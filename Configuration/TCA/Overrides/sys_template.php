@@ -7,9 +7,9 @@
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 ExtensionManagementUtility::registerPageTSConfigFile(
-'form_extended',
+'fe-registration',
 'Configuration/TsConfig/NewContentElement.tsconfig',
-'Form Double Opt-In'
+'Frontend Registration'
 );
 
-ExtensionManagementUtility::addStaticFile('form_extended', 'Configuration/TypoScript/', 'Form Extended');
+ExtensionManagementUtility::addStaticFile('fe_registration', 'Configuration/TypoScript/', 'Frontend Registration');

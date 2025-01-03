@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xliff version="1.0">
+    <file source-language="en" datatype="plaintext" original="messages" date="2016-08-21T20:15:32Z"
+          product-name="form_extended">
+        <header/>
+        <body>
+            <trans-unit id="formEditor.elements.ExtendedAttributesMixin.editor.info.label">
+                <target>Info</target>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.ExtendedAttributesMixin.editor.hideTitle.label">
+                <target>Blende den Titel aus</target>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.privacyPolicyCheckbox.label">
+                <source>Privacy policy checkbox</source>
+                <target>Datenschutzerklärungs-Checkbox</target>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.countrySelect.label">
+                <source>Country select box</source>
+                <target>Länderauswahl</target>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.FileUpload.editor.enableMultiple.label">
+                <source>Enable multiple file upload</source>
+                <target>Aktiviere mehrfachen Datei-Upload</target>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.Form.finisher.EmailToSender.editor.senderAddress.fieldExplanationText2">
+                <source>Set by site configuration and plugin</source>
+                <target>Wird durch die Site-Konfiguration und das Plugin gesetzt</target>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.Form.finisher.EmailToSender.editor.senderName.fieldExplanationText2">
+                <source>Set by site configuration and plugin</source>
+                <target>Wird durch die Site-Konfiguration und das Plugin gesetzt</target>
+            </trans-unit>
+            <trans-unit id="element.MultiSelect.properties.counter.placeholder">
+                <source>1 option selected|%d options selected</source>
+                <target>1 Option ausgewählt|%d Optionen ausgewählt</target>
+            </trans-unit>
+            <trans-unit id="element.MultiSelect.properties.remove_button.title">
+                <source>Remove</source>
+                <target>Löschen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

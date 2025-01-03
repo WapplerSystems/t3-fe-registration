@@ -37,7 +37,7 @@ class FeUsernameAlreadyExistsValidator extends AbstractValidator
             $this->addError(
                 $this->translateErrorMessage(
                     'validator.feUsernameAlreadyExists.true',
-                    'form_extended'
+                    'fe_registration'
                 ),
                 1591107223
             );

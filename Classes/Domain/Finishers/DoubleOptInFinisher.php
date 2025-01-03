@@ -62,7 +62,7 @@ class DoubleOptInFinisher extends \TYPO3\CMS\Form\Domain\Finishers\EmailFinisher
 
         /* passing options from default options to options for using in EmailFinisher */
         if (empty($this->options['subject'])) {
-            $this->options['subject'] = LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'form_extended');
+            $this->options['subject'] = LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration');
         }
 
         $formRuntime = $this->finisherContext->getFormRuntime();

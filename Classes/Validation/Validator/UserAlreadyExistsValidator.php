@@ -48,7 +48,7 @@ class UserAlreadyExistsValidator extends AbstractValidator
             $this->addError(
                 $this->translateErrorMessage(
                     'validator.optInAlreadyExists.true',
-                    'form_extended'
+                    'fe_registration'
                 ),
                 1591107223
             );

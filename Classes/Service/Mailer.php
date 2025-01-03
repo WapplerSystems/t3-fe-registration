@@ -56,9 +56,9 @@ class Mailer
             ->initializeFluidEmail( $settings, $request)
             ->from(new Address($senderAddress, $senderName))
             ->to($receiverAddress)
-            ->subject(LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'form_extended'))
+            ->subject(LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration'))
             ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
-            ->assign('title', LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'form_extended'))
+            ->assign('title', LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration'))
             ->assign('optIn', $optIn)
             ->assign('validationPid', $validationPid);
 

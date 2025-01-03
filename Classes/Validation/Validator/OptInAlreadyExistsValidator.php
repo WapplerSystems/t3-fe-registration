@@ -64,7 +64,7 @@ class OptInAlreadyExistsValidator extends AbstractValidator
                 $this->addError(
                     $this->translateErrorMessage(
                         'validator.optInAlreadyExists.resend',
-                        'form_extended',
+                        'fe_registration',
                         [$link]
                     ),
                     1735853778
@@ -75,7 +75,7 @@ class OptInAlreadyExistsValidator extends AbstractValidator
             $this->addError(
                 $this->translateErrorMessage(
                     'validator.optInAlreadyExists.true',
-                    'form_extended'
+                    'fe_registration'
                 ),
                 1591107223
             );

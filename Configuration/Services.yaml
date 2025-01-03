@@ -8,11 +8,5 @@ services:
     resource: '../Classes/*'
 
 
-  WapplerSystems\FeRegistration\EventListener\DataStructureIdentifierListener:
-    tags:
-      - name: event.listener
-        identifier: 'form-extended/modify-data-structure'
-        method: 'modifyDataStructure'
-
   WapplerSystems\FeRegistration\Service\Mailer:
     public: true

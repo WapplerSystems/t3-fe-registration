@@ -1,6 +1,6 @@
 <?php
 
-namespace WapplerSystems\FormExtended\Validation\Validator;
+namespace WapplerSystems\FeRegistration\Validation\Validator;
 
 
 use Doctrine\DBAL\Exception;

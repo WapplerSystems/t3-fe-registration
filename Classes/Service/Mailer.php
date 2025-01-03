@@ -1,6 +1,6 @@
 <?php
 
-namespace WapplerSystems\FormExtended\Service;
+namespace WapplerSystems\FeRegistration\Service;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
@@ -13,8 +13,8 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
-use WapplerSystems\FormExtended\Domain\Model\OptIn;
-use WapplerSystems\FormExtended\Domain\Repository\OptInRepository;
+use WapplerSystems\FeRegistration\Domain\Model\OptIn;
+use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
 
 class Mailer
 {

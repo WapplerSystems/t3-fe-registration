@@ -26,8 +26,8 @@ use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
 use TYPO3\CMS\Form\Domain\Model\FormElements\GridRow;
 use TYPO3\CMS\Form\Domain\Model\FormElements\Section;
 use TYPO3\CMS\Form\Domain\Renderer\FluidFormRenderer;
-use WapplerSystems\FormExtended\Validation\Validator\FeUsernameAlreadyExistsValidator;
-use WapplerSystems\FormExtended\Validation\Validator\OptInAlreadyExistsValidator;
+use WapplerSystems\FeRegistration\Validation\Validator\FeUsernameAlreadyExistsValidator;
+use WapplerSystems\FeRegistration\Validation\Validator\OptInAlreadyExistsValidator;
 
 class RegistrationFormFactory extends AbstractFormFactory
 {

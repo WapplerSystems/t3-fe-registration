@@ -1,0 +1,15 @@
+imports:
+  - { resource: "./Finishers/DoubleOptIn.yaml" }
+
+
+formManager:
+  translationFiles:
+    27: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
+
+prototypes:
+  standard:
+    formEditor:
+      translationFiles:
+        2788: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
+
+

@@ -1,0 +1,40 @@
+{
+  "name": "wapplersystems/fe-registration",
+  "type": "typo3-cms-extension",
+  "description": "",
+  "keywords": [
+    "TYPO3"
+  ],
+  "homepage": "https://wappler.systems",
+  "authors": [
+    {
+      "name": "Sven Wappler",
+      "role": "Developer",
+      "homepage": "https://wappler.systems"
+    }
+  ],
+  "license": [
+    "GPL-2.0+"
+  ],
+  "require": {
+    "typo3/cms-form": "^13.4"
+  },
+  "require-dev": {
+  },
+  "autoload": {
+    "psr-4": {
+      "WapplerSystems\\FeRegistration\\": "Classes"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+    }
+  },
+  "scripts": {
+  },
+  "extra": {
+    "typo3/cms": {
+      "extension-key": "fe_registration"
+    }
+  }
+}

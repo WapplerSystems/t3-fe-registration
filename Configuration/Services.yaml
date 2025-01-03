@@ -1,0 +1,18 @@
+services:
+  _defaults:
+    autowire: true
+    autoconfigure: true
+    public: false
+
+  WapplerSystems\FeRegistration\:
+    resource: '../Classes/*'
+
+
+  WapplerSystems\FeRegistration\EventListener\DataStructureIdentifierListener:
+    tags:
+      - name: event.listener
+        identifier: 'form-extended/modify-data-structure'
+        method: 'modifyDataStructure'
+
+  WapplerSystems\FeRegistration\Service\Mailer:
+    public: true

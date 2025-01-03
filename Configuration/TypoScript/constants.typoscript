@@ -1,0 +1,36 @@
+
+# customsubcategory=optInEmail=Opt-In Email
+
+plugin.tx_formextended_doubleoptin {
+  persistence {
+    # cat=plugin.tx_formextended_doubleoptin//a; type=string; label=Default storage PID
+    storagePid =
+  }
+
+  settings {
+    # cat=plugin.tx_formextended_doubleoptin/settings/a; type=int+; label=Storage page id for fe_users
+    feUserStoragePid =
+    # cat=plugin.tx_formextended_doubleoptin/settings/b; type=int+; label=Storage page id for opt-in records
+    optInStoragePid =
+    # cat=plugin.tx_formextended_doubleoptin/settings/c; type=bool; label=Create fe_user record after opt-in
+    createFeUser = 0
+    # cat=plugin.tx_formextended_doubleoptin/settings/d; type=string; label=Comma seperated list of usergroups for new registered users
+    usergroups =
+    # cat=plugin.tx_formextended_doubleoptin/settings/e; type=int+; label=Page ID where the validation plugin is located
+    validationPid =
+
+    optInEmail {
+
+      # cat=plugin.tx_formextended_doubleoptin/optInEmail/a; type=bool; label=Use HTML in email
+      useHTML = 1
+
+      # cat=plugin.tx_formextended_doubleoptin/optInEmail/b; type=string; label=Sender email
+      senderAddress =
+      # cat=plugin.tx_formextended_doubleoptin/optInEmail/c; type=string; label=Sender name
+      senderName =
+      # cat=plugin.tx_formextended_doubleoptin/optInEmail/c; type=int; label=Time interval between two transmissions
+      timeLock = 0
+
+    }
+  }
+}

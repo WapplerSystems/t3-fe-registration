@@ -6,6 +6,7 @@ plugin.tx_feregistration {
   }
 
   settings {
+
     feUserStoragePid = {$plugin.tx_feregistration.settings.feUserStoragePid}
     optInStoragePid = {$plugin.tx_feregistration.settings.optInStoragePid}
     createFeUser = {$plugin.tx_feregistration.settings.createFeUser}
@@ -44,4 +45,12 @@ formExtendedResend {
   10 < tt_content.formextended_resendoptinemail.20
   10.settings < plugin.tx_feregistration.settings
 
+}
+
+plugin.tx_form {
+  settings {
+    yamlConfigurations {
+      321 = EXT:fe_registration/Configuration/Yaml/FormSetup.yaml
+    }
+  }
 }

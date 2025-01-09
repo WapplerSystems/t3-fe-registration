@@ -7,7 +7,20 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use WapplerSystems\FeRegistration\Controller\DoubleOptInController;
+use WapplerSystems\FeRegistration\Controller\RegistrationController;
 
+
+ExtensionUtility::configurePlugin(
+    'fe_registration',
+    'Registration',
+    [
+        RegistrationController::class => 'do'
+    ],
+    [
+        RegistrationController::class => 'do'
+    ],
+    ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
+);
 
 ExtensionUtility::configurePlugin(
     'fe_registration',

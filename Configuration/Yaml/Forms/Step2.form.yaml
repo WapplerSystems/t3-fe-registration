@@ -1,0 +1,55 @@
+
+renderingOptions:
+  submitButtonLabel: 'Jetzt registrieren'
+identifier: step2
+label: 'Schritt 2: Passwort setzen'
+type: Form
+prototypeName: standard
+renderables:
+  -
+    renderingOptions:
+      previousButtonLabel: 'previous Page'
+      nextButtonLabel: 'next Page'
+    identifier: page-1
+    label: ''
+    type: Page
+    renderables:
+      -
+        defaultValue: ''
+        type: Text
+        identifier: firstname
+        label: Vorname
+        properties:
+          fluidAdditionalAttributes:
+            required: required
+        validators:
+          -
+            identifier: NotEmpty
+      -
+        defaultValue: ''
+        identifier: lastname
+        label: Nachname
+        type: Text
+        properties:
+          fluidAdditionalAttributes:
+            placeholder: Name
+            required: required
+          cleverreachField: name
+        validators:
+          -
+            identifier: NotEmpty
+      -
+        defaultValue: ''
+        identifier: email
+        label: Email
+        type: Text
+        properties:
+          fluidAdditionalAttributes:
+            placeholder: 'E-Mail Adresse'
+            required: required
+          cleverreachField: email
+        validators:
+          -
+            identifier: NotEmpty
+          -
+            identifier: EmailAddress

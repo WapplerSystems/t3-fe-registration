@@ -5,14 +5,24 @@
  */
 
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
+use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 
-$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_excludelist']['formextended_doubleoptin'] = 'select_key,pages,recursive';
 
-/**
- * Include Flexform
- */
-$GLOBALS['TCA']['tt_content']['types']['list']['subtypes_addlist']['formextended_doubleoptin'] = 'pi_flexform';
+$contentTypeName = ExtensionUtility::registerPlugin(
+    'fe_registration',
+    'Registration',
+    'Frontend User Registration'
+);
+
+ExtensionManagementUtility::addToAllTCAtypes(
+    'tt_content',
+    'pi_flexform',
+    $contentTypeName,
+    'after:palette:headers'
+);
+
 ExtensionManagementUtility::addPiFlexFormValue(
-    'formextended_doubleoptin',
-    'FILE:EXT:form_extended/Configuration/FlexForms/DoubleOptIn.xml'
+    '*',
+    'FILE:EXT:fe_registration/Configuration/FlexForms/Registration.xml',
+    $contentTypeName
 );

@@ -2,7 +2,7 @@ prototypes:
   standard:
     finishersDefinition:
       DoubleOptIn:
-        implementationClassName: WapplerSystems\FormExtended\Domain\Finishers\DoubleOptInFinisher
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\DoubleOptInFinisher
         options:
           templateName: 'Default'
           templateRootPaths:
@@ -154,3 +154,4 @@ prototypes:
               label: tt_content.finishersDefinition.EmailToReceiver.title.label
               config:
                 type: input
+

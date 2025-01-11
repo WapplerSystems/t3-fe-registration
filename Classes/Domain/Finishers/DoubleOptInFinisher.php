@@ -24,9 +24,9 @@ use TYPO3\CMS\Form\Domain\Model\FormElements\FormElementInterface;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3\CMS\Form\Service\TranslationService;
 use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
-use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
-use WapplerSystems\FeRegistration\Event\AfterValidationRequestCreationEvent;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Event\AfterConfirmationRequestCreationEvent;
 
 class DoubleOptInFinisher extends EmailFinisher
 {
@@ -46,8 +46,8 @@ class DoubleOptInFinisher extends EmailFinisher
     ];
 
 
-    public function __construct(readonly ValidationRequestRepository $optInRepository,
-                                readonly EventDispatcherInterface    $eventDispatcher)
+    public function __construct(readonly ConfirmationRequestRepository $optInRepository,
+                                readonly EventDispatcherInterface      $eventDispatcher)
     {
     }
 
@@ -109,7 +109,7 @@ class DoubleOptInFinisher extends EmailFinisher
 
 
         /* Opt in data set  */
-        $optIn = new ValidationRequest();
+        $optIn = new ConfirmationRequest();
         $optIn->setEmail($recipients[0]->getAddress());
 
         if (is_array($payloadElementsConfiguration)) {
@@ -126,7 +126,7 @@ class DoubleOptInFinisher extends EmailFinisher
         $this->optInRepository->add($optIn);
 
         $this->eventDispatcher->dispatch(
-            new AfterValidationRequestCreationEvent($optIn)
+            new AfterConfirmationRequestCreationEvent($optIn)
         );
 
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
@@ -171,14 +171,14 @@ class DoubleOptInFinisher extends EmailFinisher
         }
 
         $mail = $this
-                ->initializeFluidEmail($formRuntime)
-                ->from(new Address($senderAddress, $senderName))
-                ->to(...$recipients)
-                ->subject($subject)
-                ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
-                ->assign('title', $title)
-                ->assign('optIn', $optIn)
-                ->assign('validationPid', $validationPid);
+            ->initializeFluidEmail($formRuntime)
+            ->from(new Address($senderAddress, $senderName))
+            ->to(...$recipients)
+            ->subject($subject)
+            ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
+            ->assign('title', $title)
+            ->assign('optIn', $optIn)
+            ->assign('validationPid', $validationPid);
 
         if (!empty($replyToRecipients)) {
             $mail->replyTo(...$replyToRecipients);

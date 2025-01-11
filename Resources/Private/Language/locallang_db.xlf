@@ -7,8 +7,8 @@
             <trans-unit id="flexform.main">
                 <source>Main settings</source>
             </trans-unit>
-            <trans-unit id="flexform.validationEmail">
-                <source>Email Validation</source>
+            <trans-unit id="flexform.confirmationEmail">
+                <source>Confirmation email</source>
             </trans-unit>
             <trans-unit id="flexform.senderEmailAddress">
                 <source>Sender email address</source>
@@ -16,14 +16,14 @@
             <trans-unit id="flexform.senderName">
                 <source>Sender name</source>
             </trans-unit>
-            <trans-unit id="flexform.validationRequestPid">
-                <source>Storage for validation requests</source>
+            <trans-unit id="flexform.confirmationRequestPid">
+                <source>Storage for confirmation requests</source>
             </trans-unit>
             <trans-unit id="flexform.timeLock">
                 <source>Time block for resending</source>
             </trans-unit>
             <trans-unit id="flexform.subject">
-                <source>Subject</source>
+                <source>Override subject</source>
             </trans-unit>
             <trans-unit id="flexform.useFluidEmail">
                 <source>Use fluid email</source>
@@ -40,26 +40,26 @@
             <trans-unit id="flexform.forward">
                 <source>Forward to page</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest.email">
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.email">
                 <source>Email</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest.encoded_values">
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.encoded_values">
                 <source>Values</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest.is_validated">
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.is_confirmed">
                 <source>Is validated</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest.validation_hash">
-                <source>Validation hash</source>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.confirmation_hash">
+                <source>Confirmation hash</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest.validation_date">
-                <source>Validation date</source>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.confirmation_date">
+                <source>Confirmation date</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest.last_sent">
-                <source>Last validation mail sent</source>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.last_sent">
+                <source>Last confirmation mail sent</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_validationrequest">
-                <source>Opt in requests</source>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest">
+                <source>Email confirmation requests</source>
             </trans-unit>
             <trans-unit id="registration_completed">
                 <source>Registration completed</source>

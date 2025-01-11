@@ -1,5 +1,6 @@
 imports:
-  - { resource: "./Finishers/DoubleOptIn.yaml" }
+  - { resource: "./Finishers/ConfirmationRequest.yaml" }
+  - { resource: "./Finishers/ConfirmationEmail.yaml" }
   - { resource: "./FormElements/Overrides/Form.yaml" }
 
 

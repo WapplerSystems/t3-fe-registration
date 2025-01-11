@@ -64,17 +64,19 @@ readonly class DataStructureIdentifierListener
      * @todo: Clean up __construct() / init() of PageRepository!
      */
     public function __construct(
-        protected FormPersistenceManagerInterface $formPersistenceManager,
+        protected FormPersistenceManagerInterface      $formPersistenceManager,
         #[Autowire(lazy: true)]
-        protected ConfigurationService $configurationService,
+        protected ConfigurationService                 $configurationService,
         #[Autowire(lazy: true)]
-        protected TranslationService $translationService,
-        protected FlashMessageService $flashMessageService,
+        protected TranslationService                   $translationService,
+        protected FlashMessageService                  $flashMessageService,
         #[Autowire(lazy: true)]
         protected ExtbaseConfigurationManagerInterface $extbaseConfigurationManager,
         #[Autowire(lazy: true)]
         protected ExtFormConfigurationManagerInterface $extFormConfigurationManager,
-    ) {}
+    )
+    {
+    }
 
     /**
      * The data structure depends on a current form selection (persistenceIdentifier)

@@ -63,9 +63,9 @@
                             <show_thumbs>1</show_thumbs>
                         </config>
                     </settings.forward>
-                    <settings.validationRequestPid>
+                    <settings.confirmationRequestPid>
                         <label>
-                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.validationRequestPid
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.confirmationRequestPid
                         </label>
                         <config>
                             <type>group</type>
@@ -79,7 +79,7 @@
                                 </default>
                             </suggestOptions>
                         </config>
-                    </settings.validationRequestPid>
+                    </settings.confirmationRequestPid>
                     <settings.feUserStoragePid>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.feUserStoragePid
@@ -112,12 +112,12 @@
                 </el>
             </ROOT>
         </sDEF>
-        <optInEmail>
+        <confirmationEmail>
             <ROOT>
-                <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.validationEmail</sheetTitle>
+                <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.confirmationEmail</sheetTitle>
                 <type>array</type>
                 <el>
-                    <settings.optInEmail.senderEmailAddress>
+                    <settings.confirmationEmail.senderEmailAddress>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderEmailAddress
                         </label>
@@ -126,8 +126,8 @@
                             <size>30</size>
                             <eval>trim</eval>
                         </config>
-                    </settings.optInEmail.senderEmailAddress>
-                    <settings.optInEmail.senderName>
+                    </settings.confirmationEmail.senderEmailAddress>
+                    <settings.confirmationEmail.senderName>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderName
                         </label>
@@ -136,8 +136,8 @@
                             <size>30</size>
                             <eval>trim</eval>
                         </config>
-                    </settings.optInEmail.senderName>
-                    <settings.optInEmail.timeLock>
+                    </settings.confirmationEmail.senderName>
+                    <settings.confirmationEmail.timeLock>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.timeLock
                         </label>
@@ -147,16 +147,16 @@
                             <eval>trim,int</eval>
                             <default>300</default>
                         </config>
-                    </settings.optInEmail.timeLock>
-                    <settings.optInEmail.useFluidEmail>
+                    </settings.confirmationEmail.timeLock>
+                    <settings.confirmationEmail.useFluidEmail>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.useFluidEmail
                         </label>
                         <config>
                             <type>check</type>
                         </config>
-                    </settings.optInEmail.useFluidEmail>
-                    <settings.optInEmail.subject>
+                    </settings.confirmationEmail.useFluidEmail>
+                    <settings.confirmationEmail.subject>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.subject
                         </label>
@@ -165,9 +165,9 @@
                             <size>30</size>
                             <eval>trim</eval>
                         </config>
-                    </settings.optInEmail.subject>
+                    </settings.confirmationEmail.subject>
                 </el>
             </ROOT>
-        </optInEmail>
+        </confirmationEmail>
     </sheets>
 </T3DataStructure>

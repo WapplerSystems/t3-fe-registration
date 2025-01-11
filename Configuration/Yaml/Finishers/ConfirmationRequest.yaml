@@ -1,0 +1,12 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      ConfirmationRequest:
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\ConfirmationRequestFinisher
+        options:
+        formEditor:
+          iconIdentifier: form-finisher
+          label: 'Create email address confirmation request'
+          predefinedDefaults:
+            options:
+

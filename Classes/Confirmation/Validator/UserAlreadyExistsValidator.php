@@ -1,6 +1,6 @@
 <?php
 
-namespace WapplerSystems\FeRegistration\Validation\Validator;
+namespace WapplerSystems\FeRegistration\Confirmation\Validator;
 
 
 use Doctrine\DBAL\Exception;
@@ -10,7 +10,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
 
 /**
- * Checks optin records and fe_users for existing or completed records
+ * Checks confirmationRequest records and fe_users for existing or completed records
  *
  * @api
  */
@@ -18,7 +18,7 @@ class UserAlreadyExistsValidator extends AbstractValidator
 {
 
     protected $supportedOptions = [
-        'optInPid' => [null, 'Storage page ID for opt in records', 'int'],
+        'confirmationRequestPid' => [null, 'Storage page ID for opt in records', 'int'],
         'feUsersPid' => [null, 'Storage page ID for fe_users records', 'int'],
     ];
 
@@ -40,20 +40,19 @@ class UserAlreadyExistsValidator extends AbstractValidator
             ->from('tx_feregistration_domain_model_validationrequest')
             ->where($queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['optInPid'])),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['confirmationRequestPid'])),
             )
-        )->executeQuery()->fetchOne();
+            )->executeQuery()->fetchOne();
 
         if ($count > 0) {
             $this->addError(
                 $this->translateErrorMessage(
-                    'validator.optInAlreadyExists.true',
+                    'validator.confirmationRequestAlreadyExists.true',
                     'fe_registration'
                 ),
                 1591107223
             );
         }
-
 
 
     }

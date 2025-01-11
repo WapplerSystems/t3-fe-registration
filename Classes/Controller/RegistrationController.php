@@ -13,18 +13,17 @@ use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
-use WapplerSystems\FeRegistration\Event\AfterValidationEvent;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
 class RegistrationController extends ActionController
 {
 
 
-    public function __construct(readonly
-                                ValidationRequestRepository $optInRepository,
-                                EventDispatcherInterface    $eventDispatcher)
+    public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
+                                EventDispatcherInterface               $eventDispatcher)
     {
     }
 
@@ -33,19 +32,26 @@ class RegistrationController extends ActionController
     {
         DebugUtility::debug($this->settings);
 
-        $doubleOptinFinisher = [
-            'identifier' => 'DoubleOptIn',
+        $confirmationRequestFinisher = [
+            'identifier' => 'ConfirmationRequest',
             'options' => [
-                'senderAddress' => $this->settings['optInEmail']['senderAddress'] ?? '',
-                'senderName' => $this->settings['optInEmail']['senderName'] ?? '',
-                'useFluidEmail' => $this->settings['optInEmail']['useFluidEmail'] ?? 0,
-                'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:optInEmail.subject')
+                'confirmationRequestPid' => $this->settings['confirmationRequestPid'] ?? '',
+            ]
+        ];
+        $emailFinisher = [
+            'identifier' => 'ConfirmationEmail',
+            'options' => [
+                'senderAddress' => $this->settings['confirmationEmail']['senderAddress'] ?? '',
+                'senderName' => $this->settings['confirmationEmail']['senderName'] ?? '',
+                'useFluidEmail' => $this->settings['confirmationEmail']['useFluidEmail'] ?? 0,
+                'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject')
             ]
         ];
 
         $overrideConfiguration = [
             'finishers' => [
-                'DoubleOptIn' => $doubleOptinFinisher
+                'ConfirmationRequest' => $confirmationRequestFinisher,
+                'ConfirmationEmail' => $emailFinisher,
             ]
         ];
 
@@ -67,22 +73,22 @@ class RegistrationController extends ActionController
     {
 
         if ($hash !== '') {
-            /** @var ValidationRequest $optIn */
-            $optIn = $this->optInRepository->findOneByValidationHash($hash);
+            /** @var ConfirmationRequest $confirmationRequest */
+            $confirmationRequest = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
 
-            if ($optIn) {
+            if ($confirmationRequest) {
 
-                if ($optIn->getIsValidated()) {
+                if ($confirmationRequest->isConfirmed()) {
                     $this->view->assign('alreadyConfirmed', true);
                     return $this->htmlResponse();
                 }
 
-                $optIn->setIsValidated(TRUE);
-                $optIn->setValidationDate(new \DateTime);
-                $this->optInRepository->update($optIn);
+                $confirmationRequest->setIsConfirmed(TRUE);
+                $confirmationRequest->setConfirmationDate(new \DateTime);
+                $this->confirmationRequestRepository->update($confirmationRequest);
 
                 $this->eventDispatcher->dispatch(
-                    new AfterValidationEvent($optIn)
+                    new AfterConfirmationEvent($confirmationRequest)
                 );
 
                 if (isset($this->settings['forward']) && (int)$this->settings['forward'] > 0) {
@@ -92,7 +98,7 @@ class RegistrationController extends ActionController
 
                 if ((int)($this->settings['createFeUser'] ?? 0) === 1) {
 
-                    $values = $optIn->getDecodedValues();
+                    $values = $confirmationRequest->getDecodedValues();
 
                     $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
                         'fe_users'
@@ -130,23 +136,23 @@ class RegistrationController extends ActionController
     }
 
 
-    public function resendOptInEmailAction(): ResponseInterface
+    public function resendConfirmationEmailAction(): ResponseInterface
     {
         $hash = $this->request->getQueryParams()['hash'] ?? '';
 
-        $optInRecord = $this->optInRepository->findOneByValidationHash($hash);
-        if ($optInRecord) {
+        $confirmationRequestRecord = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
+        if ($confirmationRequestRecord) {
 
-            if ($optInRecord->getIsValidated()) {
+            if ($confirmationRequestRecord->getIsValidated()) {
                 return new JsonResponse(['success' => false, 'alreadyConfirmed' => true]);
             }
-            if ($optInRecord->getLastSent() && $optInRecord->getLastSent()->getTimestamp() + (int)$this->settings['optInEmail']['timeLock'] > time()) {
-                return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $optInRecord->getLastSent()->getTimestamp() + (int)$this->settings['optInEmail']['timeLock']]);
+            if ($confirmationRequestRecord->getLastSent() && $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['confirmationEmail']['timeLock'] > time()) {
+                return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['confirmationEmail']['timeLock']]);
             }
 
             /** @var Mailer $mailer */
             $mailer = GeneralUtility::makeInstance(Mailer::class);
-            $mailer->sendOptInMail($optInRecord, $this->request, $this->settings);
+            $mailer->sendconfirmationMail($confirmationRequestRecord, $this->request, $this->settings);
 
 
             return new JsonResponse(['success' => true]);

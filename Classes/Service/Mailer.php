@@ -13,8 +13,8 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
-use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 
 class Mailer
 {
@@ -25,7 +25,7 @@ class Mailer
      * @throws TransportExceptionInterface
      * @throws FinisherException
      */
-    public function sendOptInMail(ValidationRequest $optIn, ServerRequestInterface $request, array $settings): void
+    public function sendconfirmationMail(ConfirmationRequest $confirmationRequest, ServerRequestInterface $request, array $settings): void
     {
 
 
@@ -33,16 +33,16 @@ class Mailer
         if (empty($validationPid)) {
             throw new FinisherException('The option "validationPid" must be set.', 1527148282);
         }
-        $receiverAddress = $optIn->getEmail();
+        $receiverAddress = $confirmationRequest->getEmail();
 
-        $addHtmlPart = $settings['optInEmail']['useHTML'] ?? false;
+        $addHtmlPart = $settings['confirmationRequestEmail']['useHTML'] ?? false;
 
         $senderAddress = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] ?? '';
         $senderName = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'] ?? '';
 
 
-        $senderAddress = $settings['optInEmail']['senderAddress'] ?? $senderAddress;
-        $senderName = $settings['optInEmail']['senderName'] ?? $senderName;
+        $senderAddress = $settings['confirmationRequestEmail']['senderAddress'] ?? $senderAddress;
+        $senderName = $settings['confirmationRequestEmail']['senderName'] ?? $senderName;
 
         if (empty($senderAddress)) {
             throw new Exception('The option "senderAddress" must be set.', 1735853778);
@@ -53,13 +53,13 @@ class Mailer
 
 
         $mail = $this
-            ->initializeFluidEmail( $settings, $request)
+            ->initializeFluidEmail($settings, $request)
             ->from(new Address($senderAddress, $senderName))
             ->to($receiverAddress)
             ->subject(LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration'))
             ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
             ->assign('title', LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration'))
-            ->assign('optIn', $optIn)
+            ->assign('confirmationRequest', $confirmationRequest)
             ->assign('validationPid', $validationPid);
 
         /*
@@ -70,10 +70,10 @@ class Mailer
 
         GeneralUtility::makeInstance(MailerInterface::class)->send($mail);
 
-        $optIn->setLastSent(new \DateTime());
+        $confirmationRequest->setLastSent(new \DateTime());
 
-        $optInRepository = GeneralUtility::makeInstance(ValidationRequestRepository::class);
-        $optInRepository->update($optIn);
+        $confirmationRequestRepository = GeneralUtility::makeInstance(ConfirmationRequestRepository::class);
+        $confirmationRequestRepository->update($confirmationRequest);
 
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
         $persistenceManager->persistAll();

@@ -4,41 +4,42 @@ namespace WapplerSystems\FeRegistration\Controller;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
+use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Extbase\Exception;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
-use WapplerSystems\FeRegistration\Event\AfterValidationEvent;
+use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
 class DoubleOptInController extends ActionController
 {
 
 
-    public function __construct(readonly
-                                ValidationRequestRepository $optInRepository,
-                                EventDispatcherInterface    $eventDispatcher)
+    public function __construct(readonly ConfirmationRequestRepository $optInRepository,
+                                EventDispatcherInterface               $eventDispatcher)
     {
     }
 
     /**
-     * action validation
      *
      * @param string $hash
      * @return ResponseInterface
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
      */
-    public function validationAction($hash = ''): ResponseInterface
+    public function confirmAction($hash = ''): ResponseInterface
     {
         if ($hash !== '') {
-            /** @var ValidationRequest $optIn */
-            $optIn = $this->optInRepository->findOneByValidationHash($hash);
+            /** @var ConfirmationRequest $optIn */
+            $optIn = $this->optInRepository->findOneByConfirmationHash($hash);
 
             if ($optIn) {
 
@@ -48,11 +49,11 @@ class DoubleOptInController extends ActionController
                 }
 
                 $optIn->setIsValidated(TRUE);
-                $optIn->setValidationDate(new \DateTime);
+                $optIn->setConfirmationDate(new \DateTime);
                 $this->optInRepository->update($optIn);
 
                 $this->eventDispatcher->dispatch(
-                    new AfterValidationEvent($optIn)
+                    new AfterConfirmationEvent($optIn)
                 );
 
                 if (isset($this->settings['forward']) && (int)$this->settings['forward'] > 0) {
@@ -104,7 +105,7 @@ class DoubleOptInController extends ActionController
     {
         $hash = $this->request->getQueryParams()['hash'] ?? '';
 
-        $optInRecord = $this->optInRepository->findOneByValidationHash($hash);
+        $optInRecord = $this->optInRepository->findOneByConfirmationHash($hash);
         if ($optInRecord) {
 
             if ($optInRecord->getIsValidated()) {
@@ -116,7 +117,12 @@ class DoubleOptInController extends ActionController
 
             /** @var Mailer $mailer */
             $mailer = GeneralUtility::makeInstance(Mailer::class);
-            $mailer->sendOptInMail($optInRecord, $this->request, $this->settings);
+            try {
+                $mailer->sendconfirmationMail($optInRecord, $this->request, $this->settings);
+            } catch (Exception $e) {
+
+                return new JsonResponse(['success' => false]);
+            }
 
 
             return new JsonResponse(['success' => true]);

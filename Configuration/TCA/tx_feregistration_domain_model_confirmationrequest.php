@@ -2,7 +2,7 @@
 
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest',
+        'title' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest',
         'label' => 'email',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -12,7 +12,7 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden'
         ],
-        'searchFields' => 'email, given_name, family_name, company, customer_number, validation_hash',
+        'searchFields' => 'email, given_name, family_name, company, customer_number, confirmation_hash',
         'iconfile' => 'EXT:fe_registration/Resources/Public/Icons/DoubleOptIn.png',
         'security' => [
             'ignorePageTypeRestriction' => true,
@@ -22,13 +22,13 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'email, encoded_values, validation_hash, validation_date, is_validated, last_sent'
+            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, is_validated, last_sent'
         ]
     ],
     'columns' => [
         'email' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.email',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.email',
             'config' => [
                 'type' => 'input',
                 'size' => '30',
@@ -37,7 +37,7 @@ return [
         ],
         'encoded_values' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.encoded_values',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.encoded_values',
             'config' => [
                 'type' => 'text',
                 'readOnly' => 1
@@ -45,24 +45,24 @@ return [
         ],
         'is_validated' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.is_validated',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.is_validated',
             'config' => [
                 'type' => 'check',
                 'readOnly' => 1
             ]
         ],
-        'validation_hash' => [
+        'confirmation_hash' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.validation_hash',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.confirmation_hash',
             'config' => [
                 'type' => 'input',
                 'size' => 40,
                 'readOnly' => 1
             ]
         ],
-        'validation_date' => [
+        'confirmation_date' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.validation_date',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.confirmation_date',
             'config' => [
                 'type' => 'input',
                 'size' => 20,
@@ -73,7 +73,7 @@ return [
         ],
         'last_sent' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.last_sent',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.last_sent',
             'config' => [
                 'type' => 'input',
                 'size' => 20,

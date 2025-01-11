@@ -1,11 +1,12 @@
 <?php
+
 namespace WapplerSystems\FeRegistration\Domain\Repository;
 
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
  */
-class ValidationRequestRepository extends Repository
+class ConfirmationRequestRepository extends Repository
 {
 
     public function createQuery()

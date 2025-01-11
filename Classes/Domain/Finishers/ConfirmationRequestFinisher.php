@@ -14,9 +14,11 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManager;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
+use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
+use TYPO3\CMS\Form\Domain\Finishers\AbstractFinisher;
 use TYPO3\CMS\Form\Domain\Finishers\EmailFinisher;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\FileUpload;
@@ -24,61 +26,65 @@ use TYPO3\CMS\Form\Domain\Model\FormElements\FormElementInterface;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3\CMS\Form\Service\TranslationService;
 use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
-use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
-use WapplerSystems\FeRegistration\Event\AfterValidationRequestCreationEvent;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Event\AfterConfirmationRequestCreationEvent;
 
-class CreateValidationRequestFinisher extends EmailFinisher
+class ConfirmationRequestFinisher extends AbstractFinisher
 {
 
     /**
      * @var array
      */
     protected $defaultOptions = [
-        'recipientName' => '',
-        'senderName' => '',
-        'attachUploads' => true,
-        'payloadElements' => [],
-        'validationPid' => null,
+        'confirmationRequestPid' => null,
     ];
 
 
-    public function __construct(readonly ValidationRequestRepository $optInRepository,
-                                readonly EventDispatcherInterface    $eventDispatcher)
+    public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
+                                readonly EventDispatcherInterface      $eventDispatcher)
     {
     }
 
 
     /**
      * Executes this finisher
-     * @throws FinisherException
+     * @throws FinisherException|IllegalObjectTypeException
      * @see AbstractFinisher::execute()
      *
      */
     protected function executeInternal()
     {
+        $formValues = $this->getFormValues();
 
-
-        /* Opt in data set  */
-        $optIn = new ValidationRequest();
-        $optIn->setEmail($recipients[0]->getAddress());
-
-        if (is_array($payloadElementsConfiguration)) {
-            $payload = $this->prepareData($payloadElementsConfiguration);
-            $optIn->setDecodedValues($payload);
+        $email = null;
+        $elements = $this->finisherContext->getFormRuntime()->getFormDefinition()->getElements();
+        foreach ($elements as $element) {
+            if ($element->getType() === 'Email') {
+                $email = $formValues[$element->getIdentifier()] ?? null;
+            }
+        }
+        if ($email === null) {
+            throw new FinisherException('No receiver email address found in form data.', 1599834020);
         }
 
-        $optIn->setPid($storagePid);
+        /* Opt in data set  */
+        $confirmationRequest = new ConfirmationRequest();
+        $confirmationRequest->setEmail($email);
 
-        $this->optInRepository->add($optIn);
+        $payload = $this->prepareData();
+        $confirmationRequest->setDecodedValues($payload);
+
+        $confirmationRequest->setPid($this->options['confirmationRequestPid']);
+
+        $this->confirmationRequestRepository->add($confirmationRequest);
 
         $this->eventDispatcher->dispatch(
-            new AfterValidationRequestCreationEvent($optIn)
+            new AfterConfirmationRequestCreationEvent($confirmationRequest)
         );
 
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
         $persistenceManager->persistAll();
-        /* Opt in data set  */
 
 
     }
@@ -87,20 +93,15 @@ class CreateValidationRequestFinisher extends EmailFinisher
     /**
      * Prepare data for saving to database
      *
-     * @param array $elementsConfiguration
      * @return mixed
      */
-    protected function prepareData(array $elementsConfiguration)
+    protected function prepareData()
     {
         $data = [];
         $formRuntime = $this->finisherContext->getFormRuntime();
         $hashInstance = GeneralUtility::makeInstance(PasswordHashFactory::class)->getDefaultHashInstance('FE');
 
         foreach ($this->getFormValues() as $elementIdentifier => $elementValue) {
-
-            if (!in_array($elementIdentifier, $elementsConfiguration, true)) {
-                continue;
-            }
 
             $element = $formRuntime->getFormDefinition()->getElementByIdentifier($elementIdentifier);
             if ($element !== null && ($element->getType() === 'Password' || $element->getType() === 'AdvancedPassword')) {

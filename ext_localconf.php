@@ -1,39 +1,21 @@
 <?php
 
-use TYPO3\CMS\Core\Configuration\ExtensionConfiguration;
 use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
 use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
-use WapplerSystems\FeRegistration\Controller\DoubleOptInController;
 use WapplerSystems\FeRegistration\Controller\RegistrationController;
 
-/*
-$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['afterBuildingFinished'][]
-    = \WapplerSystems\FeRegistration\Callbacks\AfterBuildingFinished::class;
-*/
 
 ExtensionUtility::configurePlugin(
     'fe_registration',
     'Registration',
     [
-        RegistrationController::class => 'new, validate'
+        RegistrationController::class => 'new, confirm'
     ],
     [
-        RegistrationController::class => 'new, validate'
-    ],
-    ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
-);
-
-ExtensionUtility::configurePlugin(
-    'fe_registration',
-    'DoubleOptIn',
-    [
-        DoubleOptInController::class => 'validation'
-    ],
-    [
-        DoubleOptInController::class => 'validation'
+        RegistrationController::class => 'new, confirm'
     ],
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
@@ -42,10 +24,10 @@ ExtensionUtility::configurePlugin(
     'fe_registration',
     'ResendOptinEmail',
     [
-        DoubleOptInController::class => 'resendOptInEmail'
+        RegistrationController::class => 'resendOptInEmail'
     ],
     [
-        DoubleOptInController::class => 'resendOptInEmail'
+        RegistrationController::class => 'resendOptInEmail'
     ],
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
@@ -54,7 +36,7 @@ $iconRegistry = GeneralUtility::makeInstance(
     IconRegistry::class
 );
 $iconRegistry->registerIcon(
-    'plugin-formextended',
+    'plugin-feregistration',
     SvgIconProvider::class,
     ['source' => 'EXT:fe_registration/Resources/Public/Icons/PluginDoubleOptIn.svg']
 );

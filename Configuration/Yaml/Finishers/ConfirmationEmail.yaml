@@ -1,0 +1,12 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      ConfirmationEmail:
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\ConfirmationEmailFinisher
+        options:
+        formEditor:
+          iconIdentifier: form-finisher
+          label: 'Send confirmation email'
+          predefinedDefaults:
+            options:
+

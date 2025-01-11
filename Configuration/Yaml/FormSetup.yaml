@@ -13,7 +13,6 @@ prototypes:
       translationFiles:
         2788: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
 
-
 persistenceManager:
   allowedExtensionPaths:
     2788: EXT:fe_registration/Configuration/Yaml/Forms/

@@ -15,7 +15,7 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
  *
  * @api
  */
-class OptInAlreadyExistsValidator extends AbstractValidator
+class ValidationRequestAlreadyExistsValidator extends AbstractValidator
 {
 
     protected $supportedOptions = [
@@ -35,11 +35,11 @@ class OptInAlreadyExistsValidator extends AbstractValidator
     {
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_optin');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_validationrequest');
         $queryBuilder->getRestrictions()->removeAll();
         $row = $queryBuilder
             ->select('uid', 'is_validated', 'validation_hash')
-            ->from('tx_feregistration_domain_model_optin')
+            ->from('tx_feregistration_domain_model_validationrequest')
             ->where($queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['pid'])),

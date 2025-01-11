@@ -5,9 +5,7 @@
     <sheets>
         <sDEF>
             <ROOT>
-                <TCEforms>
-                    <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.main</sheetTitle>
-                </TCEforms>
+                <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.main</sheetTitle>
                 <type>array</type>
                 <el>
 
@@ -65,8 +63,111 @@
                             <show_thumbs>1</show_thumbs>
                         </config>
                     </settings.forward>
+                    <settings.validationRequestPid>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.validationRequestPid
+                        </label>
+                        <config>
+                            <type>group</type>
+                            <allowed>pages</allowed>
+                            <maxitems>1</maxitems>
+                            <minitems>0</minitems>
+                            <size>1</size>
+                            <suggestOptions>
+                                <default>
+                                    <addWhere>AND pages.doktype = 254</addWhere>
+                                </default>
+                            </suggestOptions>
+                        </config>
+                    </settings.validationRequestPid>
+                    <settings.feUserStoragePid>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.feUserStoragePid
+                        </label>
+                        <config>
+                            <type>group</type>
+                            <allowed>pages</allowed>
+                            <maxitems>1</maxitems>
+                            <minitems>0</minitems>
+                            <size>1</size>
+                            <suggestOptions>
+                                <default>
+                                    <addWhere>AND pages.doktype = 254</addWhere>
+                                </default>
+                            </suggestOptions>
+                        </config>
+                    </settings.feUserStoragePid>
+                    <settings.usergroups>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.usergroups
+                        </label>
+                        <config>
+                            <type>group</type>
+                            <allowed>fe_groups</allowed>
+                            <maxitems>99</maxitems>
+                            <minitems>0</minitems>
+                            <size>1</size>
+                        </config>
+                    </settings.usergroups>
                 </el>
             </ROOT>
         </sDEF>
+        <optInEmail>
+            <ROOT>
+                <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.validationEmail</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.optInEmail.senderEmailAddress>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderEmailAddress
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.optInEmail.senderEmailAddress>
+                    <settings.optInEmail.senderName>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderName
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.optInEmail.senderName>
+                    <settings.optInEmail.timeLock>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.timeLock
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim,int</eval>
+                            <default>300</default>
+                        </config>
+                    </settings.optInEmail.timeLock>
+                    <settings.optInEmail.useFluidEmail>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.useFluidEmail
+                        </label>
+                        <config>
+                            <type>check</type>
+                        </config>
+                    </settings.optInEmail.useFluidEmail>
+                    <settings.optInEmail.subject>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.subject
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.optInEmail.subject>
+                </el>
+            </ROOT>
+        </optInEmail>
     </sheets>
 </T3DataStructure>

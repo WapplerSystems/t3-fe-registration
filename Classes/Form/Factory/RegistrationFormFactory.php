@@ -27,7 +27,7 @@ use TYPO3\CMS\Form\Domain\Model\FormElements\GridRow;
 use TYPO3\CMS\Form\Domain\Model\FormElements\Section;
 use TYPO3\CMS\Form\Domain\Renderer\FluidFormRenderer;
 use WapplerSystems\FeRegistration\Validation\Validator\FeUsernameAlreadyExistsValidator;
-use WapplerSystems\FeRegistration\Validation\Validator\OptInAlreadyExistsValidator;
+use WapplerSystems\FeRegistration\Validation\Validator\ValidationRequestAlreadyExistsValidator;
 
 class RegistrationFormFactory extends AbstractFormFactory
 {
@@ -158,7 +158,7 @@ class RegistrationFormFactory extends AbstractFormFactory
         $element->setLabel('email');
         $element->addValidator($resolver->createValidator(StringLengthValidator::class, ['maximum' => 100]));
         $element->addValidator($resolver->createValidator(FeUsernameAlreadyExistsValidator::class));
-        $element->addValidator($resolver->createValidator(OptInAlreadyExistsValidator::class, ['pid' => $configuration['optInStoragePid']]));
+        $element->addValidator($resolver->createValidator(ValidationRequestAlreadyExistsValidator::class, ['pid' => $configuration['optInStoragePid']]));
         $element->addValidator($resolver->createValidator(EmailAddressValidator::class));
         $element->addValidator($resolver->createValidator(NotEmptyValidator::class));
 

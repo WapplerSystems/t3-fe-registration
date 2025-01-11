@@ -11,9 +11,9 @@ use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use WapplerSystems\FeRegistration\Domain\Model\OptIn;
+use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
-use WapplerSystems\FeRegistration\Event\AfterOptInValidationEvent;
+use WapplerSystems\FeRegistration\Event\AfterValidationEvent;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
 class DoubleOptInController extends ActionController
@@ -37,7 +37,7 @@ class DoubleOptInController extends ActionController
     public function validationAction($hash = ''): ResponseInterface
     {
         if ($hash !== '') {
-            /** @var OptIn $optIn */
+            /** @var ValidationRequest $optIn */
             $optIn = $this->optInRepository->findOneByValidationHash($hash);
 
             if ($optIn) {
@@ -52,7 +52,7 @@ class DoubleOptInController extends ActionController
                 $this->optInRepository->update($optIn);
 
                 $this->eventDispatcher->dispatch(
-                    new AfterOptInValidationEvent($optIn)
+                    new AfterValidationEvent($optIn)
                 );
 
                 if (isset($this->settings['forward']) && (int)$this->settings['forward'] > 0) {

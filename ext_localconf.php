@@ -9,15 +9,19 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use WapplerSystems\FeRegistration\Controller\DoubleOptInController;
 use WapplerSystems\FeRegistration\Controller\RegistrationController;
 
+/*
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['afterBuildingFinished'][]
+    = \WapplerSystems\FeRegistration\Callbacks\AfterBuildingFinished::class;
+*/
 
 ExtensionUtility::configurePlugin(
     'fe_registration',
     'Registration',
     [
-        RegistrationController::class => 'do'
+        RegistrationController::class => 'new, validate'
     ],
     [
-        RegistrationController::class => 'do'
+        RegistrationController::class => 'new, validate'
     ],
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );

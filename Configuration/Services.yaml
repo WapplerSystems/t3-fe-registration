@@ -10,3 +10,5 @@ services:
 
   WapplerSystems\FeRegistration\Service\Mailer:
     public: true
+
+

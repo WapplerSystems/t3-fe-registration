@@ -1,7 +1,7 @@
 #
-# Table structure for table 'tx_feregistration_domain_model_optin'
+# Table structure for table 'tx_feregistration_domain_model_validationrequest'
 #
-CREATE TABLE tx_feregistration_domain_model_optin
+CREATE TABLE tx_feregistration_domain_model_validationrequest
 (
 
 	encoded_values  text,

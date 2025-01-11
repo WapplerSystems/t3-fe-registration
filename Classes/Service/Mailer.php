@@ -13,7 +13,7 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
-use WapplerSystems\FeRegistration\Domain\Model\OptIn;
+use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
 
 class Mailer
@@ -25,7 +25,7 @@ class Mailer
      * @throws TransportExceptionInterface
      * @throws FinisherException
      */
-    public function sendOptInMail(OptIn $optIn, ServerRequestInterface $request, array $settings): void
+    public function sendOptInMail(ValidationRequest $optIn, ServerRequestInterface $request, array $settings): void
     {
 
 

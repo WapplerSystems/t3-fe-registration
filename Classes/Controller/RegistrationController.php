@@ -6,14 +6,16 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use WapplerSystems\FeRegistration\Domain\Model\OptIn;
+use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
+use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
-use WapplerSystems\FeRegistration\Event\AfterOptInValidationEvent;
+use WapplerSystems\FeRegistration\Event\AfterValidationEvent;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
 class RegistrationController extends ActionController
@@ -26,6 +28,33 @@ class RegistrationController extends ActionController
     {
     }
 
+
+    public function newAction(): ResponseInterface
+    {
+        DebugUtility::debug($this->settings);
+
+        $doubleOptinFinisher = [
+            'identifier' => 'DoubleOptIn',
+            'options' => [
+                'senderAddress' => $this->settings['optInEmail']['senderAddress'] ?? '',
+                'senderName' => $this->settings['optInEmail']['senderName'] ?? '',
+                'useFluidEmail' => $this->settings['optInEmail']['useFluidEmail'] ?? 0,
+                'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:optInEmail.subject')
+            ]
+        ];
+
+        $overrideConfiguration = [
+            'finishers' => [
+                'DoubleOptIn' => $doubleOptinFinisher
+            ]
+        ];
+
+
+        $this->view->assign('overrideConfiguration', $overrideConfiguration);
+
+        return $this->htmlResponse();
+    }
+
     /**
      * action validation
      *
@@ -34,13 +63,11 @@ class RegistrationController extends ActionController
      * @throws IllegalObjectTypeException
      * @throws UnknownObjectException
      */
-    public function doAction($hash = ''): ResponseInterface
+    public function validateAction(string $hash = ''): ResponseInterface
     {
 
-
-
         if ($hash !== '') {
-            /** @var OptIn $optIn */
+            /** @var ValidationRequest $optIn */
             $optIn = $this->optInRepository->findOneByValidationHash($hash);
 
             if ($optIn) {
@@ -55,7 +82,7 @@ class RegistrationController extends ActionController
                 $this->optInRepository->update($optIn);
 
                 $this->eventDispatcher->dispatch(
-                    new AfterOptInValidationEvent($optIn)
+                    new AfterValidationEvent($optIn)
                 );
 
                 if (isset($this->settings['forward']) && (int)$this->settings['forward'] > 0) {

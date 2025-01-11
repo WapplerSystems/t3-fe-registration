@@ -17,17 +17,18 @@ use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
+use TYPO3\CMS\Form\Domain\Finishers\EmailFinisher;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\FileUpload;
 use TYPO3\CMS\Form\Domain\Model\FormElements\FormElementInterface;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3\CMS\Form\Service\TranslationService;
 use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
-use WapplerSystems\FeRegistration\Domain\Model\OptIn;
+use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
-use WapplerSystems\FeRegistration\Event\AfterOptInCreationEvent;
+use WapplerSystems\FeRegistration\Event\AfterValidationRequestCreationEvent;
 
-class DoubleOptInFinisher extends \TYPO3\CMS\Form\Domain\Finishers\EmailFinisher
+class DoubleOptInFinisher extends EmailFinisher
 {
 
     /**
@@ -108,7 +109,7 @@ class DoubleOptInFinisher extends \TYPO3\CMS\Form\Domain\Finishers\EmailFinisher
 
 
         /* Opt in data set  */
-        $optIn = new OptIn();
+        $optIn = new ValidationRequest();
         $optIn->setEmail($recipients[0]->getAddress());
 
         if (is_array($payloadElementsConfiguration)) {
@@ -125,7 +126,7 @@ class DoubleOptInFinisher extends \TYPO3\CMS\Form\Domain\Finishers\EmailFinisher
         $this->optInRepository->add($optIn);
 
         $this->eventDispatcher->dispatch(
-            new AfterOptInCreationEvent($optIn)
+            new AfterValidationRequestCreationEvent($optIn)
         );
 
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);

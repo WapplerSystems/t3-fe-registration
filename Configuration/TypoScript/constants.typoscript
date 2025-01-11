@@ -12,21 +12,6 @@ plugin.tx_feregistration {
     createFeUser = 0
     # cat=plugin.tx_feregistration/settings/d; type=string; label=Comma seperated list of usergroups for new registered users
     usergroups =
-    # cat=plugin.tx_feregistration/settings/e; type=int+; label=Page ID where the validation plugin is located
-    validationPid =
 
-    optInEmail {
-
-      # cat=plugin.tx_feregistration/optInEmail/a; type=bool; label=Use HTML in email
-      useHTML = 1
-
-      # cat=plugin.tx_feregistration/optInEmail/b; type=string; label=Sender email
-      senderAddress =
-      # cat=plugin.tx_feregistration/optInEmail/c; type=string; label=Sender name
-      senderName =
-      # cat=plugin.tx_feregistration/optInEmail/c; type=int; label=Time interval between two transmissions
-      timeLock = 0
-
-    }
   }
 }

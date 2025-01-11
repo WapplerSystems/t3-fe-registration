@@ -5,9 +5,8 @@ namespace WapplerSystems\FeRegistration\Domain\Model;
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 
 /**
- * OptIn
  */
-class OptIn extends AbstractEntity
+class ValidationRequest extends AbstractEntity
 {
 
     /**

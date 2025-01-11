@@ -2,7 +2,7 @@
 
 return [
     'ctrl' => [
-        'title' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin',
+        'title' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest',
         'label' => 'email',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
@@ -28,7 +28,7 @@ return [
     'columns' => [
         'email' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin.email',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.email',
             'config' => [
                 'type' => 'input',
                 'size' => '30',
@@ -37,7 +37,7 @@ return [
         ],
         'encoded_values' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin.encoded_values',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.encoded_values',
             'config' => [
                 'type' => 'text',
                 'readOnly' => 1
@@ -45,7 +45,7 @@ return [
         ],
         'is_validated' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin.is_validated',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.is_validated',
             'config' => [
                 'type' => 'check',
                 'readOnly' => 1
@@ -53,7 +53,7 @@ return [
         ],
         'validation_hash' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin.validation_hash',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.validation_hash',
             'config' => [
                 'type' => 'input',
                 'size' => 40,
@@ -62,7 +62,7 @@ return [
         ],
         'validation_date' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin.validation_date',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.validation_date',
             'config' => [
                 'type' => 'input',
                 'size' => 20,
@@ -73,7 +73,7 @@ return [
         ],
         'last_sent' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_optin.last_sent',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_validationrequest.last_sent',
             'config' => [
                 'type' => 'input',
                 'size' => 20,

@@ -7,28 +7,58 @@
             <trans-unit id="flexform.main">
                 <source>Main settings</source>
             </trans-unit>
+            <trans-unit id="flexform.validationEmail">
+                <source>Email Validation</source>
+            </trans-unit>
+            <trans-unit id="flexform.senderEmailAddress">
+                <source>Sender email address</source>
+            </trans-unit>
+            <trans-unit id="flexform.senderName">
+                <source>Sender name</source>
+            </trans-unit>
+            <trans-unit id="flexform.validationRequestPid">
+                <source>Storage for validation requests</source>
+            </trans-unit>
+            <trans-unit id="flexform.timeLock">
+                <source>Time block for resending</source>
+            </trans-unit>
+            <trans-unit id="flexform.subject">
+                <source>Subject</source>
+            </trans-unit>
+            <trans-unit id="flexform.useFluidEmail">
+                <source>Use fluid email</source>
+            </trans-unit>
+            <trans-unit id="flexform.useHTML">
+                <source>Use HTML in email</source>
+            </trans-unit>
+            <trans-unit id="flexform.usergroups">
+                <source>Add usergroups at creation</source>
+            </trans-unit>
+            <trans-unit id="flexform.feUserStoragePid">
+                <source>Storage of user records</source>
+            </trans-unit>
             <trans-unit id="flexform.forward">
                 <source>Forward to page</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin.email">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest.email">
                 <source>Email</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin.encoded_values">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest.encoded_values">
                 <source>Values</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin.is_validated">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest.is_validated">
                 <source>Is validated</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin.validation_hash">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest.validation_hash">
                 <source>Validation hash</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin.validation_date">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest.validation_date">
                 <source>Validation date</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin.last_sent">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest.last_sent">
                 <source>Last validation mail sent</source>
             </trans-unit>
-            <trans-unit id="tx_feregistration_domain_model_optin">
+            <trans-unit id="tx_feregistration_domain_model_validationrequest">
                 <source>Opt in requests</source>
             </trans-unit>
             <trans-unit id="registration_completed">

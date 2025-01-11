@@ -14,7 +14,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Fluid\View\TemplatePaths;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
+use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
 
 class Mailer
 {
@@ -72,7 +72,7 @@ class Mailer
 
         $optIn->setLastSent(new \DateTime());
 
-        $optInRepository = GeneralUtility::makeInstance(OptInRepository::class);
+        $optInRepository = GeneralUtility::makeInstance(ValidationRequestRepository::class);
         $optInRepository->update($optIn);
 
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);

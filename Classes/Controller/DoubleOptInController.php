@@ -12,7 +12,7 @@ use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
+use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
 use WapplerSystems\FeRegistration\Event\AfterValidationEvent;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
@@ -21,8 +21,8 @@ class DoubleOptInController extends ActionController
 
 
     public function __construct(readonly
-                                OptInRepository $optInRepository,
-                                EventDispatcherInterface $eventDispatcher)
+                                ValidationRequestRepository $optInRepository,
+                                EventDispatcherInterface    $eventDispatcher)
     {
     }
 

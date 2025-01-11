@@ -14,7 +14,7 @@ use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use WapplerSystems\FeRegistration\Domain\Model\ValidationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\OptInRepository;
+use WapplerSystems\FeRegistration\Domain\Repository\ValidationRequestRepository;
 use WapplerSystems\FeRegistration\Event\AfterValidationEvent;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
@@ -23,8 +23,8 @@ class RegistrationController extends ActionController
 
 
     public function __construct(readonly
-                                OptInRepository $optInRepository,
-                                EventDispatcherInterface $eventDispatcher)
+                                ValidationRequestRepository $optInRepository,
+                                EventDispatcherInterface    $eventDispatcher)
     {
     }
 

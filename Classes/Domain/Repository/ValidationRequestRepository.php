@@ -4,9 +4,8 @@ namespace WapplerSystems\FeRegistration\Domain\Repository;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 
 /**
- * OptInRepository
  */
-class OptInRepository extends Repository
+class ValidationRequestRepository extends Repository
 {
 
     public function createQuery()

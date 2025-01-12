@@ -2,10 +2,12 @@
 
 namespace WapplerSystems\FeRegistration\Controller;
 
+use Doctrine\DBAL\ParameterType;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
+use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
@@ -150,28 +152,62 @@ class RegistrationController extends ActionController
     {
 
 
+        $currentPageId = (int)($this->request->getAttribute('routing')->getPageId() ?? 0);
+        $currentLanguageUid = (int)($this->request->getAttribute('language')->getLanguageId() ?? 0);
+
+        // QueryBuilder für tt_content erstellen
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tt_content');
+
+        // Inhaltselement mit CType 'feregistration' und aktueller Sprache suchen
+        $record = $queryBuilder
+            ->select('*')
+            ->from('tt_content')
+            ->where(
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($currentPageId, ParameterType::INTEGER)),
+                $queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter('feregistration_registration')),
+                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($currentLanguageUid, ParameterType::INTEGER))
+            )
+            ->setMaxResults(1)
+            ->executeQuery()
+            ->fetchAssociative();
+
+        if ($record) {
+            // FlexForm-Daten parsen
+            $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
+            $flexFormSettings = $flexFormService->convertFlexFormContentToArray($record['pi_flexform']);
+
+            // FlexForm-Werte nutzen
+            $settings = $flexFormSettings['settings'] ?? null;
 
 
-        $email = $this->request->getQueryParams()['email'] ?? '';
+            $email = $this->request->getQueryParams()['email'] ?? '';
 
-        /** @var ConfirmationRequest $confirmationRequestRecord */
-        $confirmationRequestRecord = $this->confirmationRequestRepository->findOneByEmail($email);
-        if ($confirmationRequestRecord) {
+            /** @var ConfirmationRequest $confirmationRequestRecord */
+            $confirmationRequestRecord = $this->confirmationRequestRepository->findOneByEmail($email);
+            if ($confirmationRequestRecord) {
 
-            if ($confirmationRequestRecord->isConfirmed()) {
-                return new JsonResponse(['success' => false, 'alreadyConfirmed' => true]);
+                if ($confirmationRequestRecord->isConfirmed()) {
+                    return new JsonResponse(['success' => false, 'alreadyConfirmed' => true]);
+                }
+                if ($confirmationRequestRecord->getLastSent() && $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$settings['optInEmail']['timeLock'] > time()) {
+                    return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$settings['optInEmail']['timeLock']]);
+                }
+
+                $settings['validationPid'] = $currentPageId;
+
+                /** @var Mailer $mailer */
+                $mailer = GeneralUtility::makeInstance(Mailer::class);
+                $mailer->sendconfirmationMail($confirmationRequestRecord, $this->request, $settings);
+
+
+                return new JsonResponse(['success' => true]);
             }
-            if ($confirmationRequestRecord->getLastSent() && $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['timeLock'] > time()) {
-                return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['timeLock']]);
-            }
-
-            /** @var Mailer $mailer */
-            $mailer = GeneralUtility::makeInstance(Mailer::class);
-            $mailer->sendconfirmationMail($confirmationRequestRecord, $this->request, $this->settings);
 
 
-            return new JsonResponse(['success' => true]);
         }
+
+
+
 
         return new JsonResponse(['success' => false]);
     }

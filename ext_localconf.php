@@ -22,12 +22,12 @@ ExtensionUtility::configurePlugin(
 
 ExtensionUtility::configurePlugin(
     'fe_registration',
-    'ResendOptinEmail',
+    'ResendConfirmationEmail',
     [
-        RegistrationController::class => 'resendOptInEmail'
+        RegistrationController::class => 'resendConfirmationEmail'
     ],
     [
-        RegistrationController::class => 'resendOptInEmail'
+        RegistrationController::class => 'resendConfirmationEmail'
     ],
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );

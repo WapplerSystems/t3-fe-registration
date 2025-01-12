@@ -1,11 +1,12 @@
 <?php
 
-namespace WapplerSystems\FeRegistration\Confirmation\Validator;
+namespace WapplerSystems\FeRegistration\Validator;
 
 
 use Doctrine\DBAL\Exception;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
@@ -15,12 +16,11 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
  *
  * @api
  */
-class ConfirmationRequestAlreadyExistsValidator extends AbstractValidator
+class ConfirmationRequestValidator extends AbstractValidator
 {
 
     protected $supportedOptions = [
-        'pid' => [null, 'Storage page ID for opt in records', 'int'],
-        'resendUri' => [null, 'Ajax uri for resend', 'string'],
+        'pid' => [null, 'Storage page ID for confirmation request records', 'int'],
         'uriBuilder' => [null, 'uriBuilder', UriBuilder::class],
     ];
 
@@ -33,6 +33,7 @@ class ConfirmationRequestAlreadyExistsValidator extends AbstractValidator
      */
     public function isValid($value): void
     {
+        DebugUtility::debug($this->options);
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
@@ -40,13 +41,14 @@ class ConfirmationRequestAlreadyExistsValidator extends AbstractValidator
         $row = $queryBuilder
             ->select('uid', 'is_confirmed', 'confirmation_hash')
             ->from('tx_feregistration_domain_model_confirmationrequest')
+            ->setMaxResults(1)
             ->where($queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['pid'])),
             )
             )->executeQuery()->fetchAssociative();
 
-        if (count($row) > 0) {
+        if ($row !== false) {
 
             if ((int)$row['is_confirmed'] === 0) {
 
@@ -56,7 +58,7 @@ class ConfirmationRequestAlreadyExistsValidator extends AbstractValidator
                     ->reset()
                     ->setCreateAbsoluteUri(true)
                     ->setTargetPageUid($GLOBALS['TSFE']->id)
-                    ->setArguments(['hash' => $row['confirmation_hash']])
+                    ->setArguments(['email' => $value])
                     ->setTargetPageType(1735853778)
                     ->buildFrontendUri();
 

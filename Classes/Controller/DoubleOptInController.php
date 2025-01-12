@@ -43,7 +43,7 @@ class DoubleOptInController extends ActionController
 
             if ($optIn) {
 
-                if ($optIn->getIsValidated()) {
+                if ($optIn->isConfirmed()) {
                     $this->view->assign('alreadyConfirmed', true);
                     return $this->htmlResponse();
                 }

@@ -26,8 +26,6 @@ use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
 use TYPO3\CMS\Form\Domain\Model\FormElements\GridRow;
 use TYPO3\CMS\Form\Domain\Model\FormElements\Section;
 use TYPO3\CMS\Form\Domain\Renderer\FluidFormRenderer;
-use WapplerSystems\FeRegistration\Validation\Validator\FeUsernameAlreadyExistsValidator;
-use WapplerSystems\FeRegistration\Validation\Validator\ConfirmationRequestAlreadyExistsValidator;
 
 class RegistrationFormFactory extends AbstractFormFactory
 {
@@ -99,11 +97,11 @@ class RegistrationFormFactory extends AbstractFormFactory
         $confirmationFinisher = $formDefinition->createFinisher('Confirmation');
         $confirmationFinisher->setOptions([
             'message' => LocalizationUtility::translate(
-                'LLL:EXT:form_extended/Resources/Private/Language/Frontend.xlf:msg.pleaseConfirmEmailAddress'
+                'LLL:EXT:fe_registration/Resources/Private/Language/Frontend.xlf:msg.pleaseConfirmEmailAddress'
             ),
             'templateName' => 'Confirmation',
             'templateRootPaths' => [
-                10 => 'EXT:form_extended/Resources/Private/Templates/Form/Finisher/Confirmation/',
+                10 => 'EXT:fe_registration/Resources/Private/Templates/Form/Finisher/Confirmation/',
             ],
         ]);
 

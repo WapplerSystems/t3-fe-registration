@@ -8,7 +8,7 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 $newSysFileReferenceColumns = [
     'registration_completed' => [
         'exclude' => true,
-        'label' => 'LLL:EXT:form_extended/Resources/Private/Language/locallang_db.xlf:registration_completed',
+        'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:registration_completed',
         'config' => [
             'type' => 'check',
             'renderType' => 'checkboxToggle',

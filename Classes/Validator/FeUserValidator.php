@@ -1,6 +1,6 @@
 <?php
 
-namespace WapplerSystems\FeRegistration\Confirmation\Validator;
+namespace WapplerSystems\FeRegistration\Validator;
 
 
 use Doctrine\DBAL\Exception;
@@ -14,8 +14,12 @@ use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
  *
  * @api
  */
-class FeUsernameAlreadyExistsValidator extends AbstractValidator
+class FeUserValidator extends AbstractValidator
 {
+
+    protected $supportedOptions = [
+        'pid' => [null, 'Storage page ID for fe_user records', 'int'],
+    ];
 
     /**
      * Checks if the given property ($propertyValue) is not empty (NULL, empty string, empty array or empty object).
@@ -29,8 +33,12 @@ class FeUsernameAlreadyExistsValidator extends AbstractValidator
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('fe_users');
         $queryBuilder->getRestrictions()->removeAll();
-        $count = $queryBuilder->count('uid')->from('fe_users')->where(
-            $queryBuilder->expr()->eq('username', $queryBuilder->createNamedParameter($value))
+        $count = $queryBuilder->count('uid')
+            ->from('fe_users')
+            ->where($queryBuilder->expr()->and(
+                $queryBuilder->expr()->eq('username', $queryBuilder->createNamedParameter($value)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['pid'])),
+            )
         )->executeQuery()->fetchOne();
 
         if ($count > 0) {

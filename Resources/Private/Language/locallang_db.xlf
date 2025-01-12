@@ -19,6 +19,9 @@
             <trans-unit id="flexform.confirmationRequestPid">
                 <source>Storage for confirmation requests</source>
             </trans-unit>
+            <trans-unit id="flexform.identifierFieldName">
+                <source>Field name of the username</source>
+            </trans-unit>
             <trans-unit id="flexform.timeLock">
                 <source>Time block for resending</source>
             </trans-unit>
@@ -47,7 +50,7 @@
                 <source>Values</source>
             </trans-unit>
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest.is_confirmed">
-                <source>Is validated</source>
+                <source>Is confirmed</source>
             </trans-unit>
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest.confirmation_hash">
                 <source>Confirmation hash</source>

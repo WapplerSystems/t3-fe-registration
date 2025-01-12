@@ -6,13 +6,13 @@
 		<main>
 			<ROOT>
 				<TCEforms>
-					<sheetTitle>LLL:EXT:form_extended/Resources/Private/Language/locallang_db.xlf:flexform.main</sheetTitle>
+					<sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.main</sheetTitle>
 				</TCEforms>
 				<type>array</type>
 				<el>
 					<settings.forward>
 						<TCEforms>
-							<label>LLL:EXT:form_extended/Resources/Private/Language/locallang_db.xlf:flexform.forward</label>
+							<label>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.forward</label>
 							<config>
 								<type>group</type>
 								<internal_type>db</internal_type>

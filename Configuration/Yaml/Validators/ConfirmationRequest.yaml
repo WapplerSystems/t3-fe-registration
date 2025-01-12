@@ -1,0 +1,8 @@
+prototypes:
+  standard:
+    validatorsDefinition:
+      ConfirmationRequest:
+        implementationClassName: WapplerSystems\FeRegistration\Validator\ConfirmationRequestValidator
+        formEditor:
+          iconIdentifier: form-validator
+          label: 'Confirmation request exists'

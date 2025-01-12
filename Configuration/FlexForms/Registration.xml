@@ -63,6 +63,20 @@
                             <show_thumbs>1</show_thumbs>
                         </config>
                     </settings.forward>
+
+
+                    <settings.identifierFieldName>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.identifierFieldName
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.identifierFieldName>
+
+
                     <settings.confirmationRequestPid>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.confirmationRequestPid

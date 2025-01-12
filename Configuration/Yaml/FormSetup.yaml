@@ -1,7 +1,11 @@
 imports:
   - { resource: "./Finishers/ConfirmationRequest.yaml" }
   - { resource: "./Finishers/ConfirmationEmail.yaml" }
+  - { resource: "./FormElements/Overrides/Email.yaml" }
   - { resource: "./FormElements/Overrides/Form.yaml" }
+  - { resource: "./FormElements/Overrides/Text.yaml" }
+  - { resource: "./Validators/ConfirmationRequest.yaml" }
+  - { resource: "./Validators/FeUser.yaml" }
 
 
 formManager:

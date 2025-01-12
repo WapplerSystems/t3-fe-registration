@@ -4,11 +4,11 @@
 
 
     <p>
-        <f:translate key="LLL:EXT:form_extended/Resources/Private/Language/locallang.xlf:doubleoptin.email.text" />
+        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:doubleoptin.email.text" />
     </p>
     <p>
-        <f:link.action pageUid="{validationPid}" extensionName="feregistration" pluginName="doubleoptin" controller="DoubleOptIn" action="validation" absolute="1" arguments="{hash: optIn.validationHash}">
-            {f:uri.action(pageUid: validationPid, extensionName: 'feregistration', pluginName: 'doubleoptin', controller: 'DoubleOptIn', action: 'validation', absolute: 1, arguments: {hash: optIn.validationHash})}
+        <f:link.action pageUid="{pageUid}" extensionName="feregistration" pluginName="Registration" controller="Registration" action="confirm" absolute="1" arguments="{hash: confirmationRequest.confirmationHash}">
+            {f:uri.action(pageUid: pageUid, extensionName: 'feregistration', pluginName: 'Registration', controller: 'Registration', action: 'confirm', absolute: 1, arguments: {hash: confirmationRequest.confirmationHash})}
         </f:link.action>
     </p>
 

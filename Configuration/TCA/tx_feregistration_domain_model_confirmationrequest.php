@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, is_validated, last_sent'
+            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, is_confirmed, last_sent'
         ]
     ],
     'columns' => [
@@ -43,9 +43,9 @@ return [
                 'readOnly' => 1
             ]
         ],
-        'is_validated' => [
+        'is_confirmed' => [
             'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.is_validated',
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.is_confirmed',
             'config' => [
                 'type' => 'check',
                 'readOnly' => 1

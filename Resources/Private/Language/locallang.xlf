@@ -4,7 +4,7 @@
           product-name="form_extended">
         <header/>
         <body>
-            <trans-unit id="doubleoptin.email.text" xml:space="preserve">
+            <trans-unit id="confirmationEmail.text" xml:space="preserve">
                 <source><![CDATA[Thank you for signing up. To verify your email address, please click the following link or copy it into your browser's address bar:]]></source>
             </trans-unit>
             <trans-unit id="text.success">

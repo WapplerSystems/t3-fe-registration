@@ -1,0 +1,36 @@
+prototypes:
+  standard:
+    formElementsDefinition:
+      Text:
+        formEditor:
+          editors:
+            900:
+              selectOptions:
+                8750:
+                  value: ConfirmationRequest
+                  label: 'Confirmation request'
+                8751:
+                  value: FeUser
+                  label: 'Frontend user'
+          propertyCollections:
+            validators:
+              8750:
+                identifier: ConfirmationRequest
+                editors:
+                  100:
+                    identifier: header
+                    templateName: Inspector-CollectionElementHeaderEditor
+                    label: 'Confirmation request'
+                  9999:
+                    identifier: removeButton
+                    templateName: Inspector-RemoveElementEditor
+              8751:
+                identifier: FeUser
+                editors:
+                  100:
+                    identifier: header
+                    templateName: Inspector-CollectionElementHeaderEditor
+                    label: 'Frontend user'
+                  9999:
+                    identifier: removeButton
+                    templateName: Inspector-RemoveElementEditor

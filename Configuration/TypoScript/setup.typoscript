@@ -7,18 +7,6 @@ plugin.tx_feregistration {
 
   settings {
 
-    feUserStoragePid = {$plugin.tx_feregistration.settings.feUserStoragePid}
-    optInStoragePid = {$plugin.tx_feregistration.settings.optInStoragePid}
-    createFeUser = {$plugin.tx_feregistration.settings.createFeUser}
-    usergroups = {$plugin.tx_feregistration.settings.usergroups}
-    validationPid = {$plugin.tx_feregistration.settings.validationPid}
-    optInEmail {
-      useHTML = {$plugin.tx_feregistration.settings.optInEmail.useHTML}
-      senderAddress = {$plugin.tx_feregistration.settings.optInEmail.senderAddress}
-      senderName = {$plugin.tx_feregistration.settings.optInEmail.senderName}
-      timeLock = {$plugin.tx_feregistration.settings.optInEmail.timeLock}
-    }
-
     templateRootPaths < plugin.tx_feregistration.view.templateRootPaths
     partialRootPaths < plugin.tx_feregistration.view.partialRootPaths
     layoutRootPaths < plugin.tx_feregistration.view.layoutRootPaths
@@ -37,12 +25,11 @@ formExtendedResend {
     debug = 0
     disablePrefixComment = 1
     metaCharset = utf-8
-    additionalHeaders.10.header = Content-Type:text/html;charset=UTF-8
     disableBodyTag = 1
     no_cache = 1
   }
 
-  10 < tt_content.formextended_resendoptinemail.20
+  10 < tt_content.feregistration_resendconfirmationemail.20
   10.settings < plugin.tx_feregistration.settings
 
 }

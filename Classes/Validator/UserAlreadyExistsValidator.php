@@ -1,6 +1,6 @@
 <?php
 
-namespace WapplerSystems\FeRegistration\Confirmation\Validator;
+namespace WapplerSystems\FeRegistration\Validator;
 
 
 use Doctrine\DBAL\Exception;
@@ -47,7 +47,7 @@ class UserAlreadyExistsValidator extends AbstractValidator
         if ($count > 0) {
             $this->addError(
                 $this->translateErrorMessage(
-                    'validator.confirmationRequestAlreadyExists.true',
+                    'validator.confirmationRequest.true',
                     'fe_registration'
                 ),
                 1591107223

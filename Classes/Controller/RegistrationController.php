@@ -16,6 +16,7 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
+use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
 class RegistrationController extends ActionController
@@ -52,11 +53,20 @@ class RegistrationController extends ActionController
             'finishers' => [
                 'ConfirmationRequest' => $confirmationRequestFinisher,
                 'ConfirmationEmail' => $emailFinisher,
+            ],
+            'renderingOptions' => [
+                'controllerAction' => 'new',
+
             ]
         ];
-
-
         $this->view->assign('overrideConfiguration', $overrideConfiguration);
+
+
+        GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder);
+
+
+
+        $this->view->assign('factoryClass', RegistrationPatchFormFactory::class);
 
         return $this->htmlResponse();
     }
@@ -138,16 +148,21 @@ class RegistrationController extends ActionController
 
     public function resendConfirmationEmailAction(): ResponseInterface
     {
-        $hash = $this->request->getQueryParams()['hash'] ?? '';
 
-        $confirmationRequestRecord = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
+
+
+
+        $email = $this->request->getQueryParams()['email'] ?? '';
+
+        /** @var ConfirmationRequest $confirmationRequestRecord */
+        $confirmationRequestRecord = $this->confirmationRequestRepository->findOneByEmail($email);
         if ($confirmationRequestRecord) {
 
-            if ($confirmationRequestRecord->getIsValidated()) {
+            if ($confirmationRequestRecord->isConfirmed()) {
                 return new JsonResponse(['success' => false, 'alreadyConfirmed' => true]);
             }
-            if ($confirmationRequestRecord->getLastSent() && $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['confirmationEmail']['timeLock'] > time()) {
-                return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['confirmationEmail']['timeLock']]);
+            if ($confirmationRequestRecord->getLastSent() && $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['timeLock'] > time()) {
+                return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$this->settings['timeLock']]);
             }
 
             /** @var Mailer $mailer */

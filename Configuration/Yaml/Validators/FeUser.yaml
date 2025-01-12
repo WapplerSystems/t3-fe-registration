@@ -1,0 +1,8 @@
+prototypes:
+  standard:
+    validatorsDefinition:
+      FeUser:
+        implementationClassName: WapplerSystems\FeRegistration\Validator\FeUserValidator
+        formEditor:
+          iconIdentifier: form-validator
+          label: 'Frontend user exists'

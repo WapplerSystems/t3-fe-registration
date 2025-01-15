@@ -22,13 +22,6 @@ class ConfirmationRequest extends AbstractEntity
      */
     protected string $encodedValues = '';
 
-
-    /**
-     *
-     * @var bool
-     */
-    protected bool $isConfirmed = FALSE;
-
     /**
      *
      * @var string
@@ -83,6 +76,12 @@ class ConfirmationRequest extends AbstractEntity
     {
         $this->confirmationHash = $confirmationHash;
     }
+
+    public function getConfirmationHash(): string
+    {
+        return $this->confirmationHash;
+    }
+
 
     /**
      * Returns the confirmationDate
@@ -147,13 +146,10 @@ class ConfirmationRequest extends AbstractEntity
 
     public function isConfirmed(): bool
     {
-        return $this->isConfirmed;
+        return $this->confirmationDate !== null;
     }
 
-    public function setIsConfirmed(bool $isConfirmed): void
-    {
-        $this->isConfirmed = $isConfirmed;
-    }
+
 
 
 }

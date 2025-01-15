@@ -4,7 +4,7 @@
 
 <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:doubleoptin.email.text" />
 
-{f:uri.action(pageUid: validationPid, extensionName: 'feregistration', pluginName: 'doubleoptin', controller: 'DoubleOptIn', action: 'validation', absolute: 1, arguments: {hash: optIn.validationHash}) -> f:format.raw()}
+{f:uri.action(pageUid: pageId, extensionName: 'feregistration', pluginName: 'Registration', controller: 'Registration', action: 'confirm', absolute: 1, arguments: {hash: confirmationHash}) -> f:format.raw()}
 
 
 </f:section>

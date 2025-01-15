@@ -76,7 +76,6 @@
                         </config>
                     </settings.identifierFieldName>
 
-
                     <settings.confirmationRequestPid>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.confirmationRequestPid
@@ -94,6 +93,7 @@
                             </suggestOptions>
                         </config>
                     </settings.confirmationRequestPid>
+
                     <settings.feUserStoragePid>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.feUserStoragePid
@@ -111,6 +111,7 @@
                             </suggestOptions>
                         </config>
                     </settings.feUserStoragePid>
+
                     <settings.usergroups>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.usergroups
@@ -123,6 +124,16 @@
                             <size>1</size>
                         </config>
                     </settings.usergroups>
+
+                    <settings.createFeUser>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.createFeUser
+                        </label>
+                        <config>
+                            <type>check</type>
+                            <default>1</default>
+                        </config>
+                    </settings.createFeUser>
                 </el>
             </ROOT>
         </sDEF>
@@ -162,14 +173,15 @@
                             <default>300</default>
                         </config>
                     </settings.confirmationEmail.timeLock>
-                    <settings.confirmationEmail.useFluidEmail>
+                    <settings.confirmationEmail.useHTML>
                         <label>
-                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.useFluidEmail
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.useHTML
                         </label>
                         <config>
                             <type>check</type>
+                            <default>1</default>
                         </config>
-                    </settings.confirmationEmail.useFluidEmail>
+                    </settings.confirmationEmail.useHTML>
                     <settings.confirmationEmail.subject>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.subject

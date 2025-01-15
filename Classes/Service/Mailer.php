@@ -7,6 +7,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Mail\FluidEmail;
 use TYPO3\CMS\Core\Mail\MailerInterface;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Exception;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -25,24 +26,19 @@ class Mailer
      * @throws TransportExceptionInterface
      * @throws FinisherException
      */
-    public function sendconfirmationMail(ConfirmationRequest $confirmationRequest, ServerRequestInterface $request, array $settings): void
+    public function sendConfirmationMail(ConfirmationRequest $confirmationRequest, ServerRequestInterface $request, array $settings, int $pageId): void
     {
 
-
-        $validationPid = $settings['validationPid'] ?? null;
-        if (empty($validationPid)) {
-            throw new FinisherException('The option "validationPid" must be set.', 1527148282);
-        }
         $receiverAddress = $confirmationRequest->getEmail();
 
-        $addHtmlPart = $settings['confirmationRequestEmail']['useHTML'] ?? false;
+        $addHtmlPart = $settings['confirmationEmail']['useHTML'] ?? false;
 
         $senderAddress = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] ?? '';
         $senderName = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'] ?? '';
 
 
-        $senderAddress = $settings['confirmationRequestEmail']['senderAddress'] ?? $senderAddress;
-        $senderName = $settings['confirmationRequestEmail']['senderName'] ?? $senderName;
+        $senderAddress = !empty($settings['confirmationEmail']['senderAddress'] ?? '') ? $settings['confirmationEmail']['senderAddress'] :  $senderAddress;
+        $senderName = !empty($settings['confirmationEmail']['senderName'] ?? '') ? $settings['confirmationEmail']['senderName'] :  $senderName;
 
         if (empty($senderAddress)) {
             throw new Exception('The option "senderAddress" must be set.', 1735853778);
@@ -53,14 +49,15 @@ class Mailer
 
 
         $mail = $this
-            ->initializeFluidEmail($settings, $request)
+            ->initializeFluidEmail('Email/ConfirmationMail', $settings, $request)
             ->from(new Address($senderAddress, $senderName))
             ->to($receiverAddress)
             ->subject(LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration'))
             ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
             ->assign('title', LocalizationUtility::translate('subject.pleaseConfirmEmailAddress', 'fe_registration'))
             ->assign('confirmationRequest', $confirmationRequest)
-            ->assign('validationPid', $validationPid);
+            ->assign('confirmationHash', $confirmationRequest->getConfirmationHash())
+            ->assign('pageId', $pageId);
 
         /*
         if (!empty($languageBackup)) {
@@ -81,7 +78,7 @@ class Mailer
     }
 
 
-    protected function initializeFluidEmail(array $options, ServerRequestInterface $request): FluidEmail
+    protected function initializeFluidEmail(string $templateName, array $options, ServerRequestInterface $request): FluidEmail
     {
         $templatePaths = $this->initializeTemplatePaths(
             $GLOBALS['TYPO3_CONF_VARS']['MAIL'],
@@ -93,7 +90,7 @@ class Mailer
 
         $fluidEmail
             ->setRequest($request)
-            ->setTemplate('DoubleOptInEmail');
+            ->setTemplate($templateName);
 
         if (is_array($options['variables'] ?? null)) {
             $fluidEmail->assignMultiple($options['variables']);

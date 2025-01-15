@@ -1,0 +1,16 @@
+<f:layout name="SystemEmail" />
+<f:section name="Title">{title}</f:section>
+<f:section name="Main">
+
+
+    <p>
+        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.text" />
+    </p>
+    <p>
+        <f:link.action pageUid="{pageId}" extensionName="feregistration" pluginName="Registration" controller="Registration" action="confirm" absolute="1" arguments="{hash: confirmationHash}">
+            {f:uri.action(pageUid: pageId, extensionName: 'feregistration', pluginName: 'Registration', controller: 'Registration', action: 'confirm', absolute: 1, arguments: {hash: confirmationHash})}
+        </f:link.action>
+    </p>
+
+
+</f:section>

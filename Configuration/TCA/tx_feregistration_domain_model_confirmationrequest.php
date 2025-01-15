@@ -12,7 +12,7 @@ return [
         'enablecolumns' => [
             'disabled' => 'hidden'
         ],
-        'searchFields' => 'email, given_name, family_name, company, customer_number, confirmation_hash',
+        'searchFields' => 'email, confirmation_hash',
         'iconfile' => 'EXT:fe_registration/Resources/Public/Icons/DoubleOptIn.png',
         'security' => [
             'ignorePageTypeRestriction' => true,
@@ -22,7 +22,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, is_confirmed, last_sent'
+            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, last_sent'
         ]
     ],
     'columns' => [
@@ -40,14 +40,6 @@ return [
             'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.encoded_values',
             'config' => [
                 'type' => 'text',
-                'readOnly' => 1
-            ]
-        ],
-        'is_confirmed' => [
-            'exclude' => 1,
-            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.is_confirmed',
-            'config' => [
-                'type' => 'check',
                 'readOnly' => 1
             ]
         ],

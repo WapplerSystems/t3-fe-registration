@@ -118,7 +118,7 @@ class DoubleOptInController extends ActionController
             /** @var Mailer $mailer */
             $mailer = GeneralUtility::makeInstance(Mailer::class);
             try {
-                $mailer->sendconfirmationMail($optInRecord, $this->request, $this->settings);
+                $mailer->sendConfirmationMail($optInRecord, $this->request, $this->settings);
             } catch (Exception $e) {
 
                 return new JsonResponse(['success' => false]);

@@ -37,8 +37,6 @@ class RegistrationController extends ActionController
 
     public function newAction(): ResponseInterface
     {
-        DebugUtility::debug($this->settings);
-
         if (($this->settings['formStep1'] ?? '') === '') {
             $html = $this->view->renderSection('Error', ['error' => 'No form configuration found for step 1.']);
             return $this->htmlResponse($html);

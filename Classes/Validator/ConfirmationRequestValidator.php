@@ -4,6 +4,7 @@ namespace WapplerSystems\FeRegistration\Validator;
 
 
 use Doctrine\DBAL\Exception;
+use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\DebugUtility;
@@ -22,6 +23,7 @@ class ConfirmationRequestValidator extends AbstractValidator
     protected $supportedOptions = [
         'pid' => [null, 'Storage page ID for confirmation request records', 'int'],
         'uriBuilder' => [null, 'uriBuilder', UriBuilder::class],
+        'request' => [null, 'Request', ServerRequestInterface::class],
     ];
 
 
@@ -33,7 +35,7 @@ class ConfirmationRequestValidator extends AbstractValidator
      */
     public function isValid($value): void
     {
-        DebugUtility::debug($this->options);
+        //DebugUtility::debug($this->options);
 
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
@@ -53,7 +55,9 @@ class ConfirmationRequestValidator extends AbstractValidator
             if ((int)$row['is_confirmed'] === 0) {
 
                 /** @var UriBuilder $uriBuilder */
-                $uriBuilder = $this->options['uriBuilder'];
+                $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
+                $uriBuilder->setRequest($this->options['request']);
+
                 $link = $uriBuilder
                     ->reset()
                     ->setCreateAbsoluteUri(true)

@@ -7,6 +7,7 @@ namespace WapplerSystems\FeRegistration\Form\Factory;
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Utility\DebugUtility;
+use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Form\Domain\Factory\ArrayFormFactory;
 use TYPO3\CMS\Form\Domain\Model\FormDefinition;
@@ -45,6 +46,7 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
                         }
                         $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['pid'] = self::$settings['confirmationRequestPid'] ?? '';
                         $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['uriBuilder'] = self::$uriBuilder;
+                        $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['request'] = $request;
                     }
                     if ($validator['identifier'] === 'FeUser') {
                         if (!isset($validator['options'])) {
@@ -56,7 +58,7 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             }
         }
 
-        DebugUtility::debug($configuration['renderables'], 'Patched configuration');
+        //DebugUtility::debug($configuration['renderables'], 'Patched configuration');
 
 
         return parent::build($configuration, $prototypeName, $request);

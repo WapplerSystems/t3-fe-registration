@@ -9,7 +9,6 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Service\FlexFormService;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Exception;
@@ -23,6 +22,7 @@ use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
 use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
+use WapplerSystems\FeRegistration\Service\Database;
 use WapplerSystems\FeRegistration\Service\Mailer;
 
 class RegistrationController extends ActionController
@@ -38,14 +38,17 @@ class RegistrationController extends ActionController
     public function newAction(): ResponseInterface
     {
         if (($this->settings['formStep1'] ?? '') === '') {
-            $html = $this->view->renderSection('Error', ['error' => 'No form configuration found for step 1.']);
-            return $this->htmlResponse($html);
+            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found for step 1.']));
         }
         if (($this->settings['identifierFieldName'] ?? '') === '') {
-            $html = $this->view->renderSection('Error', ['error' => 'No identifierFieldName set.']);
-            return $this->htmlResponse($html);
+            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No identifier field name set.']));
         }
-
+        if (($this->settings['confirmationEmail']['senderEmailAddress'] ?? '') === '') {
+            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No sender email address set.']));
+        }
+        if (($this->settings['confirmationEmail']['senderName'] ?? '') === '') {
+            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No sender name set.']));
+        }
 
         $confirmationRequestFinisher = [
             'identifier' => 'ConfirmationRequest',
@@ -54,12 +57,20 @@ class RegistrationController extends ActionController
             ]
         ];
         $emailFinisher = [
-            'identifier' => 'ConfirmationEmail',
+            'identifier' => 'EmailToSender',
             'options' => [
-                'senderAddress' => $this->settings['confirmationEmail']['senderAddress'] ?? '',
+                'senderAddress' => $this->settings['confirmationEmail']['senderEmailAddress'] ?? '',
                 'senderName' => $this->settings['confirmationEmail']['senderName'] ?? '',
                 'useFluidEmail' => $this->settings['confirmationEmail']['useFluidEmail'] ?? 0,
-                'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject')
+                'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject'),
+                'recipients' => ['{email}'],
+                'templateName' => 'Email/ConfirmationMail',
+            ]
+        ];
+        $confirmationFinisher = [
+            'identifier' => 'Confirmation',
+            'options' => [
+
             ]
         ];
 
@@ -67,22 +78,20 @@ class RegistrationController extends ActionController
             'finishers' => [
                 'ConfirmationRequest' => $confirmationRequestFinisher,
                 'ConfirmationEmail' => $emailFinisher,
+                'Confirmation' => $confirmationFinisher,
             ],
             'renderingOptions' => [
                 'controllerAction' => 'new',
-
             ]
         ];
-        $this->view->assign('overrideConfiguration', $overrideConfiguration);
-
 
         GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder);
 
-
-
-        $this->view->assign('factoryClass', RegistrationPatchFormFactory::class);
-
-        return $this->htmlResponse();
+        return $this->htmlResponse($this->view->renderSection('Form', [
+            'settings' => $this->settings,
+            'overrideConfiguration' => $overrideConfiguration,
+            'factoryClass' => RegistrationPatchFormFactory::class
+        ]));
     }
 
     /**
@@ -105,6 +114,9 @@ class RegistrationController extends ActionController
                     return $this->htmlResponse($this->view->renderSection('AlreadyConfirmed'));
                 }
 
+                $values = $confirmationRequest->getDecodedValues();
+
+
                 if (($this->settings['formStep2'] ?? '') !== '') {
 
                     // Formular für Schritt 2 laden
@@ -113,52 +125,19 @@ class RegistrationController extends ActionController
                     return $this->htmlResponse($this->view->renderSection('Form'));
                 }
 
-                DebugUtility::debug($confirmationRequest);
-                exit();
-
-
                 if ((int)($this->settings['createFeUser'] ?? 0) === 1) {
 
-                    $values = $confirmationRequest->getDecodedValues();
-
-                    $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-                        'fe_users'
-                    );
-                    $connection = GeneralUtility::makeInstance(ConnectionPool::class)
-                        ->getConnectionForTable('fe_users');
-                    $schemaManager = $connection->createSchemaManager();
-                    $columns = $schemaManager->listTableColumns('fe_users');
-
-                    $dbValues = [
-                        'pid' => (int)$this->settings['feUserStoragePid'],
-                        'usergroup' => $this->settings['usergroups'] ?? '',
-                        'username' => $values[$this->settings['identifierFieldName']],
-                    ];
-
-
-                    $queryBuilder
-                        ->insert('fe_users')
-                        ->values([
-
-                            'username' => $values['email'],
-                            'email' => $values['email'],
-                            'first_name' => $values['firstName'] ?? '',
-                            'last_name' => $values['lastName'] ?? '',
-                            'password' => $values['password'],
-                            'crdate' => time(),
-                            'tstamp' => time(),
-                            'deleted' => 0,
-                            'disable' => 0,
-                        ])
-                        ->executeStatement();
-
-                    $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-                    $persistenceManager->persistAll();
+                    /** @var Database $database */
+                    $database = GeneralUtility::makeInstance(Database::class);
+                    $database->createFeUser($values, $this->settings);
                 }
 
 
                 $confirmationRequest->setConfirmationDate(new \DateTime());
                 $this->confirmationRequestRepository->update($confirmationRequest);
+
+                $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
+                $persistenceManager->persistAll();
 
                 $this->eventDispatcher->dispatch(
                     new AfterConfirmationEvent($confirmationRequest)
@@ -170,6 +149,7 @@ class RegistrationController extends ActionController
                     $this->redirectToUri($url);
                 }
 
+                $this->view->assignMultiple($values);
 
                 return $this->htmlResponse($this->view->renderSection('Success'));
             }
@@ -244,10 +224,13 @@ class RegistrationController extends ActionController
         }
 
 
-
-
         return new JsonResponse(['success' => false]);
     }
 
+
+    public function successAction(): ResponseInterface
+    {
+        return $this->htmlResponse();
+    }
 
 }

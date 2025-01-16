@@ -4,14 +4,14 @@
           product-name="form_extended">
         <header/>
         <body>
-            <trans-unit id="confirmationEmail.text" xml:space="preserve">
+            <trans-unit id="confirmationEmail.text">
                 <source><![CDATA[Thank you for signing up. To verify your email address, please click the following link or copy it into your browser's address bar:]]></source>
             </trans-unit>
-            <trans-unit id="confirmationEmail.subject" xml:space="preserve">
+            <trans-unit id="confirmationEmail.subject">
                 <source>Please confirm your email address</source>
             </trans-unit>
             <trans-unit id="text.success">
-                <source>Thank you, your validation was successful. You can now login.</source>
+                <source>Thank you, your registration was successful. You can now login.</source>
             </trans-unit>
             <trans-unit id="text.notFound">
                 <source>Unfortunately no matching entry was found for the key.</source>

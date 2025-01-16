@@ -12,10 +12,10 @@ ExtensionUtility::configurePlugin(
     'fe_registration',
     'Registration',
     [
-        RegistrationController::class => 'new, confirm'
+        RegistrationController::class => 'new, confirm, success'
     ],
     [
-        RegistrationController::class => 'new, confirm'
+        RegistrationController::class => 'new, confirm, success'
     ],
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );

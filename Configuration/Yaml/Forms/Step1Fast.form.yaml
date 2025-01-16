@@ -1,8 +1,8 @@
 
 renderingOptions:
   submitButtonLabel: 'Jetzt registrieren'
-identifier: step2
-label: 'Schritt 2: Passwort setzen'
+identifier: step1Fast
+label: 'Schritt 1: Schnell'
 type: Form
 prototypeName: standard
 renderables:
@@ -22,6 +22,7 @@ renderables:
         properties:
           fluidAdditionalAttributes:
             required: required
+            autocomplete: given-name
         validators:
           -
             identifier: NotEmpty
@@ -34,6 +35,7 @@ renderables:
           fluidAdditionalAttributes:
             placeholder: Name
             required: required
+            autocomplete: family-name
           cleverreachField: name
         validators:
           -
@@ -42,14 +44,19 @@ renderables:
         defaultValue: ''
         identifier: email
         label: Email
-        type: Text
+        type: Email
         properties:
           fluidAdditionalAttributes:
             placeholder: 'E-Mail Adresse'
             required: required
+            autocomplete: email
           cleverreachField: email
         validators:
           -
             identifier: NotEmpty
           -
             identifier: EmailAddress
+          -
+            identifier: ConfirmationRequest
+          -
+            identifier: FeUser

@@ -8,6 +8,10 @@
                 <source><![CDATA[Thank you for signing up. To verify your email address, please click the following link or copy it into your browser's address bar:]]></source>
                 <target><![CDATA[Danke, dass Sie sich angemeldet haben. Um Ihre E-Mail-Adresse zu verifizieren, klicken Sie bitte auf den folgenden Link oder kopieren Sie ihn in die Adressleiste Ihres Browsers:]]></target>
             </trans-unit>
+            <trans-unit id="confirmationEmail.subject">
+                <source>Please confirm your email address</source>
+                <target>Bitte bestätigen Sie Ihre Email-Adresse</target>
+            </trans-unit>
             <trans-unit id="text.success">
                 <source>Thank you, your validation was successful. You can now login.</source>
                 <target>Vielen Dank, Ihre Validierung war erfolgreich. Sie können sich jetzt einloggen.</target>

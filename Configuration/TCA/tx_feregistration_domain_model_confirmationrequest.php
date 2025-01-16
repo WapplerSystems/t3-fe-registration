@@ -6,12 +6,7 @@ return [
         'label' => 'email',
         'tstamp' => 'tstamp',
         'crdate' => 'crdate',
-        'cruser_id' => 'cruser_id',
         'dividers2tabs' => true,
-        'delete' => 'deleted',
-        'enablecolumns' => [
-            'disabled' => 'hidden'
-        ],
         'searchFields' => 'email, confirmation_hash',
         'iconfile' => 'EXT:fe_registration/Resources/Public/Icons/DoubleOptIn.png',
         'security' => [

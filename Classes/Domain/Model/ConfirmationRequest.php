@@ -99,7 +99,7 @@ class ConfirmationRequest extends AbstractEntity
      * @param \DateTime $confirmationDate
      * @return void
      */
-    public function setConfirmationDate(\DateTime $confirmationDate): void
+    public function setConfirmationDate(?\DateTime $confirmationDate): void
     {
         $this->confirmationDate = $confirmationDate;
     }

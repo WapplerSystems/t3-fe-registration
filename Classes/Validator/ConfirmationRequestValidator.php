@@ -35,13 +35,11 @@ class ConfirmationRequestValidator extends AbstractValidator
      */
     public function isValid($value): void
     {
-        //DebugUtility::debug($this->options);
-
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
         $queryBuilder->getRestrictions()->removeAll();
         $row = $queryBuilder
-            ->select('uid', 'is_confirmed', 'confirmation_hash')
+            ->select('uid', 'confirmation_date', 'confirmation_hash')
             ->from('tx_feregistration_domain_model_confirmationrequest')
             ->setMaxResults(1)
             ->where($queryBuilder->expr()->and(
@@ -52,16 +50,18 @@ class ConfirmationRequestValidator extends AbstractValidator
 
         if ($row !== false) {
 
-            if ((int)$row['is_confirmed'] === 0) {
+            if ((int)$row['confirmation_date'] === 0) {
 
                 /** @var UriBuilder $uriBuilder */
                 $uriBuilder = GeneralUtility::makeInstance(UriBuilder::class);
                 $uriBuilder->setRequest($this->options['request']);
 
+                $currentPageId = (int)($this->options['request']->getAttribute('routing')->getPageId() ?? 0);
+
                 $link = $uriBuilder
                     ->reset()
                     ->setCreateAbsoluteUri(true)
-                    ->setTargetPageUid($GLOBALS['TSFE']->id)
+                    ->setTargetPageUid($currentPageId)
                     ->setArguments(['email' => $value])
                     ->setTargetPageType(1735853778)
                     ->buildFrontendUri();

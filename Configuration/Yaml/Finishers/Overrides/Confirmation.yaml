@@ -1,0 +1,7 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      Confirmation:
+        options:
+          templateRootPaths:
+            890: 'EXT:fe_registration/Resources/Private/Templates/Confirmation/'

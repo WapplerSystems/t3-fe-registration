@@ -77,6 +77,7 @@ class ConfirmationRequestFinisher extends AbstractFinisher
         $confirmationRequest->setDecodedValues($payload);
 
         $confirmationRequest->setPid($this->options['confirmationRequestPid']);
+        $confirmationRequest->setLastSent(new \DateTime());
 
         $this->confirmationRequestRepository->add($confirmationRequest);
 

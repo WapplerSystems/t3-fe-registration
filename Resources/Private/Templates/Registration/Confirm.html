@@ -2,22 +2,24 @@
 
 <f:section name="Form">
 
-    <formvh:render persistenceIdentifier="{settings.formStep2}" />
+    <formvh:render persistenceIdentifier="{settings.formStep2}" overrideConfiguration="{overrideConfiguration}" factoryClass="{factoryClass}" />
 
 </f:section>
 <f:section name="Error">
+
+    <p class="alert alert-alert">Error</p>
 
 </f:section>
 <f:section name="HashNotFound">
 
 
-    Hash not found
+    <p class="alert alert-alert">Hash not found</p>
 
 </f:section>
 <f:section name="AlreadyConfirmed">
 
 
-    Already confirmed
+    <p class="alert alert-alert">Already confirmed</p>
 
 </f:section>
 <f:section name="Success">

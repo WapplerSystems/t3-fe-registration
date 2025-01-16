@@ -88,7 +88,7 @@ class ConfirmationRequestFinisher extends AbstractFinisher
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
         $persistenceManager->persistAll();
 
-
+        $this->finisherContext->getFormRuntime()->getFormState()->setFormValue('confirmationHash', $confirmationRequest->getConfirmationHash());
     }
 
 

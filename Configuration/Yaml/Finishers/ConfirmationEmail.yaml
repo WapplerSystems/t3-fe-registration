@@ -4,6 +4,8 @@ prototypes:
       ConfirmationEmail:
         implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\ConfirmationEmailFinisher
         options:
+          templateRootPaths:
+            890: 'EXT:fe_registration/Resources/Private/Templates/'
         formEditor:
           iconIdentifier: form-finisher
           label: 'Send confirmation email'

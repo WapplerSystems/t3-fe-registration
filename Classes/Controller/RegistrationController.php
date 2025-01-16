@@ -57,7 +57,7 @@ class RegistrationController extends ActionController
             ]
         ];
         $emailFinisher = [
-            'identifier' => 'EmailToSender',
+            'identifier' => 'ConfirmationEmail',
             'options' => [
                 'senderAddress' => $this->settings['confirmationEmail']['senderEmailAddress'] ?? '',
                 'senderName' => $this->settings['confirmationEmail']['senderName'] ?? '',
@@ -121,8 +121,18 @@ class RegistrationController extends ActionController
 
                     // Formular für Schritt 2 laden
 
+                    $overrideConfiguration = [
+                        'renderingOptions' => [
+                            'controllerAction' => 'confirm',
+                            'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
+                        ]
+                    ];
 
-                    return $this->htmlResponse($this->view->renderSection('Form'));
+                    return $this->htmlResponse($this->view->renderSection('Form', [
+                        'settings' => $this->settings,
+                        'overrideConfiguration' => $overrideConfiguration,
+                        'factoryClass' => RegistrationPatchFormFactory::class
+                    ]));
                 }
 
                 if ((int)($this->settings['createFeUser'] ?? 0) === 1) {

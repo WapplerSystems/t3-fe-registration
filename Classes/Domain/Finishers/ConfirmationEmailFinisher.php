@@ -32,4 +32,16 @@ use WapplerSystems\FeRegistration\Event\AfterConfirmationRequestCreationEvent;
 class ConfirmationEmailFinisher extends EmailFinisher
 {
 
+    protected function executeInternal()
+    {
+
+        if (is_array($this->options['variables'] ?? null)) {
+            $this->options['variables']['confirmationHash'] = $this->finisherContext->getFormRuntime()->getFormState()->getFormValue('confirmationHash');
+        } else {
+            $this->options['variables'] = ['confirmationHash' => $this->finisherContext->getFormRuntime()->getFormState()->getFormValue('confirmationHash')];
+        }
+
+        parent::executeInternal();
+    }
+
 }

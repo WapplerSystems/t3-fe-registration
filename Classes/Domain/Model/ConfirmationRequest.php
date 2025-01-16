@@ -39,9 +39,7 @@ class ConfirmationRequest extends AbstractEntity
 
     public function __construct()
     {
-        if (!$this->confirmationHash) {
-            $this->confirmationHash = Uuid::generate();
-        }
+        $this->confirmationHash = Uuid::generate();
     }
 
     /**

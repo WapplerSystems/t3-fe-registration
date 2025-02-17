@@ -4,7 +4,9 @@
           product-name="fe_registration">
         <header/>
         <body>
-
+            <trans-unit id="formEditor.elements.EmailConfirmation.label">
+                <source>E-mail confirmation by user</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

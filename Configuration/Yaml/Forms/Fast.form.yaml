@@ -2,7 +2,7 @@
 renderingOptions:
   submitButtonLabel: 'Jetzt registrieren'
 identifier: step1Fast
-label: 'Schritt 1: Schnell'
+label: 'Schnelle Registrierung'
 type: Form
 prototypeName: standard
 renderables:
@@ -23,6 +23,7 @@ renderables:
           fluidAdditionalAttributes:
             required: required
             autocomplete: given-name
+          mapOnDatabaseColumn: first_name
         validators:
           -
             identifier: NotEmpty
@@ -36,7 +37,7 @@ renderables:
             placeholder: Name
             required: required
             autocomplete: family-name
-          cleverreachField: name
+          mapOnDatabaseColumn: last_name
         validators:
           -
             identifier: NotEmpty
@@ -50,13 +51,13 @@ renderables:
             placeholder: 'E-Mail Adresse'
             required: required
             autocomplete: email
-          cleverreachField: email
+          mapOnDatabaseColumn: username
         validators:
           -
             identifier: NotEmpty
           -
             identifier: EmailAddress
-          -
-            identifier: ConfirmationRequest
-          -
-            identifier: FeUser
+  -
+    type: EmailConfirmation
+    identifier: emailconfirmation-1
+    label: 'E-mail confirmation by user'

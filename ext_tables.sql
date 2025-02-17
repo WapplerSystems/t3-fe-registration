@@ -15,5 +15,6 @@ CREATE TABLE tx_feregistration_domain_model_confirmationrequest
 
 CREATE TABLE fe_users
 (
+	registration_request   int(10) unsigned    DEFAULT '0' NOT NULL,
 	registration_completed tinyint(4) unsigned DEFAULT '0' NOT NULL
 );

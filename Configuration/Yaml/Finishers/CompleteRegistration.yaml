@@ -1,0 +1,12 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      CompleteRegistration:
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\CompleteRegistrationFinisher
+        options:
+        formEditor:
+          iconIdentifier: form-finisher
+          label: 'Complete registration'
+          predefinedDefaults:
+            options:
+

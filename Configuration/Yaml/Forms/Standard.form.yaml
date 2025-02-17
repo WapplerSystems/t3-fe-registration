@@ -1,8 +1,8 @@
 
 renderingOptions:
   submitButtonLabel: 'Jetzt registrieren'
-identifier: step1WithPassword
-label: 'Schritt 1: Registrierung mit Passwort'
+identifier: Standard
+label: 'Standard mit Passwort'
 type: Form
 prototypeName: standard
 renderables:
@@ -17,7 +17,7 @@ renderables:
       -
         defaultValue: ''
         type: Text
-        identifier: firstname
+        identifier: firstName
         label: Vorname
         properties:
           fluidAdditionalAttributes:
@@ -28,7 +28,7 @@ renderables:
             identifier: NotEmpty
       -
         defaultValue: ''
-        identifier: lastname
+        identifier: lastName
         label: Nachname
         type: Text
         properties:
@@ -36,7 +36,6 @@ renderables:
             placeholder: Name
             required: required
             autocomplete: family-name
-          cleverreachField: name
         validators:
           -
             identifier: NotEmpty
@@ -50,7 +49,6 @@ renderables:
             placeholder: 'E-Mail Adresse'
             required: required
             autocomplete: email
-          cleverreachField: email
         validators:
           -
             identifier: NotEmpty
@@ -66,9 +64,35 @@ renderables:
           fluidAdditionalAttributes:
             required: required
             autocomplete: new-password
+          mapOnDatabaseColumn: password
         type: AdvancedPassword
         identifier: password
         label: 'Sichereres Passwort'
+        validators:
+          -
+            identifier: NotEmpty
+  -
+    type: EmailConfirmation
+    identifier: emailconfirmation-1
+    label: 'E-mail confirmation by user'
+  -
+    renderingOptions:
+      previousButtonLabel: 'previous Page'
+      nextButtonLabel: 'next Page'
+    identifier: page-2
+    label: ''
+    type: Page
+    renderables:
+      -
+        defaultValue: ''
+        identifier: city
+        label: Stadt
+        type: Text
+        properties:
+          fluidAdditionalAttributes:
+            placeholder: Stadt
+            required: required
+          mapOnDatabaseColumn: city
         validators:
           -
             identifier: NotEmpty

@@ -9,6 +9,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Service\FlexFormService;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Exception;
@@ -22,23 +23,26 @@ use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
 use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
-use WapplerSystems\FeRegistration\Service\Database;
-use WapplerSystems\FeRegistration\Service\Mailer;
+use WapplerSystems\FeRegistration\Service\ConfirmationService;
+use WapplerSystems\FeRegistration\Service\DatabaseService;
+use WapplerSystems\FeRegistration\Service\MailingService;
 
 class RegistrationController extends ActionController
 {
 
 
     public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
-                                EventDispatcherInterface               $eventDispatcher)
+                                EventDispatcherInterface               $eventDispatcher,
+                                readonly ConfirmationService                    $confirmationService)
     {
     }
 
 
+
     public function newAction(): ResponseInterface
     {
-        if (($this->settings['formStep1'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found for step 1.']));
+        if (($this->settings['form'] ?? '') === '') {
+            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found.']));
         }
         if (($this->settings['identifierFieldName'] ?? '') === '') {
             return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No identifier field name set.']));
@@ -64,7 +68,7 @@ class RegistrationController extends ActionController
                 'useFluidEmail' => $this->settings['confirmationEmail']['useFluidEmail'] ?? 0,
                 'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject'),
                 'recipients' => ['{email}'],
-                'templateName' => 'Email/ConfirmationMail',
+                'templateName' => 'Email/Confirmation',
             ]
         ];
         $confirmationFinisher = [
@@ -77,8 +81,8 @@ class RegistrationController extends ActionController
         $overrideConfiguration = [
             'finishers' => [
                 'ConfirmationRequest' => $confirmationRequestFinisher,
-                'ConfirmationEmail' => $emailFinisher,
-                'Confirmation' => $confirmationFinisher,
+                'ConfirmationEmail' => $emailFinisher,  // send email
+                'Confirmation' => $confirmationFinisher, // output message
             ],
             'renderingOptions' => [
                 'controllerAction' => 'new',
@@ -104,6 +108,10 @@ class RegistrationController extends ActionController
     public function confirmAction(string $hash = ''): ResponseInterface
     {
 
+        if (($this->settings['form'] ?? '') === '') {
+            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found.']));
+        }
+
         if ($hash !== '') {
             /** @var ConfirmationRequest $confirmationRequest */
             $confirmationRequest = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
@@ -114,58 +122,58 @@ class RegistrationController extends ActionController
                     return $this->htmlResponse($this->view->renderSection('AlreadyConfirmed'));
                 }
 
-                $values = $confirmationRequest->getDecodedValues();
+                // save request to fe_users
+                $feUserUid = $this->confirmationService->requestToFeUser($confirmationRequest, $this->settings);
+
+                $completeRegistrationFinisher = [
+                    'identifier' => 'CompleteRegistration',
+                    'options' => [
+                        'confirmationRequest' => $confirmationRequest,
+                        'feUserUid' => $feUserUid,
+                        'settings' => $this->settings
+                    ]
+                ];
+                $redirectFinisher = [
+                    'identifier' => 'RedirectToUri',
+                    'options' => [
+                        'uri' => $this->uriBuilder->reset()->uriFor('success'),
+                    ]
+                ];
 
 
-                if (($this->settings['formStep2'] ?? '') !== '') {
+                $overrideConfiguration = [
+                    'finishers' => [
+                        //'SaveFeUser' => $saveFeUserFinisher,
+                        'CompleteRegistration' => $completeRegistrationFinisher,
+                        'RedirectToUri' => $redirectFinisher,
+                    ],
+                    'renderingOptions' => [
+                        'controllerAction' => 'confirm',
+                        'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
+                    ]
+                ];
 
-                    // Formular für Schritt 2 laden
-
-                    $overrideConfiguration = [
-                        'renderingOptions' => [
-                            'controllerAction' => 'confirm',
-                            'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
-                        ]
-                    ];
-
-                    return $this->htmlResponse($this->view->renderSection('Form', [
-                        'settings' => $this->settings,
-                        'overrideConfiguration' => $overrideConfiguration,
-                        'factoryClass' => RegistrationPatchFormFactory::class
-                    ]));
-                }
-
-                if ((int)($this->settings['createFeUser'] ?? 0) === 1) {
-
-                    /** @var Database $database */
-                    $database = GeneralUtility::makeInstance(Database::class);
-                    $database->createFeUser($values, $this->settings);
-                }
-
-
-                $confirmationRequest->setConfirmationDate(new \DateTime());
-                $this->confirmationRequestRepository->update($confirmationRequest);
-
-                $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-                $persistenceManager->persistAll();
-
-                $this->eventDispatcher->dispatch(
-                    new AfterConfirmationEvent($confirmationRequest)
-                );
-
-
-                if (isset($this->settings['forward']) && (int)$this->settings['forward'] > 0) {
-                    $url = $this->uriBuilder->reset()->setCreateAbsoluteUri(true)->setTargetPageUid($this->settings['forward'])->build();
-                    $this->redirectToUri($url);
-                }
-
-                $this->view->assignMultiple($values);
-
-                return $this->htmlResponse($this->view->renderSection('Success'));
+                return $this->htmlResponse($this->view->renderSection('Form', [
+                    'settings' => $this->settings,
+                    'overrideConfiguration' => $overrideConfiguration,
+                    'factoryClass' => RegistrationPatchFormFactory::class
+                ]));
             }
+
+            // not found
+
+
         }
 
         return $this->htmlResponse($this->view->renderSection('HashNotFound'));
+    }
+
+
+    public function successAction(): ResponseInterface
+    {
+
+
+        return $this->htmlResponse();
     }
 
 
@@ -222,8 +230,8 @@ class RegistrationController extends ActionController
                     return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock']]);
                 }
 
-                /** @var Mailer $mailer */
-                $mailer = GeneralUtility::makeInstance(Mailer::class);
+                /** @var MailingService $mailer */
+                $mailer = GeneralUtility::makeInstance(MailingService::class);
                 $mailer->sendConfirmationMail($confirmationRequestRecord, $this->request, $settings, $currentPageId);
 
 
@@ -237,10 +245,5 @@ class RegistrationController extends ActionController
         return new JsonResponse(['success' => false]);
     }
 
-
-    public function successAction(): ResponseInterface
-    {
-        return $this->htmlResponse();
-    }
 
 }

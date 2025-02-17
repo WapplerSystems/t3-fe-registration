@@ -9,9 +9,9 @@
                 <type>array</type>
                 <el>
 
-                    <settings.formStep1>
+                    <settings.form>
                         <label>
-                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tt_content.pi_flexform.feregistration.step1
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tt_content.pi_flexform.feregistration.form
                         </label>
                         <onChange>reload</onChange>
                         <config>
@@ -27,27 +27,7 @@
                             </items>
                             <softref>formPersistenceIdentifier</softref>
                         </config>
-                    </settings.formStep1>
-
-                    <settings.formStep2>
-                        <label>
-                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tt_content.pi_flexform.feregistration.step2
-                        </label>
-                        <onChange>reload</onChange>
-                        <config>
-                            <type>select</type>
-                            <renderType>selectSingle</renderType>
-                            <items>
-                                <numIndex index="0" type="array">
-                                    <label>
-                                        LLL:EXT:form/Resources/Private/Language/Database.xlf:tt_content.pi_flexform.formframework.selectPersistenceIdentifier
-                                    </label>
-                                    <value></value>
-                                </numIndex>
-                            </items>
-                            <softref>formPersistenceIdentifier</softref>
-                        </config>
-                    </settings.formStep2>
+                    </settings.form>
 
                     <settings.forward>
                         <label>

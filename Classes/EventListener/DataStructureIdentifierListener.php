@@ -165,26 +165,13 @@ readonly class DataStructureIdentifierListener
                     $formIsAccessible = true;
                 }
                 if ($invalidFormDefinition) {
-                    $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.formStep1']['config']['items'][] = [
+                    $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.form']['config']['items'][] = [
                         'label' => $form['name'] . ' (' . $form['persistenceIdentifier'] . ')',
                         'value' => $form['persistenceIdentifier'],
                         'icon' => 'overlay-missing',
                     ];
                 } else {
-                    $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.formStep1']['config']['items'][] = [
-                        'label' => $form['name'] . ' (' . $form['persistenceIdentifier'] . ')',
-                        'value' => $form['persistenceIdentifier'],
-                        'icon' => 'content-form',
-                    ];
-                }
-                if ($invalidFormDefinition) {
-                    $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.formStep2']['config']['items'][] = [
-                        'label' => $form['name'] . ' (' . $form['persistenceIdentifier'] . ')',
-                        'value' => $form['persistenceIdentifier'],
-                        'icon' => 'overlay-missing',
-                    ];
-                } else {
-                    $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.formStep2']['config']['items'][] = [
+                    $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.form']['config']['items'][] = [
                         'label' => $form['name'] . ' (' . $form['persistenceIdentifier'] . ')',
                         'value' => $form['persistenceIdentifier'],
                         'icon' => 'content-form',
@@ -193,14 +180,7 @@ readonly class DataStructureIdentifierListener
             }
             if (!empty($identifier['ext-feregistration-persistenceIdentifier']) && !$formIsAccessible) {
                 $languageService = $this->getLanguageService();
-                $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.formStep1']['config']['items'][] = [
-                    'label' => sprintf(
-                        $languageService->sL('LLL:EXT:form/Resources/Private/Language/Database.xlf:tt_content.preview.inaccessiblePersistenceIdentifier'),
-                        $identifier['ext-feregistration-persistenceIdentifier']
-                    ),
-                    'value' => $identifier['ext-feregistration-persistenceIdentifier'],
-                ];
-                $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.formStep2']['config']['items'][] = [
+                $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.form']['config']['items'][] = [
                     'label' => sprintf(
                         $languageService->sL('LLL:EXT:form/Resources/Private/Language/Database.xlf:tt_content.preview.inaccessiblePersistenceIdentifier'),
                         $identifier['ext-feregistration-persistenceIdentifier']

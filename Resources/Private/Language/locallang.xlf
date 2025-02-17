@@ -23,6 +23,9 @@
             <trans-unit id="subject.pleaseConfirmEmailAddress">
                 <source>Your registration - please confirm your email address</source>
             </trans-unit>
+            <trans-unit id="subject.welcome">
+                <source>Welcome</source>
+            </trans-unit>
 
 
             <trans-unit id="validator.feUsernameAlreadyExists.true">
@@ -37,6 +40,16 @@
 
             <trans-unit id="element.privacyPolicyCheckbox.properties.description">
                 <source><![CDATA[I have read and accepted the <a href="%s">privacy policy</a>.]]></source>
+            </trans-unit>
+
+            <trans-unit id="welcomeEmail.text">
+                <source>Thank you for your registration.</source>
+            </trans-unit>
+            <trans-unit id="welcomeEmail.username">
+                <source>Your user name is:</source>
+            </trans-unit>
+            <trans-unit id="welcomeEmail.password">
+                <source>Your password is:</source>
             </trans-unit>
 
         </body>

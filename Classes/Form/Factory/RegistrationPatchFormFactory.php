@@ -36,32 +36,98 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         ?ServerRequestInterface $request = null
     ): FormDefinition {
 
-        foreach ($configuration['renderables'] as $pageKey => $page) {
-            foreach ($page['renderables'] as $elementKey => $renderable) {
-                $validators = $renderable['validators'] ?? [];
-                foreach ($validators as $validatorKey => $validator) {
-                    if ($validator['identifier'] === 'ConfirmationRequest') {
-                        if (!isset($validator['options'])) {
-                            $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options'] = [];
-                        }
-                        $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['pid'] = self::$settings['confirmationRequestPid'] ?? '';
-                        $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['uriBuilder'] = self::$uriBuilder;
-                        $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['request'] = $request;
-                    }
-                    if ($validator['identifier'] === 'FeUser') {
-                        if (!isset($validator['options'])) {
-                            $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options'] = [];
-                        }
-                        $configuration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][$validatorKey]['options']['pid'] = self::$settings['feUserStoragePid'] ?? '';
-                    }
+        $hasPasswordField = $this->hasPasswordField($configuration);
+
+        $newConfiguration = $configuration;
+        $newConfiguration['renderingOptions']['hasPasswordField'] = $hasPasswordField;
+
+        $preConfirmation = false;
+        foreach ($configuration['finishers'] ?? [] as $finisherName => $page) {
+            if ($finisherName === 'ConfirmationRequest') {
+                $preConfirmation = true;
+            }
+        }
+
+        foreach ($configuration['renderables'] ?? [] as $pageKey => $page) {
+            if ($page['type'] === 'EmailConfirmation') {
+                if ($preConfirmation) {
+                    $newConfiguration['renderables'] = array_slice($newConfiguration['renderables'], 0 , $pageKey);
+                } else {
+                    $newConfiguration['renderables'] = array_slice($newConfiguration['renderables'], $pageKey + 1);
                 }
+            }
+        }
+        if (count($newConfiguration['renderables']) === 0) {
+            // add pseudo page
+            $newConfiguration['renderables'][] = [
+                'type' => 'Page',
+                'identifier' => 'pseudoPage',
+                'renderables' => [
+                    [
+                        'type' => 'Text',
+                        'identifier' => 'pseudoText',
+                        'properties' => [
+                            'text' => 'No fields available'
+                        ]
+                    ]
+                ]
+            ];
+        }
+
+        //DebugUtility::debug($newConfiguration, 'Patched configuration');
+        //exit();
+
+        foreach ($newConfiguration['renderables'] ?? [] as $pageKey => $page) {
+            foreach ($page['renderables'] ?? [] as $elementKey => $renderable) {
+
+                if (($renderable['properties']['mapOnDatabaseColumn'] ?? '') === 'username') {
+                    $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][] = [
+                        'identifier' => 'ConfirmationRequest',
+                        'options' => [
+                            'pid' => self::$settings['confirmationRequestPid'] ?? '',
+                            'uriBuilder' => self::$uriBuilder,
+                            'request' => $request
+                        ]
+                    ];
+                    $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][] = [
+                        'identifier' => 'FeUser',
+                        'options' => [
+                            'pid' => self::$settings['feUserStoragePid'] ?? '',
+                        ]
+                    ];
+                }
+
             }
         }
 
         //DebugUtility::debug($configuration['renderables'], 'Patched configuration');
 
 
-        return parent::build($configuration, $prototypeName, $request);
+        return parent::build($newConfiguration, $prototypeName, $request);
+    }
+
+
+    private function hasPasswordField(array $configuration) : bool
+    {
+        $renderables = $this->getRenderables($configuration['renderables']);
+        foreach ($renderables as $renderable) {
+            if ($renderable['type'] === 'Password' || $renderable['type'] === 'AdvancedPassword') {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private function getRenderables(array $configuration): array
+    {
+        $renderables = [];
+        foreach ($configuration as $elements) {
+            $renderables[] = $elements;
+            if (isset($elements['renderables'])) {
+                $renderables = array_merge($renderables, $this->getRenderables($elements['renderables']));
+            }
+        }
+        return $renderables;
     }
 
 }

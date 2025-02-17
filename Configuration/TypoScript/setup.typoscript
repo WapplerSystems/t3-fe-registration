@@ -37,7 +37,7 @@ formExtendedResend {
 plugin.tx_form {
   settings {
     yamlConfigurations {
-      321 = EXT:fe_registration/Configuration/Yaml/FormSetup.yaml
+      451 = EXT:fe_registration/Configuration/Yaml/FormSetup.yaml
     }
   }
 }

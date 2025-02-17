@@ -1,0 +1,16 @@
+<f:layout name="SystemEmail" />
+<f:section name="Title">{title}</f:section>
+<f:section name="Main">
+
+    <p>
+        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.text" />
+    </p>
+    <p>
+        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.username" /> {user.username}
+    </p>
+
+    <f:if condition="{password}">
+        <p><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.password" /> {password}</p>
+    </f:if>
+
+</f:section>

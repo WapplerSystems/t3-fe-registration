@@ -46,9 +46,10 @@ ExtensionManagementUtility::addTypoScriptSetup(
     'module.tx_form {
     settings {
         yamlConfigurations {
-            321 = EXT:fe_registration/Configuration/Yaml/FormSetup.yaml
+            341 = EXT:fe_registration/Configuration/Yaml/FormSetup.yaml
         }
     }
 }'
 );
 
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['afterInitializeCurrentPage'][1739725421] = \WapplerSystems\FeRegistration\Hooks\FormInitializationHook::class;

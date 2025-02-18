@@ -13,11 +13,20 @@
             <trans-unit id="text.success">
                 <source>Thank you, your registration was successful. You can now login.</source>
             </trans-unit>
+            <trans-unit id="text.confirmationMailSent">
+                <source>Thank you very much. Please confirm the email that has just been sent to you.</source>
+            </trans-unit>
             <trans-unit id="text.notFound">
                 <source>Unfortunately no matching entry was found for the key.</source>
             </trans-unit>
             <trans-unit id="text.alreadyConfirmed">
                 <source>The email address has already been activated.</source>
+            </trans-unit>
+            <trans-unit id="text.alreadyCompleted">
+                <source>The registration has already been completed.</source>
+            </trans-unit>
+            <trans-unit id="text.hashNotFound">
+                <source>Unfortunately, no registration was found with this key.</source>
             </trans-unit>
 
             <trans-unit id="subject.pleaseConfirmEmailAddress">
@@ -25,6 +34,10 @@
             </trans-unit>
             <trans-unit id="subject.welcome">
                 <source>Welcome</source>
+            </trans-unit>
+
+            <trans-unit id="btn.completeRegistration">
+                <source>Complete registration</source>
             </trans-unit>
 
 

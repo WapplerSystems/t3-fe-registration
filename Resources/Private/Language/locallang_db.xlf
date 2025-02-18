@@ -10,6 +10,9 @@
             <trans-unit id="flexform.confirmationEmail">
                 <source>Confirmation email</source>
             </trans-unit>
+            <trans-unit id="flexform.welcomeEmail">
+                <source>Welcome email</source>
+            </trans-unit>
             <trans-unit id="flexform.senderEmailAddress">
                 <source>Sender email address</source>
             </trans-unit>
@@ -45,6 +48,9 @@
             </trans-unit>
             <trans-unit id="flexform.forward">
                 <source>Forward to page</source>
+            </trans-unit>
+            <trans-unit id="flexform.allowedParameterizedFields">
+                <source>Allowed parameterized fields</source>
             </trans-unit>
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest.email">
                 <source>Email</source>

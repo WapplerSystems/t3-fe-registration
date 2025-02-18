@@ -1,8 +1,8 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" xmlns:registration="http://typo3.org/ns/WapplerSystems/FeRegistration/ViewHelpers" data-namespace-typo3-fluid="true">
 
 <f:section name="Form">
 
-    <formvh:render persistenceIdentifier="{settings.form}" overrideConfiguration="{overrideConfiguration}" factoryClass="{factoryClass}" />
+    <registration:render persistenceIdentifier="{settings.form}" overrideConfiguration="{overrideConfiguration}" factoryClass="{factory}" />
 
 </f:section>
 

@@ -20,7 +20,6 @@ namespace WapplerSystems\FeRegistration\EventListener;
 
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Form\Mvc\Persistence\Event\AfterFormDefinitionLoadedEvent;
 
 #[AsEventListener(

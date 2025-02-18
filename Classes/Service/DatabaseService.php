@@ -3,27 +3,15 @@
 namespace WapplerSystems\FeRegistration\Service;
 
 use Doctrine\DBAL\ParameterType;
-use Psr\Http\Message\ServerRequestInterface;
-use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
-use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Mail\FluidEmail;
-use TYPO3\CMS\Core\Mail\MailerInterface;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Extbase\Exception;
-use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
-use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
-use TYPO3\CMS\Fluid\View\TemplatePaths;
-use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
-use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 
 class DatabaseService
 {
 
 
-    public function createFeUser(array $values, array $settings): int
+    public function createFeUser(array $values, array $settings): array
     {
 
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
@@ -58,7 +46,9 @@ class DatabaseService
             ->values($dbValues)
             ->executeStatement();
 
-        return (int)$connection->lastInsertId();
+        $dbValues['uid'] = $connection->lastInsertId();
+
+        return $dbValues;
     }
 
     /**
@@ -82,7 +72,7 @@ class DatabaseService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
-    public function getFeUser(int $feUserUid)
+    public function getFeUser(int $feUserUid) : array|false
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
@@ -105,6 +95,19 @@ class DatabaseService
         $queryBuilder
             ->update('fe_users')
             ->set('password', $password)
+            ->where(
+                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($feUserUid, ParameterType::INTEGER))
+            )
+            ->executeStatement();
+    }
+
+    public function setRegistrationCompletedOfUser($feUserUid) {
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
+            'fe_users'
+        );
+        $queryBuilder
+            ->update('fe_users')
+            ->set('registration_completed', 1)
             ->where(
                 $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($feUserUid, ParameterType::INTEGER))
             )

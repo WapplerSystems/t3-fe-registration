@@ -86,15 +86,15 @@ class MailingService
     public function sendWelcomeMail(array $feUser, ServerRequestInterface $request, array $settings, ?string $password): void
     {
 
-        $addHtmlPart = $settings['confirmationEmail']['useHTML'] ?? false;
+        $addHtmlPart = $settings['welcomeEmail']['useHTML'] ?? false;
 
         $senderAddress = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromAddress'] ?? '';
         $senderName = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'] ?? '';
 
         $receiverAddress = $feUser['email'] === '' ? $feUser['username'] : $feUser['email'];
 
-        $senderAddress = !empty($settings['confirmationEmail']['senderAddress'] ?? '') ? $settings['confirmationEmail']['senderAddress'] :  $senderAddress;
-        $senderName = !empty($settings['confirmationEmail']['senderName'] ?? '') ? $settings['confirmationEmail']['senderName'] :  $senderName;
+        $senderAddress = !empty($settings['welcomeEmail']['senderEmailAddress'] ?? '') ? $settings['welcomeEmail']['senderEmailAddress'] :  $senderAddress;
+        $senderName = !empty($settings['welcomeEmail']['senderName'] ?? '') ? $settings['welcomeEmail']['senderName'] :  $senderName;
 
         if (empty($senderAddress)) {
             throw new Exception('The option "senderAddress" must be set.', 1735853778);

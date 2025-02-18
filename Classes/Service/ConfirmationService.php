@@ -21,21 +21,19 @@ class ConfirmationService
     }
 
 
-    public function requestToFeUser(ConfirmationRequest $confirmationRequest, array $settings): int
+    public function requestToFeUser(ConfirmationRequest $confirmationRequest, array $settings): ?array
     {
+        $feUser = $this->databaseService->findFeUserByConfirmationRequest($confirmationRequest);
+        if ($feUser !== false) {
+            return $feUser;
+        }
+
         if ((int)($settings['createFeUser'] ?? 0) === 1) {
-
-            $feUser = $this->databaseService->findFeUserByConfirmationRequest($confirmationRequest);
-
-            if ($feUser !== false) {
-                return $feUser['uid'];
-            }
-
             $values = $confirmationRequest->getDecodedValues();
             $values['registrationRequest'] = $confirmationRequest->getUid();
             return $this->databaseService->createFeUser($values, $settings);
         }
-        return 0;
+        return null;
     }
 
 
@@ -48,9 +46,7 @@ class ConfirmationService
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
         $persistenceManager->persistAll();
 
-        $this->eventDispatcher->dispatch(
-            new AfterConfirmationEvent($confirmationRequest)
-        );
+
 
     }
 

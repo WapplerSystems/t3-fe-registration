@@ -12,7 +12,7 @@ ExtensionUtility::configurePlugin(
     'fe_registration',
     'Registration',
     [
-        RegistrationController::class => 'new, confirm, success'
+        RegistrationController::class => 'new, confirm, success, confirmationMailSent'
     ],
     [
         RegistrationController::class => 'new, confirm, success'
@@ -53,3 +53,7 @@ ExtensionManagementUtility::addTypoScriptSetup(
 );
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['afterInitializeCurrentPage'][1739725421] = \WapplerSystems\FeRegistration\Hooks\FormInitializationHook::class;
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['beforeRendering'][1739725421] = \WapplerSystems\FeRegistration\Hooks\BeforeRenderingHook::class;
+
+$GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['afterFormStateInitialized'][1739725421] = \WapplerSystems\FeRegistration\Hooks\AfterFormStateInitializedHook::class;

@@ -1,25 +1,24 @@
-<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" data-namespace-typo3-fluid="true">
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" xmlns:registration="http://typo3.org/ns/WapplerSystems/FeRegistration/ViewHelpers" data-namespace-typo3-fluid="true">
 
 <f:section name="Form">
 
-    <formvh:render persistenceIdentifier="{settings.form}" overrideConfiguration="{overrideConfiguration}" factoryClass="{factoryClass}" />
+    <registration:render persistenceIdentifier="{settings.form}" overrideConfiguration="{overrideConfiguration}" factoryClass="{factory}" />
 
 </f:section>
 <f:section name="Error">
 
-    <p class="alert alert-alert">Error</p>
+    <p class="alert alert-danger">Error</p>
 
 </f:section>
 <f:section name="HashNotFound">
 
 
-    <p class="alert alert-alert">Hash not found</p>
+    <p class="alert alert-info"><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:text.hashNotFound" /> Hash not found</p>
 
 </f:section>
-<f:section name="AlreadyConfirmed">
+<f:section name="AlreadyCompleted">
 
-
-    <p class="alert alert-alert">Already confirmed</p>
+    <p class="alert alert-info"><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:text.alreadyCompleted" /> </p>
 
 </f:section>
 

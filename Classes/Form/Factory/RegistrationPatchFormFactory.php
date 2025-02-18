@@ -6,8 +6,6 @@ namespace WapplerSystems\FeRegistration\Form\Factory;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
-use TYPO3\CMS\Core\Utility\DebugUtility;
-use TYPO3\CMS\Extbase\Mvc\RequestInterface;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Form\Domain\Factory\ArrayFormFactory;
 use TYPO3\CMS\Form\Domain\Model\FormDefinition;
@@ -16,17 +14,24 @@ use TYPO3\CMS\Form\Domain\Model\FormDefinition;
 class RegistrationPatchFormFactory extends ArrayFormFactory
 {
 
-    protected static array $settings;
+    protected array $settings;
 
-    protected static UriBuilder $uriBuilder;
+    protected UriBuilder $uriBuilder;
 
-    public function __construct(array $settings = null, ?UriBuilder $uriBuilder = null)
+    protected array $preDefinedValues;
+
+    public function __construct(?array $settings = null, ?UriBuilder $uriBuilder = null, ?array $preDefinedValues = null)
     {
         if ($settings !== null) {
-            self::$settings = $settings;
+            $this->settings = $settings;
         }
         if ($uriBuilder !== null) {
-            self::$uriBuilder = $uriBuilder;
+            $this->uriBuilder = $uriBuilder;
+        }
+        if ($preDefinedValues !== null) {
+            $this->preDefinedValues = $preDefinedValues;
+        } else {
+            $this->preDefinedValues = [];
         }
     }
 
@@ -36,10 +41,10 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         ?ServerRequestInterface $request = null
     ): FormDefinition {
 
-        $hasPasswordField = $this->hasPasswordField($configuration);
+        $allRenderables = $this->getRenderables($configuration['renderables']);
 
         $newConfiguration = $configuration;
-        $newConfiguration['renderingOptions']['hasPasswordField'] = $hasPasswordField;
+        $newConfiguration['renderingOptions']['hasPasswordField'] = $this->hasPasswordField($allRenderables);
 
         $preConfirmation = false;
         foreach ($configuration['finishers'] ?? [] as $finisherName => $page) {
@@ -74,43 +79,84 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             ];
         }
 
-        //DebugUtility::debug($newConfiguration, 'Patched configuration');
-        //exit();
-
         foreach ($newConfiguration['renderables'] ?? [] as $pageKey => $page) {
             foreach ($page['renderables'] ?? [] as $elementKey => $renderable) {
 
+                /*
                 if (($renderable['properties']['mapOnDatabaseColumn'] ?? '') === 'username') {
                     $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][] = [
                         'identifier' => 'ConfirmationRequest',
                         'options' => [
-                            'pid' => self::$settings['confirmationRequestPid'] ?? '',
-                            'uriBuilder' => self::$uriBuilder,
+                            'pid' => $this->settings['confirmationRequestPid'] ?? '',
+                            'uriBuilder' => $this->uriBuilder,
                             'request' => $request
                         ]
                     ];
                     $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][] = [
                         'identifier' => 'FeUser',
                         'options' => [
-                            'pid' => self::$settings['feUserStoragePid'] ?? '',
+                            'pid' => $this->settings['feUserStoragePid'] ?? '',
                         ]
                     ];
+                }*/
+
+                // TODO: Enhance this so support deep nested renderables
+
+                if (array_key_exists($renderable['identifier'], $this->preDefinedValues)) {
+                    $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['defaultValue'] = $this->preDefinedValues[$renderable['identifier']];
                 }
 
             }
         }
 
-        //DebugUtility::debug($configuration['renderables'], 'Patched configuration');
+        /*
+        $newConfiguration['renderables'][0]['renderables'][] = [
+            'type' => 'Hidden',
+            'identifier' => 'preDefinedValues',
+        ];*/
 
+        if ($preConfirmation) {
+            $allowedParameterizedFields = explode(',',$this->settings['allowedParameterizedFields'] ?? '');
+
+            foreach ($allowedParameterizedFields as $field) {
+                if ($field === '') {
+                    continue;
+                }
+                // create hidden field for each parameterized field which is after mail confirmation
+                if ($this->isFieldAfterEmailConfirmation($configuration, $field)) {
+                    $newConfiguration['renderables'][0]['renderables'][] = [
+                        'type' => 'Hidden',
+                        'identifier' => $field,
+                        'defaultValue' => $request->getQueryParams()[$field] ?? ''
+                    ];
+                    // TODO: copy validators from original field
+                }
+
+            }
+        }
 
         return parent::build($newConfiguration, $prototypeName, $request);
     }
 
 
-    private function hasPasswordField(array $configuration) : bool
+    private function isFieldAfterEmailConfirmation(array $configuration, string $fieldName) : bool
     {
-        $renderables = $this->getRenderables($configuration['renderables']);
-        foreach ($renderables as $renderable) {
+
+        $foundEmailConfirmation = false;
+        foreach ($configuration['renderables'] as $pages) {
+            if ($foundEmailConfirmation && $this->findRenderable($pages['renderables'], $fieldName) !== null) {
+                return true;
+            }
+            if ($pages['type'] === 'EmailConfirmation') {
+                $foundEmailConfirmation = true;
+            }
+        }
+        return false;
+    }
+
+    private function hasPasswordField(array $allRenderables) : bool
+    {
+        foreach ($allRenderables as $renderable) {
             if ($renderable['type'] === 'Password' || $renderable['type'] === 'AdvancedPassword') {
                 return true;
             }
@@ -128,6 +174,22 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             }
         }
         return $renderables;
+    }
+
+    private function findRenderable(array $configuration, string $identifier): ?array
+    {
+        foreach ($configuration as $elements) {
+            if ($elements['identifier'] === $identifier) {
+                return $elements;
+            }
+            if (isset($elements['renderables'])) {
+                $renderable = $this->findRenderable($elements['renderables'], $identifier);
+                if ($renderable !== null) {
+                    return $renderable;
+                }
+            }
+        }
+        return null;
     }
 
 }

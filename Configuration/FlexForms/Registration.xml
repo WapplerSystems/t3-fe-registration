@@ -56,6 +56,17 @@
                         </config>
                     </settings.identifierFieldName>
 
+                    <settings.allowedParameterizedFields>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.allowedParameterizedFields
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>60</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.allowedParameterizedFields>
+
                     <settings.confirmationRequestPid>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.confirmationRequestPid
@@ -175,5 +186,52 @@
                 </el>
             </ROOT>
         </confirmationEmail>
+        <welcomeEmail>
+            <ROOT>
+                <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.welcomeEmail</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.welcomeEmail.senderEmailAddress>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderEmailAddress
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.welcomeEmail.senderEmailAddress>
+                    <settings.welcomeEmail.senderName>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderName
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.welcomeEmail.senderName>
+                    <settings.welcomeEmail.useHTML>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.useHTML
+                        </label>
+                        <config>
+                            <type>check</type>
+                            <default>1</default>
+                        </config>
+                    </settings.welcomeEmail.useHTML>
+                    <settings.welcomeEmail.subject>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.subject
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.welcomeEmail.subject>
+                </el>
+            </ROOT>
+        </welcomeEmail>
     </sheets>
 </T3DataStructure>

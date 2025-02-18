@@ -14,7 +14,7 @@
             </trans-unit>
             <trans-unit id="text.success">
                 <source>Thank you, your validation was successful. You can now login.</source>
-                <target>Vielen Dank, Ihre Validierung war erfolgreich. Sie können sich jetzt einloggen.</target>
+                <target>Vielen Dank, Ihre Registrierung war erfolgreich. Sie können sich jetzt einloggen.</target>
             </trans-unit>
             <trans-unit id="text.notFound">
                 <source>Unfortunately no matching entry was found for the key.</source>
@@ -24,6 +24,19 @@
                 <source>The email address has already been activated.</source>
                 <target>Die E-Mail-Adresse wurde bereits aktiviert.</target>
             </trans-unit>
+            <trans-unit id="text.confirmationMailSent">
+                <source>Thank you very much. Please confirm the email that has just been sent to you.</source>
+                <target>Vielen Dank. Bitte bestätigen Sie die Email, die soeben an Sie gesendet wurde.</target>
+            </trans-unit>
+            <trans-unit id="text.alreadyCompleted">
+                <source>The registration has already been completed.</source>
+                <target>Die Registrierung wurde bereits abgeschlossen.</target>
+            </trans-unit>
+            <trans-unit id="text.hashNotFound">
+                <source>Unfortunately, no registration was found with this key.</source>
+                <target>Leider wurde keine Registrierung mit diesem Schlüssel gefunden.</target>
+            </trans-unit>
+
             <trans-unit id="subject.pleaseConfirmEmailAddress">
                 <source>Your registration - please confirm your email address</source>
                 <target>Ihre Registrierung - Bitte bestätigen Sie Ihre E-Mail Adresse</target>
@@ -37,6 +50,11 @@
             <trans-unit id="element.privacyPolicyCheckbox.properties.description">
                 <source><![CDATA[I have read and accepted the <a href="%s">privacy policy</a>.]]></source>
                 <target><![CDATA[Ich habe die <a href="%s">Datenschutzerklärung</a> gelesen und akzeptiert.]]></target>
+            </trans-unit>
+
+            <trans-unit id="btn.completeRegistration">
+                <source>Complete registration</source>
+                <target>Registrierung abschließen</target>
             </trans-unit>
         </body>
     </file>

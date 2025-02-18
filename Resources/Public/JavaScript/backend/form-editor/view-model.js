@@ -116,7 +116,6 @@ function _renderTemplateDispatcherFormExtended(formElement, template) {
  * @return void
  */
 function _renderEditorDispatcherFormExtended(editorConfiguration, editorHtml, collectionElementIdentifier, collectionName) {
-  //console.debug(editorConfiguration['templateName']);
   switch (editorConfiguration['templateName']) {
     case 'Inspector-StaticTextEditor':
       renderStaticTextEditor(

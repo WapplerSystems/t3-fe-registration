@@ -22,6 +22,10 @@ prototypes:
     formEditor:
       translationFiles:
         73666: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
+
+      dynamicJavaScriptModules:
+        additionalViewModelModules:
+          73666: '@wapplersystems/fe_registration/backend/form-editor/view-model.js'
     formEngine:
       translationFiles:
         73666: 'EXT:fe_registration/Resources/Private/Language/form.xlf'

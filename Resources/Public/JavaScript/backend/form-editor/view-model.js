@@ -103,11 +103,7 @@ function _subscribeEvents() {
  * @return void
  */
 function _renderTemplateDispatcherFormExtended(formElement, template) {
-  switch (formElement.get('type')) {
-    case 'PrivacyPolicyCheckbox':
-      getFormEditorApp().getViewModel().getStage().renderSimpleTemplateWithValidators(formElement, template);
-      break;
-  }
+
 };
 
 /**
@@ -116,16 +112,7 @@ function _renderTemplateDispatcherFormExtended(formElement, template) {
  * @return void
  */
 function _renderEditorDispatcherFormExtended(editorConfiguration, editorHtml, collectionElementIdentifier, collectionName) {
-  switch (editorConfiguration['templateName']) {
-    case 'Inspector-StaticTextEditor':
-      renderStaticTextEditor(
-        editorConfiguration,
-        editorHtml,
-        collectionElementIdentifier,
-        collectionName
-      );
-      break;
-  }
+
 };
 
 /**

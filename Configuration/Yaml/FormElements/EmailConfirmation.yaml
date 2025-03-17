@@ -17,10 +17,10 @@ prototypes:
               templateName: Inspector-RemoveElementEditor
           label: formEditor.elements.EmailConfirmation.label
           group: page
-          groupSorting: 200
+          groupSorting: 300
           _isTopLevelFormElement: true
           _isCompositeFormElement: false
-          iconIdentifier: form-summary-page
+          iconIdentifier: form-page
         implementationClassName: TYPO3\CMS\Form\Domain\Model\FormElements\Page
         renderingOptions:
           _isTopLevelFormElement: true

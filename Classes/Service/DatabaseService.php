@@ -4,7 +4,9 @@ namespace WapplerSystems\FeRegistration\Service;
 
 use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Type\BitSet;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Form\Mvc\Property\TypeConverter\PseudoFileReference;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 
 class DatabaseService
@@ -124,16 +126,60 @@ class DatabaseService
         $schemaManager = $connection->createSchemaManager();
         $columns = array_keys($schemaManager->listTableColumns('fe_users'));
 
+        $feUser = $this->getFeUser($feUserUid);
+
         $dbValues = [
         ];
 
-        foreach ($values as $key => $value) {
-            if (in_array($key, $columns, true)) {
-                $dbValues[$key] = $value;
+        foreach ($values as $formFieldKey => $value) {
+            $formFieldKey = str_replace('-', '_', $formFieldKey);
+            $convertedFormFieldKey = null;
+            if (in_array($formFieldKey, $columns, true)) {
+                $convertedFormFieldKey = $formFieldKey;
             }
-            if (in_array(GeneralUtility::camelCaseToLowerCaseUnderscored($key), $columns, true)) {
-                $dbValues[GeneralUtility::camelCaseToLowerCaseUnderscored($key)] = $value;
+            if (in_array(GeneralUtility::camelCaseToLowerCaseUnderscored($formFieldKey), $columns, true)) {
+                $convertedFormFieldKey = GeneralUtility::camelCaseToLowerCaseUnderscored($formFieldKey);
             }
+
+
+            if (isset($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey])) {
+
+                // check if field is bitmask field
+                if (is_array($value) && $GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'check' && count($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items']) > 1) {
+                    $bitSet = new BitSet();
+                    foreach ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items'] as $key => $item) {
+                        if (($item['value'] ?? null) !== null) {
+                            if (in_array($item['value'],$value)) {
+                                $bitSet->set($key+1);
+                            }
+                        }
+                    }
+                    $value = $bitSet->__toInt();
+                }
+                if ($value instanceof PseudoFileReference) {
+                    $pseudoFileReference = $value;
+                    $queryBuilderFileReference = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
+                        'sys_file_reference'
+                    );
+                    $queryBuilderFileReference
+                        ->insert('sys_file_reference')
+                        ->values([
+                            'uid_local' => $pseudoFileReference->getOriginalResource()->getOriginalFile()->getUid(),
+                            'uid_foreign' => $feUserUid,
+                            'tablenames' => 'fe_users',
+                            'fieldname' => $convertedFormFieldKey,
+                            'crdate' => time(),
+                            'tstamp' => time(),
+                            'pid' => $feUser['pid'],
+                        ])
+                        ->executeStatement();
+
+                    $value = 1;
+                }
+
+                $dbValues[$convertedFormFieldKey] = $value;
+            }
+
         }
 
         $queryBuilder

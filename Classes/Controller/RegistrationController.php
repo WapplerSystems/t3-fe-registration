@@ -6,6 +6,7 @@ use Doctrine\DBAL\ParameterType;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Service\FlexFormService;
@@ -15,6 +16,7 @@ use TYPO3\CMS\Extbase\Exception;
 use TYPO3\CMS\Extbase\Mvc\Controller\ActionController;
 use TYPO3\CMS\Extbase\Persistence\Exception\IllegalObjectTypeException;
 use TYPO3\CMS\Extbase\Persistence\Exception\UnknownObjectException;
+use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
@@ -111,6 +113,7 @@ class RegistrationController extends ActionController
      */
     public function confirmAction(string $hash = ''): ResponseInterface
     {
+        $context = GeneralUtility::makeInstance(Context::class);
 
         if (($this->settings['form'] ?? '') === '') {
             return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found.']));
@@ -119,13 +122,16 @@ class RegistrationController extends ActionController
         if ($hash !== '') {
             /** @var ConfirmationRequest $confirmationRequest */
             $confirmationRequest = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
+            /** @var \DateTimeImmutable $currentDateTime */
+            $currentDateTime = $context->getPropertyFromAspect('date', 'full');
+            $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
+            $this->confirmationRequestRepository->update($confirmationRequest);
+
+            $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
+            $persistenceManager->persistAll();
+
 
             if ($confirmationRequest) {
-
-                /*
-                if ($confirmationRequest->isConfirmed()) {
-                    return $this->htmlResponse($this->view->renderSection('AlreadyConfirmed'));
-                }*/
 
                 $feUser = $this->confirmationService->requestToFeUser($confirmationRequest, $this->settings);
                 if ($feUser === null) {
@@ -150,10 +156,8 @@ class RegistrationController extends ActionController
                     ]
                 ];
 
-
                 $overrideConfiguration = [
                     'finishers' => [
-                        //'SaveFeUser' => $saveFeUserFinisher,
                         'CompleteRegistration' => $completeRegistrationFinisher,
                         'RedirectToUri' => $redirectFinisher,
                     ],

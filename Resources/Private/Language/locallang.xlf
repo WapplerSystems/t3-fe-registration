@@ -65,6 +65,10 @@
                 <source>Your password is:</source>
             </trans-unit>
 
+            <trans-unit id="notificationEmail.subject">
+                <source>A new user has successfully registered</source>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

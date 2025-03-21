@@ -8,10 +8,13 @@
                 <source>Main settings</source>
             </trans-unit>
             <trans-unit id="flexform.confirmationEmail">
-                <source>Confirmation email</source>
+                <source>Double opt in email</source>
             </trans-unit>
             <trans-unit id="flexform.welcomeEmail">
                 <source>Welcome email</source>
+            </trans-unit>
+            <trans-unit id="flexform.notificationEmails">
+                <source>Notification emails</source>
             </trans-unit>
             <trans-unit id="flexform.senderEmailAddress">
                 <source>Sender email address</source>
@@ -84,6 +87,18 @@
             </trans-unit>
             <trans-unit id="tt_content.pi_flexform.feregistration.step2">
                 <source>Form for step 2 (after email address confirmation)</source>
+            </trans-unit>
+            <trans-unit id="flexform.notificationEmails.registrationCompleted.emailAddresses">
+                <source>Email addresses to which a notification for completed registation is sent</source>
+            </trans-unit>
+            <trans-unit id="flexform.notificationEmails.emailAddressConfirmed.emailAddresses">
+                <source>Email addresses to which a notification for confirmed email address is sent</source>
+            </trans-unit>
+            <trans-unit id="tx_feregistration_domain_model_sender.name">
+                <source>Name</source>
+            </trans-unit>
+            <trans-unit id="tx_feregistration_domain_model_sender.email">
+                <source>Email</source>
             </trans-unit>
         </body>
     </file>

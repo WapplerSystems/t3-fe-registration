@@ -56,6 +56,12 @@
                 <source>Complete registration</source>
                 <target>Registrierung abschließen</target>
             </trans-unit>
+
+
+            <trans-unit id="notificationEmail.subject">
+                <source>A new user has successfully registered</source>
+                <target>Ein neue Benutzer hat sich erfolgreich registriert</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

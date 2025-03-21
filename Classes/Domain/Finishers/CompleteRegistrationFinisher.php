@@ -39,7 +39,6 @@ class CompleteRegistrationFinisher extends AbstractFinisher
      */
     protected function executeInternal()
     {
-
         /** @var ConfirmationRequest $confirmationRequest */
         $confirmationRequest = $this->options['confirmationRequest'];
         $feUserUid = $this->options['feUserUid'];

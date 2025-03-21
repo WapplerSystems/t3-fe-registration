@@ -233,5 +233,98 @@
                 </el>
             </ROOT>
         </welcomeEmail>
+        <notificationEmails>
+            <ROOT>
+                <sheetTitle>LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.notificationEmails</sheetTitle>
+                <type>array</type>
+                <el>
+                    <settings.notificationEmails.registrationCompleted.emailAddresses>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.notificationEmails.registrationCompleted.emailAddresses
+                        </label>
+                        <config>
+                            <type>inline</type>
+                            <foreign_table>tx_feregistration_domain_model_emailaddress</foreign_table>
+                            <foreign_field>uid_foreign</foreign_field>
+                            <foreign_table_field>tablename</foreign_table_field>
+                            <foreign_match_fields type="array">
+                                <fieldname>settings.notificationEmails.registrationCompleted.emailAddresses</fieldname>
+                            </foreign_match_fields>
+                            <maxitems>10</maxitems>
+                            <appearance>
+                                <useSortable>1</useSortable>
+                                <collapseAll>0</collapseAll>
+                                <levelLinksPosition>top</levelLinksPosition>
+                                <showPossibleLocalizationRecords>1</showPossibleLocalizationRecords>
+                                <showAllLocalizationLink>1</showAllLocalizationLink>
+                                <showSynchronizationLink>1</showSynchronizationLink>
+                            </appearance>
+                        </config>
+                    </settings.notificationEmails.registrationCompleted.emailAddresses>
+                    <!-- settings.notificationEmails.emailAddressConfirmed.emailAddresses>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.notificationEmails.emailAddressConfirmed.emailAddresses
+                        </label>
+                        <config>
+                            <type>inline</type>
+                            <foreign_table>tx_feregistration_domain_model_emailaddress</foreign_table>
+                            <foreign_field>uid_foreign</foreign_field>
+                            <foreign_table_field>tablename</foreign_table_field>
+                            <foreign_match_fields type="array">
+                                <fieldname>settings.notificationEmails.emailAddressConfirmed.emailAddresses</fieldname>
+                            </foreign_match_fields>
+                            <maxitems>10</maxitems>
+                            <appearance>
+                                <useSortable>1</useSortable>
+                                <collapseAll>0</collapseAll>
+                                <levelLinksPosition>top</levelLinksPosition>
+                                <showPossibleLocalizationRecords>1</showPossibleLocalizationRecords>
+                                <showAllLocalizationLink>1</showAllLocalizationLink>
+                                <showSynchronizationLink>1</showSynchronizationLink>
+                            </appearance>
+                        </config>
+                    </settings.notificationEmails.emailAddressConfirmed.emailAddresses -->
+                    <settings.notificationEmails.senderEmailAddress>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderEmailAddress
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.notificationEmails.senderEmailAddress>
+                    <settings.notificationEmails.senderName>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.senderName
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.notificationEmails.senderName>
+                    <settings.notificationEmails.useHTML>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.useHTML
+                        </label>
+                        <config>
+                            <type>check</type>
+                            <default>1</default>
+                        </config>
+                    </settings.notificationEmails.useHTML>
+                    <settings.notificationEmails.subject>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.subject
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.notificationEmails.subject>
+                </el>
+            </ROOT>
+        </notificationEmails>
     </sheets>
 </T3DataStructure>

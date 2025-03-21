@@ -5,6 +5,7 @@ namespace WapplerSystems\FeRegistration\Service;
 use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Type\BitSet;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Form\Mvc\Property\TypeConverter\PseudoFileReference;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
@@ -145,16 +146,19 @@ class DatabaseService
             if (isset($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey])) {
 
                 // check if field is bitmask field
-                if (is_array($value) && $GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'check' && count($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items']) > 1) {
-                    $bitSet = new BitSet();
-                    foreach ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items'] as $key => $item) {
-                        if (($item['value'] ?? null) !== null) {
-                            if (in_array($item['value'],$value)) {
-                                $bitSet->set($key+1);
+                if ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'check' && count($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items']) > 1) {
+                    $value = 0;
+                    if (is_array($value)) {
+                        $bitSet = new BitSet();
+                        foreach ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items'] as $key => $item) {
+                            if (($item['value'] ?? null) !== null) {
+                                if (in_array($item['value'],$value)) {
+                                    $bitSet->set($key+1);
+                                }
                             }
                         }
+                        $value = $bitSet->__toInt();
                     }
-                    $value = $bitSet->__toInt();
                 }
                 if ($value instanceof PseudoFileReference) {
                     $pseudoFileReference = $value;

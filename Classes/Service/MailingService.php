@@ -7,6 +7,7 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Mail\FluidEmail;
 use TYPO3\CMS\Core\Mail\MailerInterface;
+use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Exception;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -36,11 +37,11 @@ class MailingService
         $senderName = $GLOBALS['TYPO3_CONF_VARS']['MAIL']['defaultMailFromName'] ?? '';
 
 
-        $senderAddress = !empty($settings['confirmationEmail']['senderAddress'] ?? '') ? $settings['confirmationEmail']['senderAddress'] :  $senderAddress;
+        $senderAddress = !empty($settings['confirmationEmail']['senderEmailAddress'] ?? '') ? $settings['confirmationEmail']['senderEmailAddress'] :  $senderAddress;
         $senderName = !empty($settings['confirmationEmail']['senderName'] ?? '') ? $settings['confirmationEmail']['senderName'] :  $senderName;
 
         if (empty($senderAddress)) {
-            throw new Exception('The option "senderAddress" must be set.', 1735853778);
+            throw new Exception('The option "senderEmailAddress" must be set.', 1735853778);
         }
         if (empty($senderName)) {
             throw new Exception('The option "senderName" must be set.', 1735853779);
@@ -97,7 +98,7 @@ class MailingService
         $senderName = !empty($settings['welcomeEmail']['senderName'] ?? '') ? $settings['welcomeEmail']['senderName'] :  $senderName;
 
         if (empty($senderAddress)) {
-            throw new Exception('The option "senderAddress" must be set.', 1735853778);
+            throw new Exception('The option "senderEmailAddress" must be set.', 1735853778);
         }
         if (empty($senderName)) {
             throw new Exception('The option "senderName" must be set.', 1735853779);

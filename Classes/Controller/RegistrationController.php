@@ -20,7 +20,9 @@ use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Model\EmailAddress;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Domain\Repository\EmailAddressRepository;
 use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
 use WapplerSystems\FeRegistration\Service\ConfirmationService;
 use WapplerSystems\FeRegistration\Service\MailingService;
@@ -30,6 +32,7 @@ class RegistrationController extends ActionController
 
 
     public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
+                                readonly EmailAddressRepository        $emailAddressRepository,
                                 EventDispatcherInterface               $eventDispatcher,
                                 readonly ConfirmationService           $confirmationService)
     {
@@ -114,6 +117,8 @@ class RegistrationController extends ActionController
     public function confirmAction(string $hash = ''): ResponseInterface
     {
         $context = GeneralUtility::makeInstance(Context::class);
+        $currentContentObject = $this->request->getAttribute('currentContentObject');
+        $contentUid = $currentContentObject->data['uid'];
 
         if (($this->settings['form'] ?? '') === '') {
             return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found.']));
@@ -149,6 +154,29 @@ class RegistrationController extends ActionController
                         'settings' => $this->settings
                     ]
                 ];
+
+                $notificationEmailReceipients = [];
+                if ((int)($this->settings['notificationEmails']['registrationCompleted']['emailAddresses'] ?? 0) > 0) {
+                    $addresses = $this->emailAddressRepository->findByTablenameAndUidForeignAndFieldname('tt_content', $contentUid, 'settings.notificationEmails.registrationCompleted.emailAddresses');
+                    /** @var EmailAddress $address */
+                    foreach ($addresses as $address) {
+                        $notificationEmailReceipients[$address->getEmail()] = $address->getName();
+                    }
+                }
+                $notificationEmailFinisher = [
+                    'identifier' => 'EmailToReceiver',
+                    'options' => [
+                        'senderAddress' => $this->settings['notificationEmails']['senderEmailAddress'] ?? '',
+                        'senderName' => $this->settings['notificationEmails']['senderName'] ?? '',
+                        'useFluidEmail' => $this->settings['notificationEmails']['useFluidEmail'] ?? 0,
+                        'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:notificationEmail.subject'),
+                        'recipients' => $notificationEmailReceipients,
+                        'templateName' => 'Email/Notification/RegistrationCompleted',
+                        'variables' => [
+                            'user' => $feUser,
+                        ]
+                    ]
+                ];
                 $redirectFinisher = [
                     'identifier' => 'RedirectToUri',
                     'options' => [
@@ -156,11 +184,15 @@ class RegistrationController extends ActionController
                     ]
                 ];
 
+                $finishers = [];
+                if (count($notificationEmailReceipients) > 0) {
+                    $finishers['NotificationEmail'] = $notificationEmailFinisher;
+                }
+                $finishers['CompleteRegistration'] = $completeRegistrationFinisher;
+                $finishers['RedirectToUri'] = $redirectFinisher;
+
                 $overrideConfiguration = [
-                    'finishers' => [
-                        'CompleteRegistration' => $completeRegistrationFinisher,
-                        'RedirectToUri' => $redirectFinisher,
-                    ],
+                    'finishers' => $finishers,
                     'renderingOptions' => [
                         'controllerAction' => 'confirm',
                         'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],

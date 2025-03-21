@@ -1,0 +1,8 @@
+<f:layout name="SystemEmail" />
+<f:section name="Title">{title}</f:section>
+<f:section name="Main">
+
+User: {user.username}
+
+
+</f:section>

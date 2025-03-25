@@ -13,6 +13,7 @@ return [
             'ignorePageTypeRestriction' => true,
         ],
         'searchFields' => 'name,email',
+        'hideTable' => true,
         //'iconfile' => 'EXT:myext/Resources/Public/Icons/tx_myext_contacts.svg',
     ],
     'columns' => [

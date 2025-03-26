@@ -16,6 +16,10 @@
                 <source>Thank you, your validation was successful. You can now login.</source>
                 <target>Vielen Dank, Ihre Registrierung war erfolgreich. Sie können sich jetzt einloggen.</target>
             </trans-unit>
+            <trans-unit id="text.success.mustBeConfirmed">
+                <source>Thank you, your registration was successful. Your account must be confirmed. Please wait.</source>
+                <target>Vielen Dank, Ihre Registrierung war erfolgreich. Ihr Konto muss erst bestätigt werden. Bitte warten Sie.</target>
+            </trans-unit>
             <trans-unit id="text.notFound">
                 <source>Unfortunately no matching entry was found for the key.</source>
                 <target>Leider wurde kein passender Eintrag für den Schlüssel gefunden.</target>

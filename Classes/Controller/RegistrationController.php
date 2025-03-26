@@ -217,6 +217,10 @@ class RegistrationController extends ActionController
     public function successAction(): ResponseInterface
     {
 
+        $this->view->assignMultiple([
+            'settings' => $this->settings,
+        ]);
+
         return $this->htmlResponse();
     }
 

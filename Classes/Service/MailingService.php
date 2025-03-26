@@ -112,7 +112,8 @@ class MailingService
             ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
             ->assign('title', LocalizationUtility::translate('subject.welcome', 'fe_registration'))
             ->assign('user', $feUser)
-            ->assign('password', $password);
+            ->assign('password', $password)
+            ->assign('mustBeConfirmed', $settings['feUserMustConfirmed'] ?? false);
 
         /*
         if (!empty($languageBackup)) {

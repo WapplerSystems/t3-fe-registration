@@ -43,6 +43,9 @@
             <trans-unit id="flexform.createFeUser">
                 <source>Create fe_user record after confirmation</source>
             </trans-unit>
+            <trans-unit id="flexform.feUserMustConfirmed">
+                <source>fe_user must be confirmed after completed registration (set visible)</source>
+            </trans-unit>
             <trans-unit id="flexform.usergroups">
                 <source>Add usergroups at creation</source>
             </trans-unit>

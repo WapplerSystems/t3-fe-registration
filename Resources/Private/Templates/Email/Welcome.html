@@ -13,4 +13,8 @@
         <p><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.password" /> {password}</p>
     </f:if>
 
+    <f:if condition="{mustBeConfirmed}">
+        <p><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.feUserMustBeConfirmed" /></p>
+    </f:if>
+
 </f:section>

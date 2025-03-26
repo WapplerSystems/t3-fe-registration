@@ -3,12 +3,10 @@
 namespace WapplerSystems\FeRegistration\Service;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
-use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
 
 class ConfirmationService
 {
@@ -31,6 +29,7 @@ class ConfirmationService
         if ((int)($settings['createFeUser'] ?? 0) === 1) {
             $values = $confirmationRequest->getDecodedValues();
             $values['registrationRequest'] = $confirmationRequest->getUid();
+            $values['disable'] = ((int)($settings['feUserMustConfirmed'] ?? 0)) === 1 ? 1 : 0;
             return $this->databaseService->createFeUser($values, $settings);
         }
         return null;
@@ -45,9 +44,6 @@ class ConfirmationService
 
         $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
         $persistenceManager->persistAll();
-
-
-
     }
 
 

@@ -8,5 +8,6 @@
 
 <f:if condition="{password}"><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.password" /> {password}</f:if>
 
+<f:if condition="{mustBeConfirmed}"><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.feUserMustBeConfirmed" /></f:if>
 
 </f:section>

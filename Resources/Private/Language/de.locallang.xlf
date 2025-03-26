@@ -47,14 +47,26 @@
                 <target>Der Benutzername ist leider schon in Verwendung.</target>
             </trans-unit>
 
-            <trans-unit id="element.privacyPolicyCheckbox.properties.description">
-                <source><![CDATA[I have read and accepted the <a href="%s">privacy policy</a>.]]></source>
-                <target><![CDATA[Ich habe die <a href="%s">Datenschutzerklärung</a> gelesen und akzeptiert.]]></target>
-            </trans-unit>
-
             <trans-unit id="btn.completeRegistration">
                 <source>Complete registration</source>
                 <target>Registrierung abschließen</target>
+            </trans-unit>
+
+            <trans-unit id="welcomeEmail.text">
+                <source>Thank you for your registration.</source>
+                <target>Vielen Dank für Ihre Registrierung.</target>
+            </trans-unit>
+            <trans-unit id="welcomeEmail.username">
+                <source>Your user name is:</source>
+                <target>Ihr Benutzername lautet:</target>
+            </trans-unit>
+            <trans-unit id="welcomeEmail.password">
+                <source>Your password is:</source>
+                <target>Ihr Passwort lautet:</target>
+            </trans-unit>
+            <trans-unit id="welcomeEmail.feUserMustBeConfirmed">
+                <source>Please note that your registration must be confirmed before you can log in.</source>
+                <target>Bitte beachten Sie, dass Ihre Registrierung noch bestätigt werden muss, bevor Sie sich anmelden können.</target>
             </trans-unit>
 
 

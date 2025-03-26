@@ -51,10 +51,6 @@
                 <source><![CDATA[An unconfirmed registration with this email address already exists. Send registration email again? <a data-uri="%s" class="btn-resend-opt-in" href="#">Resend</a>]]></source>
             </trans-unit>
 
-            <trans-unit id="element.privacyPolicyCheckbox.properties.description">
-                <source><![CDATA[I have read and accepted the <a href="%s">privacy policy</a>.]]></source>
-            </trans-unit>
-
             <trans-unit id="welcomeEmail.text">
                 <source>Thank you for your registration.</source>
             </trans-unit>
@@ -63,6 +59,9 @@
             </trans-unit>
             <trans-unit id="welcomeEmail.password">
                 <source>Your password is:</source>
+            </trans-unit>
+            <trans-unit id="welcomeEmail.feUserMustBeConfirmed">
+                <source>Please note that your registration must be confirmed before you can log in.</source>
             </trans-unit>
 
             <trans-unit id="notificationEmail.subject">

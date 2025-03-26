@@ -125,6 +125,16 @@
                             <default>1</default>
                         </config>
                     </settings.createFeUser>
+
+                    <settings.feUserMustConfirmed>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.feUserMustConfirmed
+                        </label>
+                        <config>
+                            <type>check</type>
+                            <default>0</default>
+                        </config>
+                    </settings.feUserMustConfirmed>
                 </el>
             </ROOT>
         </sDEF>

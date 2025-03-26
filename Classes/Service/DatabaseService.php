@@ -82,14 +82,16 @@ class DatabaseService
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
         );
-        $return = $queryBuilder
+        $restrictions = $queryBuilder->getRestrictions();
+        $restrictions->removeByType(HiddenRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
+        return $queryBuilder
             ->select('*')
             ->from('fe_users')
             ->where(
                 $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($feUserUid, ParameterType::INTEGER))
             )
             ->executeQuery()->fetchAssociative();
-        return $return;
     }
 
     public function updateFeUserPassword(mixed $feUserUid, string $password): void
@@ -97,6 +99,9 @@ class DatabaseService
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
         );
+        $restrictions = $queryBuilder->getRestrictions();
+        $restrictions->removeByType(HiddenRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
         $queryBuilder
             ->update('fe_users')
             ->set('password', $password)
@@ -110,6 +115,9 @@ class DatabaseService
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
         );
+        $restrictions = $queryBuilder->getRestrictions();
+        $restrictions->removeByType(HiddenRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
         $queryBuilder
             ->update('fe_users')
             ->set('registration_completed', 1)
@@ -124,6 +132,9 @@ class DatabaseService
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
         );
+        $restrictions = $queryBuilder->getRestrictions();
+        $restrictions->removeByType(HiddenRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
         $connection = GeneralUtility::makeInstance(ConnectionPool::class)
             ->getConnectionForTable('fe_users');
         $schemaManager = $connection->createSchemaManager();
@@ -162,26 +173,30 @@ class DatabaseService
                         $value = $bitSet->__toInt();
                     }
                 }
-                if ($value instanceof PseudoFileReference) {
-                    $pseudoFileReference = $value;
-                    $queryBuilderFileReference = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-                        'sys_file_reference'
-                    );
-                    $queryBuilderFileReference
-                        ->insert('sys_file_reference')
-                        ->values([
-                            'uid_local' => $pseudoFileReference->getOriginalResource()->getOriginalFile()->getUid(),
-                            'uid_foreign' => $feUserUid,
-                            'tablenames' => 'fe_users',
-                            'fieldname' => $convertedFormFieldKey,
-                            'crdate' => time(),
-                            'tstamp' => time(),
-                            'pid' => $feUser['pid'],
-                        ])
-                        ->executeStatement();
-
-                    $value = 1;
+                if ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'file') {
+                    if ($value instanceof PseudoFileReference) {
+                        $pseudoFileReference = $value;
+                        $queryBuilderFileReference = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
+                            'sys_file_reference'
+                        );
+                        $queryBuilderFileReference
+                            ->insert('sys_file_reference')
+                            ->values([
+                                'uid_local' => $pseudoFileReference->getOriginalResource()->getOriginalFile()->getUid(),
+                                'uid_foreign' => $feUserUid,
+                                'tablenames' => 'fe_users',
+                                'fieldname' => $convertedFormFieldKey,
+                                'crdate' => time(),
+                                'tstamp' => time(),
+                                'pid' => $feUser['pid'],
+                            ])
+                            ->executeStatement();
+                        $value = 1;
+                    } else {
+                        $value = 0;
+                    }
                 }
+
 
                 $dbValues[$convertedFormFieldKey] = $value;
             }

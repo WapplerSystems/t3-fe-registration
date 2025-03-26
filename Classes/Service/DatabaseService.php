@@ -4,8 +4,8 @@ namespace WapplerSystems\FeRegistration\Service;
 
 use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
+use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Type\BitSet;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Form\Mvc\Property\TypeConverter\PseudoFileReference;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
@@ -62,14 +62,16 @@ class DatabaseService
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
         );
-        $return = $queryBuilder
+        $restrictions = $queryBuilder->getRestrictions();
+        $restrictions->removeByType(HiddenRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
+        return $queryBuilder
             ->select('*')
             ->from('fe_users')
             ->where(
                 $queryBuilder->expr()->eq('registration_request', $queryBuilder->createNamedParameter($confirmationRequest->getUid(), ParameterType::INTEGER))
             )
             ->executeQuery()->fetchAssociative();
-        return $return;
     }
 
     /**

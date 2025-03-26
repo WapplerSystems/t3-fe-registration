@@ -5,7 +5,6 @@ namespace WapplerSystems\FeRegistration\Service;
 use Doctrine\DBAL\ParameterType;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
-use TYPO3\CMS\Core\Type\BitSet;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Form\Mvc\Property\TypeConverter\PseudoFileReference;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
@@ -160,17 +159,20 @@ class DatabaseService
 
                 // check if field is bitmask field
                 if ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'check' && count($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items']) > 1) {
-                    $value = 0;
                     if (is_array($value)) {
-                        $bitSet = new BitSet();
+                        $strBitSet = '';
                         foreach ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items'] as $key => $item) {
                             if (($item['value'] ?? null) !== null) {
-                                if (in_array($item['value'],$value)) {
-                                    $bitSet->set($key+1);
+                                if (in_array($item['value'], $value, true)) {
+                                    $strBitSet .= '1';
+                                } else {
+                                    $strBitSet .= '0';
                                 }
                             }
                         }
-                        $value = $bitSet->__toInt();
+                        $value = bindec(strrev($strBitSet));
+                    } else {
+                        $value = 0;
                     }
                 }
                 if ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'file') {

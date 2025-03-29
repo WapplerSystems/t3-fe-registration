@@ -78,6 +78,11 @@
                 <source>A new user has successfully registered</source>
                 <target>Ein neue Benutzer hat sich erfolgreich registriert</target>
             </trans-unit>
+
+            <trans-unit id="subject.welcome">
+                <source>Welcome</source>
+                <target>Willkommen</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

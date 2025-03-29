@@ -7,6 +7,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use TYPO3\CMS\Core\Context\Context;
+use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Service\FlexFormService;
@@ -42,25 +43,39 @@ class RegistrationController extends ActionController
     public function newAction(): ResponseInterface
     {
         if (($this->settings['form'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found.']));
+            return $this->renderErrorMessage(
+                message: 'No form configuration found.',
+            );
         }
         if (($this->settings['identifierFieldName'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No identifier field name set.']));
+            return $this->renderErrorMessage(
+                message: 'No identifier field name set.',
+            );
         }
         if (($this->settings['confirmationEmail']['senderEmailAddress'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No sender email address set.']));
+            return $this->renderErrorMessage(
+                message: 'No sender email address set.',
+            );
         }
         if (($this->settings['confirmationEmail']['senderName'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No sender name set.']));
+            return $this->renderErrorMessage(
+                message: 'No sender name set.',
+            );
         }
         if (($this->settings['confirmationRequestPid'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No storage for confirmation requests set.']));
+            return $this->renderErrorMessage(
+                message: 'No storage for confirmation requests set.',
+            );
         }
         if (($this->settings['feUserStoragePid'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No storage of user records set.']));
+            return $this->renderErrorMessage(
+                message: 'No storage of user records set.',
+            );
         }
         if (($this->settings['usergroups'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No usergroup set.']));
+            return $this->renderErrorMessage(
+                message: 'No usergroup set.',
+            );
         }
 
         $confirmationRequestFinisher = [
@@ -100,19 +115,42 @@ class RegistrationController extends ActionController
 
         $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder);
 
-        return $this->htmlResponse($this->view->renderSection('Form', [
+        $this->view->assignMultiple([
             'settings' => $this->settings,
             'overrideConfiguration' => $overrideConfiguration,
             'factory' => $factory,
-        ]));
+        ]);
+
+        return $this->htmlResponse();
     }
+
+
+    public function renderErrorMessage(?string $message = null, ?string $title = null): ResponseInterface
+    {
+        $this->view->assignMultiple([
+            'settings' => $this->settings,
+            'title' => $title,
+            'message' => $message,
+        ]);
+        return $this->htmlResponse($this->view->render('ErrorMessage'));
+    }
+
+    public function renderNotification(string $type): ResponseInterface
+    {
+        $this->view->assignMultiple([
+            'settings' => $this->settings,
+            'type' => $type,
+        ]);
+        return $this->htmlResponse($this->view->render('Notifications'));
+    }
+
 
     /**
      *
      * @param string $hash
      * @return ResponseInterface
      * @throws IllegalObjectTypeException
-     * @throws UnknownObjectException
+     * @throws UnknownObjectException|AspectNotFoundException
      */
     public function confirmAction(string $hash = ''): ResponseInterface
     {
@@ -121,29 +159,36 @@ class RegistrationController extends ActionController
         $contentUid = $currentContentObject->data['uid'];
 
         if (($this->settings['form'] ?? '') === '') {
-            return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No form configuration found.']));
+            return $this->renderErrorMessage(
+                message: 'No form configuration found.',
+            );
         }
 
         if ($hash !== '') {
             /** @var ConfirmationRequest $confirmationRequest */
             $confirmationRequest = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
-            /** @var \DateTimeImmutable $currentDateTime */
-            $currentDateTime = $context->getPropertyFromAspect('date', 'full');
-            $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
-            $this->confirmationRequestRepository->update($confirmationRequest);
-
-            $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-            $persistenceManager->persistAll();
-
 
             if ($confirmationRequest) {
 
+                /** @var \DateTimeImmutable $currentDateTime */
+                $currentDateTime = $context->getPropertyFromAspect('date', 'full');
+                $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
+                $this->confirmationRequestRepository->update($confirmationRequest);
+
+                $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
+                $persistenceManager->persistAll();
+
+
                 $feUser = $this->confirmationService->requestToFeUser($confirmationRequest, $this->settings);
                 if ($feUser === null) {
-                    return $this->htmlResponse($this->view->renderSection('Error', ['error' => 'No user loadable or creatable.']));
+                    return $this->renderErrorMessage(
+                        message: 'No user loadable or creatable.',
+                    );
                 }
                 if (($feUser['registration_completed'] ?? 0) === 1) {
-                    return $this->htmlResponse($this->view->renderSection('AlreadyCompleted'));
+                    return $this->renderNotification(
+                        type: 'AlreadyCompleted',
+                    );
                 }
 
                 $completeRegistrationFinisher = [
@@ -155,12 +200,12 @@ class RegistrationController extends ActionController
                     ]
                 ];
 
-                $notificationEmailReceipients = [];
+                $notificationEmailRecipients = [];
                 if ((int)($this->settings['notificationEmails']['registrationCompleted']['emailAddresses'] ?? 0) > 0) {
                     $addresses = $this->emailAddressRepository->findByTablenameAndUidForeignAndFieldname('tt_content', $contentUid, 'settings.notificationEmails.registrationCompleted.emailAddresses');
                     /** @var EmailAddress $address */
                     foreach ($addresses as $address) {
-                        $notificationEmailReceipients[$address->getEmail()] = $address->getName();
+                        $notificationEmailRecipients[$address->getEmail()] = $address->getName();
                     }
                 }
                 $notificationEmailFinisher = [
@@ -170,7 +215,7 @@ class RegistrationController extends ActionController
                         'senderName' => $this->settings['notificationEmails']['senderName'] ?? '',
                         'useFluidEmail' => $this->settings['notificationEmails']['useFluidEmail'] ?? 0,
                         'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:notificationEmail.subject'),
-                        'recipients' => $notificationEmailReceipients,
+                        'recipients' => $notificationEmailRecipients,
                         'templateName' => 'Email/Notification/RegistrationCompleted',
                         'variables' => [
                             'user' => $feUser,
@@ -185,7 +230,7 @@ class RegistrationController extends ActionController
                 ];
 
                 $finishers = [];
-                if (count($notificationEmailReceipients) > 0) {
+                if (count($notificationEmailRecipients) > 0) {
                     $finishers['NotificationEmail'] = $notificationEmailFinisher;
                 }
                 $finishers['CompleteRegistration'] = $completeRegistrationFinisher;
@@ -202,15 +247,18 @@ class RegistrationController extends ActionController
 
                 $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder, $confirmationRequest->getDecodedValues());
 
-                return $this->htmlResponse($this->view->renderSection('Form', [
+                $this->view->assignMultiple([
                     'settings' => $this->settings,
                     'overrideConfiguration' => $overrideConfiguration,
                     'factory' => $factory,
-                ]));
+                ]);
+                return $this->htmlResponse();
             }
         }
 
-        return $this->htmlResponse($this->view->renderSection('HashNotFound'));
+        return $this->renderNotification(
+            type: 'HashNotFound',
+        );
     }
 
 
@@ -288,14 +336,9 @@ class RegistrationController extends ActionController
                 $mailer = GeneralUtility::makeInstance(MailingService::class);
                 $mailer->sendConfirmationMail($confirmationRequestRecord, $this->request, $settings, $currentPageId);
 
-
                 return new JsonResponse(['success' => true]);
             }
-
-
         }
-
-
         return new JsonResponse(['success' => false]);
     }
 

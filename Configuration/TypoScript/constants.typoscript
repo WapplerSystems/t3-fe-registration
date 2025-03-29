@@ -1,7 +1,11 @@
 
-# customsubcategory=optInEmail=Opt-In Email
-
 plugin.tx_feregistration {
+
+  view {
+    templateRootPath = EXT:fe_registration/Resources/Private/Templates
+    partialRootPath = EXT:fe_registration/Resources/Private/Partials
+    layoutRootPath = EXT:fe_registration/Resources/Private/Layouts
+  }
 
   settings {
 

@@ -48,7 +48,7 @@ class CompleteRegistrationFinisher extends AbstractFinisher
         if (count($formValues)) {
             $this->databaseService->updateFeUser($feUserUid, $formValues);
         }
-        $formValues = array_merge($formValues, $confirmationRequest->getDecodedValues());
+        $formValues = array_merge($confirmationRequest->getDecodedValues(), $formValues);
 
         $user = $this->databaseService->getFeUser($feUserUid);
 

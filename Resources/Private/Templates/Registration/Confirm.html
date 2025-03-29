@@ -1,26 +1,11 @@
 <html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers" xmlns:formvh="http://typo3.org/ns/TYPO3/CMS/Form/ViewHelpers" xmlns:registration="http://typo3.org/ns/WapplerSystems/FeRegistration/ViewHelpers" data-namespace-typo3-fluid="true">
 
-<f:section name="Form">
+<f:layout name="Default"/>
+
+<f:section name="Main">
 
     <registration:render persistenceIdentifier="{settings.form}" overrideConfiguration="{overrideConfiguration}" factoryClass="{factory}" />
 
 </f:section>
-<f:section name="Error">
-
-    <p class="alert alert-danger">Error</p>
-
-</f:section>
-<f:section name="HashNotFound">
-
-
-    <p class="alert alert-info"><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:text.hashNotFound" /> Hash not found</p>
-
-</f:section>
-<f:section name="AlreadyCompleted">
-
-    <p class="alert alert-info"><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:text.alreadyCompleted" /> </p>
-
-</f:section>
-
 
 </html>

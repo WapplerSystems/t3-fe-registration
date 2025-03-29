@@ -105,7 +105,7 @@ class MailingService
         }
 
         $mail = $this
-            ->initializeFluidEmail('Email/Welcome', $settings, $request)
+            ->initializeFluidEmail('Email/Welcome', $settings['email'], $request)
             ->from(new Address($senderAddress, $senderName))
             ->to($receiverAddress)
             ->subject(LocalizationUtility::translate('subject.welcome', 'fe_registration'))
@@ -155,6 +155,8 @@ class MailingService
             $globalConfig['templateRootPaths'] ?? [],
             $localConfig['templateRootPaths'] ?? [],
         ));
+        DebugUtility::debug($globalConfig['layoutRootPaths']);
+        DebugUtility::debug($localConfig['layoutRootPaths']);
         $templatePaths->setLayoutRootPaths(array_replace(
             $globalConfig['layoutRootPaths'] ?? [],
             $localConfig['layoutRootPaths'] ?? [],

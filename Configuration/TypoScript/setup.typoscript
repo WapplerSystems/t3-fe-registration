@@ -1,15 +1,26 @@
 plugin.tx_feregistration {
   view {
-    templateRootPaths.10 = EXT:fe_registration/Resources/Private/Templates
-    partialRootPaths.10 = EXT:fe_registration/Resources/Private/Partials
-    layoutRootPaths.10 = EXT:fe_registration/Resources/Private/Layouts
+    templateRootPaths.0 = EXT:fe_registration/Resources/Private/Templates
+    templateRootPaths.10 = {$plugin.tx_feregistration.view.templateRootPath}
+    partialRootPaths.0 = EXT:fe_registration/Resources/Private/Partials
+    partialRootPaths.10 = {$plugin.tx_feregistration.view.partialRootPath}
+    layoutRootPaths.0 = EXT:fe_registration/Resources/Private/Layouts
+    layoutRootPaths.10 = {$plugin.tx_feregistration.view.layoutRootPath}
   }
 
   settings {
 
-    templateRootPaths < plugin.tx_feregistration.view.templateRootPaths
-    partialRootPaths < plugin.tx_feregistration.view.partialRootPaths
-    layoutRootPaths < plugin.tx_feregistration.view.layoutRootPaths
+    email {
+      layoutRootPaths {
+        40 = EXT:fe_registration/Resources/Private/Layouts/
+        50 = {$plugin.tx_feregistration.view.layoutRootPath}
+      }
+      templateRootPaths {
+        40 = EXT:fe_registration/Resources/Private/Templates/
+        50 = {$plugin.tx_feregistration.view.templateRootPath}
+      }
+    }
+
   }
 }
 

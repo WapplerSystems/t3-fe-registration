@@ -9,7 +9,7 @@ class FormInitializationHook
 {
 
 
-    public function afterInitializeCurrentPage(FormRuntime $formRuntime, CompositeRenderableInterface $currentPage = null, CompositeRenderableInterface $lastPage = null, array $requestArguments = []): ?CompositeRenderableInterface
+    public function afterInitializeCurrentPage(FormRuntime $formRuntime, ?CompositeRenderableInterface $currentPage = null, ?CompositeRenderableInterface $lastPage = null, array $requestArguments = []): ?CompositeRenderableInterface
     {
         if ($formRuntime->getFormDefinition()->getPages()[0]->getIdentifier() === 'pseudoPage') {
             $currentPage = null;

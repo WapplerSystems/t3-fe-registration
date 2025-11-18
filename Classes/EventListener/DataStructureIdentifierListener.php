@@ -60,6 +60,12 @@ readonly class DataStructureIdentifierListener
      * Some dependencies are declared lazy since they otherwise collide with
      * early instance creations of FE PageRepository when called in sitations
      * where DB does not yet exist (especially acceptance test setup)
+     * @param FormPersistenceManagerInterface $formPersistenceManager
+     * @param ConfigurationService $configurationService
+     * @param TranslationService $translationService
+     * @param FlashMessageService $flashMessageService
+     * @param ExtbaseConfigurationManagerInterface $extbaseConfigurationManager
+     * @param ExtFormConfigurationManagerInterface $extFormConfigurationManager
      * @todo: Clean up __construct() / init() of PageRepository!
      */
     public function __construct(
@@ -71,7 +77,7 @@ readonly class DataStructureIdentifierListener
         protected FlashMessageService                  $flashMessageService,
         #[Autowire(lazy: true)]
         protected ExtbaseConfigurationManagerInterface $extbaseConfigurationManager,
-        #[Autowire(lazy: true)]
+        #[Autowire(lazy: ExtFormConfigurationManagerInterface::class)]
         protected ExtFormConfigurationManagerInterface $extFormConfigurationManager,
     )
     {

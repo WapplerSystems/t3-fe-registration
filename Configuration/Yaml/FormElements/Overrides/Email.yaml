@@ -2,9 +2,9 @@ prototypes:
   standard:
     formElementsDefinition:
       Email:
-        formEditor:
-          editors:
-            900:
+#        formEditor:
+#          editors:
+#            900:
 #              selectOptions:
 #                8750:
 #                  value: ConfirmationRequest

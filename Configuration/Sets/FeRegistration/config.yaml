@@ -2,3 +2,4 @@ name: wapplersystems/fe-registration
 label: Frontend Registration
 dependencies:
   - typo3/fluid-styled-content
+  - wapplersystems/form-extended

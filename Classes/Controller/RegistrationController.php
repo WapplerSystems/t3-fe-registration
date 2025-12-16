@@ -52,6 +52,11 @@ class RegistrationController extends ActionController
                 message: 'No identifier field name set.',
             );
         }
+        if (($this->settings['emailFieldName'] ?? '') === '') {
+            return $this->renderErrorMessage(
+                message: 'No email field name set.',
+            );
+        }
         if (($this->settings['confirmationEmail']['senderEmailAddress'] ?? '') === '') {
             return $this->renderErrorMessage(
                 message: 'No sender email address set.',
@@ -91,7 +96,7 @@ class RegistrationController extends ActionController
                 'senderName' => $this->settings['confirmationEmail']['senderName'] ?? '',
                 'useFluidEmail' => $this->settings['confirmationEmail']['useFluidEmail'] ?? 0,
                 'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject'),
-                'recipients' => ['{email}'],
+                'recipients' => ['{'.$this->settings['emailFieldName'].'}'],
                 'templateName' => 'Email/Confirmation',
             ]
         ];

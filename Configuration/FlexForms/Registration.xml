@@ -44,7 +44,6 @@
                         </config>
                     </settings.forward>
 
-
                     <settings.identifierFieldName>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.identifierFieldName
@@ -55,6 +54,17 @@
                             <eval>trim</eval>
                         </config>
                     </settings.identifierFieldName>
+
+                    <settings.emailFieldName>
+                        <label>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.emailFieldName
+                        </label>
+                        <config>
+                            <type>input</type>
+                            <size>30</size>
+                            <eval>trim</eval>
+                        </config>
+                    </settings.emailFieldName>
 
                     <settings.allowedParameterizedFields>
                         <label>

@@ -26,7 +26,10 @@
                 <source>Storage for confirmation requests</source>
             </trans-unit>
             <trans-unit id="flexform.identifierFieldName">
-                <source>Field name of the username</source>
+                <source>Name of the username field</source>
+            </trans-unit>
+            <trans-unit id="flexform.emailFieldName">
+                <source>Name of the email field</source>
             </trans-unit>
             <trans-unit id="flexform.timeLock">
                 <source>Time block for resending</source>

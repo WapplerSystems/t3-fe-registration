@@ -2,6 +2,7 @@ imports:
   - { resource: "./Finishers/ConfirmationRequest.yaml" }
   - { resource: "./Finishers/ConfirmationEmail.yaml" }
   - { resource: "./Finishers/CompleteRegistration.yaml" }
+  - { resource: "./Finishers/RestoreFormValues.yaml" }
   - { resource: "./Finishers/Overrides/Confirmation.yaml" }
   - { resource: "./Finishers/Overrides/EmailToSender.yaml" }
   - { resource: "./Finishers/Overrides/EmailToReceiver.yaml" }

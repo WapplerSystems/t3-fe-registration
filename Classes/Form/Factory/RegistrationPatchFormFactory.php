@@ -53,6 +53,20 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             }
         }
 
+        if ($preConfirmation) {
+            // remove in pre confirmation-steps all finishers except ConfirmationRequest, ConfirmationEmail and RedirectToUri
+            foreach ($configuration['finishers'] ?? [] as $finisherName => $finisherConfig) {
+                if ($finisherName !== 'ConfirmationRequest' && $finisherName !== 'ConfirmationEmail' && $finisherName !== 'RedirectToUri') {
+                    unset($newConfiguration['finishers'][$finisherName]);
+                }
+            }
+        } else {
+            // set RestoreFormValues to first position of finishers
+            if (array_key_exists('RestoreFormValues', $newConfiguration['finishers'])) {
+                $newConfiguration['finishers'] = ['RestoreFormValues' => $newConfiguration['finishers']['RestoreFormValues']] + $newConfiguration['finishers'];
+            }
+        }
+
         foreach ($configuration['renderables'] ?? [] as $pageKey => $page) {
             if ($page['type'] === 'EmailConfirmation') {
                 if ($preConfirmation) {

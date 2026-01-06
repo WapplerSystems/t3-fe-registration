@@ -35,7 +35,9 @@ class RegistrationController extends ActionController
     public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
                                 readonly EmailAddressRepository        $emailAddressRepository,
                                 EventDispatcherInterface               $eventDispatcher,
-                                readonly ConfirmationService           $confirmationService)
+                                readonly ConfirmationService           $confirmationService,
+                                readonly PersistenceManager            $persistenceManager
+    )
     {
     }
 
@@ -96,7 +98,7 @@ class RegistrationController extends ActionController
                 'senderName' => $this->settings['confirmationEmail']['senderName'] ?? '',
                 'useFluidEmail' => $this->settings['confirmationEmail']['useFluidEmail'] ?? 0,
                 'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject'),
-                'recipients' => ['{'.$this->settings['emailFieldName'].'}'],
+                'recipients' => ['{' . $this->settings['emailFieldName'] . '}'],
                 'templateName' => 'Email/Confirmation',
             ]
         ];
@@ -179,9 +181,7 @@ class RegistrationController extends ActionController
                 $currentDateTime = $context->getPropertyFromAspect('date', 'full');
                 $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
                 $this->confirmationRequestRepository->update($confirmationRequest);
-
-                $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-                $persistenceManager->persistAll();
+                $this->persistenceManager->persistAll();
 
 
                 $feUser = $this->confirmationService->requestToFeUser($confirmationRequest, $this->settings);
@@ -198,6 +198,14 @@ class RegistrationController extends ActionController
 
                 $completeRegistrationFinisher = [
                     'identifier' => 'CompleteRegistration',
+                    'options' => [
+                        'confirmationRequest' => $confirmationRequest,
+                        'feUserUid' => $feUser['uid'],
+                        'settings' => $this->settings
+                    ]
+                ];
+                $restoreFormValuesFinisher = [
+                    'identifier' => 'RestoreFormValues',
                     'options' => [
                         'confirmationRequest' => $confirmationRequest,
                         'feUserUid' => $feUser['uid'],
@@ -235,6 +243,7 @@ class RegistrationController extends ActionController
                 ];
 
                 $finishers = [];
+                $finishers['RestoreFormValues'] = $restoreFormValuesFinisher;
                 if (count($notificationEmailRecipients) > 0) {
                     $finishers['NotificationEmail'] = $notificationEmailFinisher;
                 }

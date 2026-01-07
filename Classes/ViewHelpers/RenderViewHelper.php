@@ -18,6 +18,7 @@ use TYPO3\CMS\Form\Domain\Factory\FormFactoryInterface;
 use TYPO3\CMS\Form\Mvc\Configuration\ConfigurationManagerInterface as ExtFormConfigurationManagerInterface;
 use TYPO3\CMS\Form\Mvc\Persistence\FormPersistenceManagerInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 
 /**
  * Main Entry Point to render a Form into a Fluid Template
@@ -88,7 +89,19 @@ final class RenderViewHelper extends AbstractViewHelper
             $factory = GeneralUtility::getContainer()->get($this->arguments['factoryClass']);
         }
         $formDefinition = $factory->build($overrideConfiguration, $prototypeName, $request);
+
         $form = $formDefinition->bind($request);
+        if ($formDefinition->getRenderingOptions()['afterConfirmation'] ?? false) {
+            /** @var ConfirmationRequest $confirmationRequest */
+            $confirmationRequest = $formDefinition->getRenderingOptions()['confirmationRequest'] ?? null;
+            if ($confirmationRequest) {
+                $values = $confirmationRequest->getDecodedValues();
+                foreach ($values as $fieldIdentifier => $value) {
+                    $form->getFormState()->setFormValue($fieldIdentifier, $value);
+                }
+            }
+        }
+
         return $form->render();
     }
 }

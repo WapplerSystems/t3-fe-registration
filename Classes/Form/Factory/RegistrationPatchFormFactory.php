@@ -147,6 +147,9 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
                 }
 
             }
+            $newConfiguration['renderingOptions']['preConfirmation'] = true;
+        } else {
+            $newConfiguration['renderingOptions']['afterConfirmation'] = true;
         }
 
         return parent::build($newConfiguration, $prototypeName, $request);

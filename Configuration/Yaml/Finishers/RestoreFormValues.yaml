@@ -1,9 +1,0 @@
-prototypes:
-  standard:
-    finishersDefinition:
-      RestoreFormValues:
-        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\RestoreFormValuesFinisher
-        formEditor:
-          iconIdentifier: form-finisher
-          label: 'Restore form values after confirmation'
-

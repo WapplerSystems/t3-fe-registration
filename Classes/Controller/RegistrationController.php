@@ -204,14 +204,6 @@ class RegistrationController extends ActionController
                         'settings' => $this->settings
                     ]
                 ];
-                $restoreFormValuesFinisher = [
-                    'identifier' => 'RestoreFormValues',
-                    'options' => [
-                        'confirmationRequest' => $confirmationRequest,
-                        'feUserUid' => $feUser['uid'],
-                        'settings' => $this->settings
-                    ]
-                ];
 
                 $notificationEmailRecipients = [];
                 if ((int)($this->settings['notificationEmails']['registrationCompleted']['emailAddresses'] ?? 0) > 0) {
@@ -243,7 +235,6 @@ class RegistrationController extends ActionController
                 ];
 
                 $finishers = [];
-                $finishers['RestoreFormValues'] = $restoreFormValuesFinisher;
                 if (count($notificationEmailRecipients) > 0) {
                     $finishers['NotificationEmail'] = $notificationEmailFinisher;
                 }
@@ -256,6 +247,7 @@ class RegistrationController extends ActionController
                         'controllerAction' => 'confirm',
                         'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
                         'submitButtonLabel' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:btn.completeRegistration'),
+                        'confirmationRequest' => $confirmationRequest,
                     ]
                 ];
 

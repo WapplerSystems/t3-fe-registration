@@ -54,13 +54,23 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         }
 
         if ($preConfirmation) {
-            // remove in pre confirmation-steps all finishers except ConfirmationRequest, ConfirmationEmail and RedirectToUri
+            // remove in pre confirmation-steps all finishers except ConfirmationRequest, ConfirmationEmail, RedirectToUri and special preConfirmation finishers
             foreach ($configuration['finishers'] ?? [] as $finisherName => $finisherConfig) {
+                if ($finisherConfig['options']['preConfirmation'] ?? false) {
+                    continue;
+                }
                 if ($finisherName !== 'ConfirmationRequest' && $finisherName !== 'ConfirmationEmail' && $finisherName !== 'RedirectToUri') {
                     unset($newConfiguration['finishers'][$finisherName]);
                 }
             }
         } else {
+
+            foreach ($configuration['finishers'] ?? [] as $finisherName => $finisherConfig) {
+                if ($finisherConfig['options']['preConfirmation'] ?? false) {
+                    unset($newConfiguration['finishers'][$finisherName]);
+                }
+            }
+
             // set RestoreFormValues to first position of finishers
             if (array_key_exists('RestoreFormValues', $newConfiguration['finishers'])) {
                 $newConfiguration['finishers'] = ['RestoreFormValues' => $newConfiguration['finishers']['RestoreFormValues']] + $newConfiguration['finishers'];

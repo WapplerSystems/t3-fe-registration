@@ -10,31 +10,17 @@ use WapplerSystems\FormExtended\Utility\Uuid;
 class ConfirmationRequest extends AbstractEntity
 {
 
-    /**
-     * email
-     *
-     * @var string
-     */
     protected string $email = '';
 
-    /**
-     * @var string
-     */
     protected string $encodedValues = '';
 
-    /**
-     *
-     * @var string
-     */
     protected string $confirmationHash = '';
 
-    /**
-     *
-     */
     protected ?\DateTime $confirmationDate = null;
 
-
     protected ?\DateTime $lastSent = null;
+
+    protected ?\DateTime $completionDate = null;
 
 
     public function __construct()
@@ -147,7 +133,20 @@ class ConfirmationRequest extends AbstractEntity
         return $this->confirmationDate !== null;
     }
 
+    public function isRegistrationCompleted(): bool
+    {
+        return $this->completionDate !== null;
+    }
 
+    public function getCompletionDate(): ?\DateTime
+    {
+        return $this->completionDate;
+    }
+
+    public function setCompletionDate(?\DateTime $completionDate): void
+    {
+        $this->completionDate = $completionDate;
+    }
 
 
 }

@@ -16,5 +16,18 @@ class ConfirmationRequestRepository extends Repository
         return $query;
     }
 
+    public function findUnconfirmedByEmail(mixed $email)
+    {
+        $query = $this->createQuery();
+        $constraints = [
+            $query->equals('email', $email),
+            $query->equals('confirmationDate', null),
+        ];
+        $query->matching(
+            $query->logicalAnd(...$constraints)
+        );
+        return $query->execute();
+    }
+
 
 }

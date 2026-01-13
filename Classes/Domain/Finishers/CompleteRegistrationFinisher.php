@@ -41,20 +41,23 @@ class CompleteRegistrationFinisher extends AbstractFinisher
     {
         /** @var ConfirmationRequest $confirmationRequest */
         $confirmationRequest = $this->options['confirmationRequest'];
-        $feUserUid = $this->options['feUserUid'];
         $settings = $this->options['settings'];
 
+        // TODO: make fe_user optional
+
+
+
         $formValues = $this->finisherContext->getFormValues();
-        if (count($formValues)) {
-            $this->databaseService->updateFeUser($feUserUid, $formValues);
-        }
         $formValues = array_merge($confirmationRequest->getDecodedValues(), $formValues);
 
-        $user = $this->databaseService->getFeUser($feUserUid);
+        $feUser = $this->databaseService->createFeUser($formValues, $settings);
+        $feUserUid = (int)$feUser['uid'];
+        $this->databaseService->updateFeUser($feUserUid, $formValues);
+
+        $feUser = $this->databaseService->getFeUser($feUserUid);
 
         $formDefinition = $this->finisherContext->getFormRuntime()->getFormDefinition();
 
-        $password = null;
         if (!$formDefinition->getRenderingOptions()['hasPasswordField']) {
 
             $passwordRules = [
@@ -69,12 +72,12 @@ class CompleteRegistrationFinisher extends AbstractFinisher
 
 
         $this->eventDispatcher->dispatch(
-            new AfterRegistrationCompletionEvent($user, $formValues, $settings)
+            new AfterRegistrationCompletionEvent($feUser, $formValues, $settings)
         );
 
-        $this->mailingService->sendWelcomeMail($user, $this->finisherContext->getRequest(), $settings, $password);
+        $this->mailingService->sendWelcomeMail($feUser, $this->finisherContext->getRequest(), $settings);
 
-        $this->databaseService->setRegistrationCompletedOfUser($feUserUid);
+        $this->confirmationService->setRegistrationCompleted($confirmationRequest);
 
     }
 

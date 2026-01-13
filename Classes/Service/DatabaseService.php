@@ -8,9 +8,14 @@ use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Form\Mvc\Property\TypeConverter\PseudoFileReference;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 
 class DatabaseService
 {
+
+    public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository)
+    {
+    }
 
 
     public function createFeUser(array $values, array $settings): array
@@ -110,21 +115,6 @@ class DatabaseService
             ->executeStatement();
     }
 
-    public function setRegistrationCompletedOfUser($feUserUid) {
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
-            'fe_users'
-        );
-        $restrictions = $queryBuilder->getRestrictions();
-        $restrictions->removeByType(HiddenRestriction::class);
-        $queryBuilder->setRestrictions($restrictions);
-        $queryBuilder
-            ->update('fe_users')
-            ->set('registration_completed', 1)
-            ->where(
-                $queryBuilder->expr()->eq('uid', $queryBuilder->createNamedParameter($feUserUid, ParameterType::INTEGER))
-            )
-            ->executeStatement();
-    }
 
     public function updateFeUser(mixed $feUserUid, array $values)
     {
@@ -158,7 +148,7 @@ class DatabaseService
             if (isset($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey])) {
 
                 // check if field is bitmask field
-                if ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'check' && count($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items']) > 1) {
+                if ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['type'] === 'check' && count($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items'] ?? []) > 1) {
                     if (is_array($value)) {
                         $strBitSet = '';
                         foreach ($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey]['config']['items'] as $key => $item) {
@@ -217,6 +207,8 @@ class DatabaseService
             ->executeStatement();
 
     }
+
+
 
 
 }

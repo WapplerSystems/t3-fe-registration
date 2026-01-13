@@ -22,21 +22,26 @@ use TYPO3\CMS\Extbase\Utility\LocalizationUtility;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Model\EmailAddress;
-use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
 use WapplerSystems\FeRegistration\Domain\Repository\EmailAddressRepository;
+use WapplerSystems\FeRegistration\Domain\Repository\FrontendUserRepository;
 use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
 use WapplerSystems\FeRegistration\Service\ConfirmationService;
+use WapplerSystems\FeRegistration\Service\ContentElementService;
+use WapplerSystems\FeRegistration\Service\DatabaseService;
 use WapplerSystems\FeRegistration\Service\MailingService;
 
 class RegistrationController extends ActionController
 {
 
 
-    public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
-                                readonly EmailAddressRepository        $emailAddressRepository,
-                                EventDispatcherInterface               $eventDispatcher,
-                                readonly ConfirmationService           $confirmationService,
-                                readonly PersistenceManager            $persistenceManager
+    public function __construct(readonly EmailAddressRepository $emailAddressRepository,
+                                EventDispatcherInterface        $eventDispatcher,
+                                readonly DatabaseService        $databaseService,
+                                readonly ConfirmationService    $confirmationService,
+                                readonly PersistenceManager     $persistenceManager,
+                                readonly FrontendUserRepository $frontendUserRepository,
+                                readonly MailingService         $mailingService,
+                                readonly ContentElementService  $contentElementService
     )
     {
     }
@@ -161,7 +166,7 @@ class RegistrationController extends ActionController
      */
     public function confirmAction(string $hash = ''): ResponseInterface
     {
-        $context = GeneralUtility::makeInstance(Context::class);
+
         $currentContentObject = $this->request->getAttribute('currentContentObject');
         $contentUid = $currentContentObject->data['uid'];
 
@@ -172,35 +177,28 @@ class RegistrationController extends ActionController
         }
 
         if ($hash !== '') {
-            /** @var ConfirmationRequest $confirmationRequest */
-            $confirmationRequest = $this->confirmationRequestRepository->findOneByConfirmationHash($hash);
+
+            $confirmationRequest = $this->confirmationService->findByHash($hash);
 
             if ($confirmationRequest) {
 
-                /** @var \DateTimeImmutable $currentDateTime */
-                $currentDateTime = $context->getPropertyFromAspect('date', 'full');
-                $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
-                $this->confirmationRequestRepository->update($confirmationRequest);
-                $this->persistenceManager->persistAll();
-
-
-                $feUser = $this->confirmationService->requestToFeUser($confirmationRequest, $this->settings);
-                if ($feUser === null) {
-                    return $this->renderErrorMessage(
-                        message: 'No user loadable or creatable.',
-                    );
-                }
-                if (($feUser['registration_completed'] ?? 0) === 1) {
+                if ($confirmationRequest->isRegistrationCompleted()) {
                     return $this->renderNotification(
                         type: 'AlreadyCompleted',
                     );
                 }
 
+                $this->confirmationService->setRequestConfirmed($confirmationRequest);
+
+
+                // TODO: change to event dispatcher
+                // optional
+                $frontendUser = $this->frontendUserRepository->findByConfirmationRequest($confirmationRequest);
+
                 $completeRegistrationFinisher = [
                     'identifier' => 'CompleteRegistration',
                     'options' => [
                         'confirmationRequest' => $confirmationRequest,
-                        'feUserUid' => $feUser['uid'],
                         'settings' => $this->settings
                     ]
                 ];
@@ -223,7 +221,8 @@ class RegistrationController extends ActionController
                         'recipients' => $notificationEmailRecipients,
                         'templateName' => 'Email/Notification/RegistrationCompleted',
                         'variables' => [
-                            'user' => $feUser,
+                            'confirmationRequest' => $confirmationRequest,
+                            'user' => $frontendUser
                         ]
                     ]
                 ];
@@ -233,8 +232,52 @@ class RegistrationController extends ActionController
                         'uri' => $this->uriBuilder->reset()->uriFor('success'),
                     ]
                 ];
+                /*
+                $feUserFinisher = [
+                    'identifier' => 'FeUser',
+                    'options' => [
+                        'pid' => (int)($this->settings['feUserStoragePid'] ?? 0),
+                        'settings' => $this->settings,
+                        'databaseColumnMappings' => [
+                            'usergroup' => [
+                                'value' => $this->settings['usergroups'] ?? '',
+                            ],
+                            'crdate' => [
+                                'function' => 'time',
+                            ],
+                        ],
+                        'elements' => [
+                            'firstName' => [
+                                'mapOnDatabaseColumn' => 'first_name',
+                            ],
+                            'lastName' => [
+                                'mapOnDatabaseColumn' => 'last_name',
+                            ],
+                            'telephoneNumber' => [
+                                'mapOnDatabaseColumn' => 'telephone',
+                            ],
+                            'street' => [
+                                'mapOnDatabaseColumn' => 'address',
+                            ],
+                            'country' => [
+                                'mapOnDatabaseColumn' => 'country',
+                            ],
+                            'company' => [
+                                'mapOnDatabaseColumn' => 'company',
+                            ],
+                            'password' => [
+                                // 'hashPassword' => true, # not again
+                                'mapOnDatabaseColumn' => 'password',
+                            ],
+                        ]
+                    ]
+                ];*/
 
                 $finishers = [];
+                /*
+                if ((int)($this->settings['createFeUser'] ?? 0) === 1) {
+                    $finishers['FeUser'] = $feUserFinisher;
+                }*/
                 if (count($notificationEmailRecipients) > 0) {
                     $finishers['NotificationEmail'] = $notificationEmailFinisher;
                 }
@@ -298,49 +341,33 @@ class RegistrationController extends ActionController
         $currentPageId = (int)($this->request->getAttribute('routing')->getPageId() ?? 0);
         $currentLanguageUid = (int)($this->request->getAttribute('language')->getLanguageId() ?? 0);
 
-        // QueryBuilder für tt_content erstellen
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tt_content');
-
         $settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
 
-
-        // Inhaltselement mit CType 'feregistration' und aktueller Sprache suchen
-        $record = $queryBuilder
-            ->select('*')
-            ->from('tt_content')
-            ->where(
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($currentPageId, ParameterType::INTEGER)),
-                $queryBuilder->expr()->eq('CType', $queryBuilder->createNamedParameter('feregistration_registration')),
-                $queryBuilder->expr()->eq('sys_language_uid', $queryBuilder->createNamedParameter($currentLanguageUid, ParameterType::INTEGER))
-            )
-            ->setMaxResults(1)
-            ->executeQuery()
-            ->fetchAssociative();
-
-        if ($record) {
+        $pluginContentRecord = $this->contentElementService->findFeRegistrationPlugin($currentPageId, $currentLanguageUid);
+        if ($pluginContentRecord) {
             // FlexForm-Daten parsen
             $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-            $flexFormSettings = $flexFormService->convertFlexFormContentToArray($record['pi_flexform']);
+            $flexFormSettings = $flexFormService->convertFlexFormContentToArray($pluginContentRecord['pi_flexform']);
 
             // FlexForm-Werte nutzen
             $settings = array_merge($settings, $flexFormSettings['settings'] ?? []);
 
             $email = $this->request->getQueryParams()['email'] ?? '';
 
-            /** @var ConfirmationRequest $confirmationRequestRecord */
-            $confirmationRequestRecord = $this->confirmationRequestRepository->findOneByEmail($email);
-            if ($confirmationRequestRecord) {
+            $confirmationRequest = $this->confirmationService->findUnconfirmedByEmail($email);
 
-                if ($confirmationRequestRecord->isConfirmed()) {
+            if ($confirmationRequest) {
+
+                if ($confirmationRequest->isConfirmed()) {
                     return new JsonResponse(['success' => false, 'alreadyConfirmed' => true]);
                 }
-                if ($confirmationRequestRecord->getLastSent() && $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock'] > time()) {
-                    return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequestRecord->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock']]);
+                if ($confirmationRequest->getLastSent() && $confirmationRequest->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock'] > time()) {
+                    return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequest->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock']]);
                 }
 
                 /** @var MailingService $mailer */
                 $mailer = GeneralUtility::makeInstance(MailingService::class);
-                $mailer->sendConfirmationMail($confirmationRequestRecord, $this->request, $settings, $currentPageId);
+                $mailer->sendConfirmationMail($confirmationRequest, $this->request, $settings, $currentPageId);
 
                 return new JsonResponse(['success' => true]);
             }

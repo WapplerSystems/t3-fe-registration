@@ -17,7 +17,7 @@ return [
     ],
     'types' => [
         '1' => [
-            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, last_sent'
+            'showitem' => 'email, encoded_values, confirmation_hash, confirmation_date, last_sent, completion_date'
         ]
     ],
     'columns' => [
@@ -51,9 +51,8 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.confirmation_date',
             'config' => [
-                'type' => 'input',
+                'type' => 'datetime',
                 'size' => 20,
-                'eval' => 'datetime',
                 'checkbox' => 0,
                 'readOnly' => 1
             ]
@@ -62,9 +61,18 @@ return [
             'exclude' => 1,
             'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.last_sent',
             'config' => [
-                'type' => 'input',
+                'type' => 'datetime',
                 'size' => 20,
-                'eval' => 'datetime',
+                'checkbox' => 0,
+                'readOnly' => 1
+            ]
+        ],
+        'completion_date' => [
+            'exclude' => 1,
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.completion_date',
+            'config' => [
+                'type' => 'datetime',
+                'size' => 20,
                 'checkbox' => 0,
                 'readOnly' => 1
             ]

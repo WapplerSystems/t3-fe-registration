@@ -29,7 +29,6 @@ class FeUserValidator extends AbstractValidator
      */
     public function isValid($value): void
     {
-
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('fe_users');
         $queryBuilder->getRestrictions()->removeAll();

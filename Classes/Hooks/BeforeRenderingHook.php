@@ -2,18 +2,9 @@
 
 namespace WapplerSystems\FeRegistration\Hooks;
 
-use Psr\EventDispatcher\EventDispatcherInterface;
-use TYPO3\CMS\Core\Utility\DebugUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
-use TYPO3\CMS\Form\Domain\Exception\RenderingException;
 use TYPO3\CMS\Form\Domain\Model\FormElements\GenericFormElement;
-use TYPO3\CMS\Form\Domain\Model\Renderable\CompositeRenderableInterface;
 use TYPO3\CMS\Form\Domain\Model\Renderable\RootRenderableInterface;
 use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
-use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
-use WapplerSystems\FeRegistration\Event\AfterConfirmationEvent;
-use WapplerSystems\FeRegistration\Event\SetPredefinedRegistrationFormValuesEvent;
-use WapplerSystems\FeRegistration\Service\DatabaseService;
 
 class BeforeRenderingHook
 {

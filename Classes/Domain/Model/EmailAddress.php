@@ -9,18 +9,9 @@ use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
 class EmailAddress extends AbstractEntity
 {
 
-    /**
-     * email
-     *
-     * @var string
-     */
     protected string $email = '';
 
-    /**
-     * @var string
-     */
     protected string $name = '';
-
 
 
     public function getEmail(): string

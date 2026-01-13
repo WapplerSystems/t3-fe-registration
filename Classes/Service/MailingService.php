@@ -7,7 +7,6 @@ use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Mail\FluidEmail;
 use TYPO3\CMS\Core\Mail\MailerInterface;
-use TYPO3\CMS\Core\Utility\DebugUtility;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Exception;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
@@ -84,7 +83,7 @@ class MailingService
      * @throws TransportExceptionInterface
      * @throws FinisherException
      */
-    public function sendWelcomeMail(array $feUser, ServerRequestInterface $request, array $settings, ?string $password): void
+    public function sendWelcomeMail(array $feUser, ServerRequestInterface $request, array $settings): void
     {
 
         $addHtmlPart = $settings['welcomeEmail']['useHTML'] ?? false;
@@ -112,7 +111,6 @@ class MailingService
             ->format($addHtmlPart ? FluidEmail::FORMAT_BOTH : FluidEmail::FORMAT_PLAIN)
             ->assign('title', LocalizationUtility::translate('subject.welcome', 'fe_registration'))
             ->assign('user', $feUser)
-            ->assign('password', $password)
             ->assign('mustBeConfirmed', $settings['feUserMustConfirmed'] ?? false);
 
         /*
@@ -155,8 +153,6 @@ class MailingService
             $globalConfig['templateRootPaths'] ?? [],
             $localConfig['templateRootPaths'] ?? [],
         ));
-        DebugUtility::debug($globalConfig['layoutRootPaths']);
-        DebugUtility::debug($localConfig['layoutRootPaths']);
         $templatePaths->setLayoutRootPaths(array_replace(
             $globalConfig['layoutRootPaths'] ?? [],
             $localConfig['layoutRootPaths'] ?? [],

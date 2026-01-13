@@ -103,35 +103,7 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             ];
         }
 
-        foreach ($newConfiguration['renderables'] ?? [] as $pageKey => $page) {
-            foreach ($page['renderables'] ?? [] as $elementKey => $renderable) {
-
-                /*
-                if (($renderable['properties']['mapOnDatabaseColumn'] ?? '') === 'username') {
-                    $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][] = [
-                        'identifier' => 'ConfirmationRequest',
-                        'options' => [
-                            'pid' => $this->settings['confirmationRequestPid'] ?? '',
-                            'uriBuilder' => $this->uriBuilder,
-                            'request' => $request
-                        ]
-                    ];
-                    $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['validators'][] = [
-                        'identifier' => 'FeUser',
-                        'options' => [
-                            'pid' => $this->settings['feUserStoragePid'] ?? '',
-                        ]
-                    ];
-                }*/
-
-                // TODO: Enhance this so support deep nested renderables
-
-                if (array_key_exists($renderable['identifier'], $this->preDefinedValues)) {
-                    $newConfiguration['renderables'][$pageKey]['renderables'][$elementKey]['defaultValue'] = $this->preDefinedValues[$renderable['identifier']];
-                }
-
-            }
-        }
+        $this->patchFieldConfigurations($newConfiguration, $request);
 
         /*
         $newConfiguration['renderables'][0]['renderables'][] = [
@@ -163,6 +135,42 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         }
 
         return parent::build($newConfiguration, $prototypeName, $request);
+    }
+
+
+    private function patchFieldConfigurations(array &$fieldConfig, ?ServerRequestInterface $request = null) : void
+    {
+        if (!isset($fieldConfig['renderables']) || !is_array($fieldConfig['renderables'])) {
+            return;
+        }
+        foreach ($fieldConfig['renderables'] as &$renderable) {
+
+            if ($renderable['identifier'] === $this->settings['identifierFieldName']) {
+
+                $renderable['validators'][] = [
+                    'identifier' => 'ConfirmationRequest',
+                    'options' => [
+                        'pid' => $this->settings['confirmationRequestPid'] ?? '',
+                        'uriBuilder' => $this->uriBuilder,
+                        'request' => $request
+                    ]
+                ];
+                $renderable['validators'][] = [
+                    'identifier' => 'FeUser',
+                    'options' => [
+                        'pid' => $this->settings['feUserStoragePid'] ?? '',
+                    ]
+                ];
+            }
+
+            if (array_key_exists($renderable['identifier'], $this->preDefinedValues)) {
+                $renderable['defaultValue'] = $this->preDefinedValues[$renderable['identifier']];
+            }
+
+            $this->patchFieldConfigurations($renderable, $request);
+
+        }
+
     }
 
 

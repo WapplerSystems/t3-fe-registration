@@ -79,6 +79,9 @@
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest.last_sent">
                 <source>Last confirmation mail sent</source>
             </trans-unit>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.registration_completed">
+                <source>Registration completed</source>
+            </trans-unit>
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest">
                 <source>Email confirmation requests</source>
             </trans-unit>

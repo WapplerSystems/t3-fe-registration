@@ -126,16 +126,6 @@
                         </config>
                     </settings.usergroups>
 
-                    <settings.createFeUser>
-                        <label>
-                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.createFeUser
-                        </label>
-                        <config>
-                            <type>check</type>
-                            <default>1</default>
-                        </config>
-                    </settings.createFeUser>
-
                     <settings.feUserMustConfirmed>
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.feUserMustConfirmed

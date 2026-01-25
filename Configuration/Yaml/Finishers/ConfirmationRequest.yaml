@@ -7,6 +7,4 @@ prototypes:
         formEditor:
           iconIdentifier: form-finisher
           label: 'Create email address confirmation request'
-          predefinedDefaults:
-            options:
 

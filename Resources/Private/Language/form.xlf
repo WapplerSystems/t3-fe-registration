@@ -7,6 +7,30 @@
             <trans-unit id="formEditor.elements.EmailConfirmation.label">
                 <source>E-mail confirmation by user</source>
             </trans-unit>
+            <trans-unit id="tt_content.finishersDefinition.FeUser.label">
+                <source>Fe-User</source>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.Form.finisher.FeUser.editor.mapping.label">
+                <source>Mapping</source>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.Form.finisher.FeUser.editor.mapping.fieldExplanationText">
+                <source>Mapping database fields to form fields</source>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.Form.finisher.FeUser.editor.mapping.gridColumns.databaseField.title">
+                <source>Database column</source>
+            </trans-unit>
+            <trans-unit id="formEditor.elements.Form.finisher.FeUser.editor.mapping.gridColumns.formField.title">
+                <source>Form field</source>
+            </trans-unit>
+            <trans-unit id="tt_content.finishersDefinition.FeUser.mapping.item.label">
+                <source>Mapping</source>
+            </trans-unit>
+            <trans-unit id="tt_content.finishersDefinition.FeUser.mapping.databaseField.label">
+                <source>Database field</source>
+            </trans-unit>
+            <trans-unit id="tt_content.finishersDefinition.FeUser.mapping.formField.label">
+                <source>Formular field</source>
+            </trans-unit>
         </body>
     </file>
 </xliff>

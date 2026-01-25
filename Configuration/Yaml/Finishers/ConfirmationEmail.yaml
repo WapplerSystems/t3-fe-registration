@@ -9,6 +9,4 @@ prototypes:
         formEditor:
           iconIdentifier: form-finisher
           label: 'Send confirmation email'
-          predefinedDefaults:
-            options:
 

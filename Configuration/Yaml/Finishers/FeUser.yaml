@@ -1,0 +1,36 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      FeUser:
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\FeUserFinisher
+        formEditor:
+          iconIdentifier: form-finisher
+          label: 'Frontend User Finisher'
+          predefinedDefaults:
+            options:
+              pid: ''
+              mapping: { }
+        FormEngine:
+          label: tt_content.finishersDefinition.FeUser.label
+          elements:
+            mapping:
+              title: tt_content.finishersDefinition.FeUser.mapping.label
+              type: array
+              section: true
+              sectionItemKey: databaseField
+              sectionItemValue: formField
+              el:
+                _arrayContainer:
+                  type: array
+                  title: tt_content.finishersDefinition.FeUser.mapping.item.label
+                  el:
+                    databaseField:
+                      label: tt_content.finishersDefinition.FeUser.mapping.databaseField.label
+                      config:
+                        type: input
+                        eval: WapplerSystems\FeRegistration\Evaluation\FeUsersDatabaseField
+                        required: true
+                    formField:
+                      label: tt_content.finishersDefinition.FeUser.mapping.formField.label
+                      config:
+                        type: input

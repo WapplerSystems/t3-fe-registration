@@ -6,22 +6,6 @@ use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 
 
 $newSysFileReferenceColumns = [
-    'registration_completed' => [
-        'exclude' => true,
-        'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:registration_completed',
-        'config' => [
-            'type' => 'check',
-            'renderType' => 'checkboxToggle',
-            'default' => 0,
-            'items' => [
-                [
-                    0 => '',
-                    1 => '',
-                ]
-            ],
-            'readOnly' => true
-        ]
-    ],
     'registration_request' => [
         'exclude' => true,
         'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:registration_request',
@@ -37,5 +21,5 @@ $newSysFileReferenceColumns = [
 
 ExtensionManagementUtility::addTCAcolumns('fe_users', $newSysFileReferenceColumns);
 
-ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'registration_completed,registration_request', '', '');
+ExtensionManagementUtility::addToAllTCAtypes('fe_users', 'registration_request', '', '');
 

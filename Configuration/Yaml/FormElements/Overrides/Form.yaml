@@ -9,16 +9,53 @@ prototypes:
               selectOptions:
                 351:
                   value: 'FeUser'
-                  label: 'FeUser'
+                  label: 'Create/update fe_users record'
+                600:
+                  value: CompleteRegistration
+                  label: 'Complete registration'
           propertyCollections:
             finishers:
+              10:
+                editors:
+                  1800:
+                    selectOptions:
+                      336558:
+                        value: 'Email/Welcome'
+                        label: 'Welcome Email'
+              20:
+                editors:
+                  1800:
+                    selectOptions:
+                      336557:
+                        value: 'Email/Notification/RegistrationCompleted'
+                        label: 'Registration Completed Notification to Admin'
               351:
                 identifier: 'FeUser'
                 editors:
                   100:
                     identifier: header
                     templateName: Inspector-CollectionElementHeaderEditor
-                    label: 'FeUser'
+                    label: 'Create/update fe_users record'
+                  350:
+                    identifier: mapping
+                    templateName: Inspector-PropertyGridEditor
+                    label: formEditor.elements.Form.finisher.FeUser.editor.mapping.label
+                    propertyPath: options.mapping
+                    fieldExplanationText: formEditor.elements.Form.finisher.FeUser.editor.mapping.fieldExplanationText
+                    isSortable: true
+                    enableAddRow: true
+                    enableDeleteRow: true
+                    useLabelAsFallbackValue: false
+                    gridColumns:
+                      -
+                        name: databaseField
+                        title: formEditor.elements.Form.finisher.FeUser.editor.mapping.gridColumns.databaseField.title
+                      -
+                        name: formField
+                        title: formEditor.elements.Form.finisher.FeUser.editor.mapping.gridColumns.formField.title
+                        enableFormelementSelectionButton: true
+                        propertyValidators:
+                          10: FormElementIdentifierWithinCurlyBracesInclusive
                   400:
                     identifier: pid
                     templateName: Inspector-Typo3WinBrowserEditor
@@ -31,6 +68,16 @@ prototypes:
                     propertyValidators:
                       10: Integer
                       20: FormElementIdentifierWithinCurlyBracesExclusive
+                  9999:
+                    identifier: removeButton
+                    templateName: Inspector-RemoveElementEditor
+              600:
+                identifier: CompleteRegistration
+                editors:
+                  100:
+                    identifier: header
+                    templateName: Inspector-CollectionElementHeaderEditor
+                    label: 'Complete registration'
                   9999:
                     identifier: removeButton
                     templateName: Inspector-RemoveElementEditor

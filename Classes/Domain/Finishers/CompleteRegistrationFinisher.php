@@ -40,16 +40,12 @@ class CompleteRegistrationFinisher extends AbstractFinisher
     protected function executeInternal()
     {
         /** @var ConfirmationRequest $confirmationRequest */
-        $confirmationRequest = $this->options['confirmationRequest'];
-        $settings = $this->options['settings'];
+        $confirmationRequest = $this->finisherContext->getFormRuntime()->getFormDefinition()->getRenderingOptions()['confirmationRequest'];
 
-        // TODO: make fe_user optional
-
+        $user = $this->finisherContext->getFormRuntime()->getFormDefinition()->getRenderingOptions()['confirmationRequest'] ?? null;
 
 
-        $formValues = $this->finisherContext->getFormValues();
-        $formValues = array_merge($confirmationRequest->getDecodedValues(), $formValues);
-
+        /*
         $feUser = $this->databaseService->createFeUser($formValues, $settings);
         $feUserUid = (int)$feUser['uid'];
         $this->databaseService->updateFeUser($feUserUid, $formValues);
@@ -73,9 +69,12 @@ class CompleteRegistrationFinisher extends AbstractFinisher
 
         $this->eventDispatcher->dispatch(
             new AfterRegistrationCompletionEvent($feUser, $formValues, $settings)
-        );
+        );*/
 
-        $this->mailingService->sendWelcomeMail($feUser, $this->finisherContext->getRequest(), $settings);
+
+        if ($confirmationRequest === null) {
+            throw new \RuntimeException('No confirmation request provided to CompleteRegistrationFinisher', 1687334861);
+        }
 
         $this->confirmationService->setRegistrationCompleted($confirmationRequest);
 

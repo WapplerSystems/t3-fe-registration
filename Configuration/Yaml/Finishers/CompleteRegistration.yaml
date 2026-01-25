@@ -7,6 +7,5 @@ prototypes:
         formEditor:
           iconIdentifier: form-finisher
           label: 'Complete registration'
-          predefinedDefaults:
-            options:
-
+        FormEngine:
+          label: 'Complete registration finisher'

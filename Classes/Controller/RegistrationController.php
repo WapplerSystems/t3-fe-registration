@@ -232,46 +232,6 @@ class RegistrationController extends ActionController
                         'uri' => $this->uriBuilder->reset()->uriFor('success'),
                     ]
                 ];
-                /*
-                $feUserFinisher = [
-                    'identifier' => 'FeUser',
-                    'options' => [
-                        'pid' => (int)($this->settings['feUserStoragePid'] ?? 0),
-                        'settings' => $this->settings,
-                        'databaseColumnMappings' => [
-                            'usergroup' => [
-                                'value' => $this->settings['usergroups'] ?? '',
-                            ],
-                            'crdate' => [
-                                'function' => 'time',
-                            ],
-                        ],
-                        'elements' => [
-                            'firstName' => [
-                                'mapOnDatabaseColumn' => 'first_name',
-                            ],
-                            'lastName' => [
-                                'mapOnDatabaseColumn' => 'last_name',
-                            ],
-                            'telephoneNumber' => [
-                                'mapOnDatabaseColumn' => 'telephone',
-                            ],
-                            'street' => [
-                                'mapOnDatabaseColumn' => 'address',
-                            ],
-                            'country' => [
-                                'mapOnDatabaseColumn' => 'country',
-                            ],
-                            'company' => [
-                                'mapOnDatabaseColumn' => 'company',
-                            ],
-                            'password' => [
-                                // 'hashPassword' => true, # not again
-                                'mapOnDatabaseColumn' => 'password',
-                            ],
-                        ]
-                    ]
-                ];*/
 
                 $finishers = [];
                 /*
@@ -285,8 +245,9 @@ class RegistrationController extends ActionController
                 $finishers['RedirectToUri'] = $redirectFinisher;
 
                 $overrideConfiguration = [
-                    'finishers' => $finishers,
+                    //'finishers' => $finishers,
                     'renderingOptions' => [
+                        'fe-registration' => true,
                         'controllerAction' => 'confirm',
                         'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
                         'submitButtonLabel' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:btn.completeRegistration'),

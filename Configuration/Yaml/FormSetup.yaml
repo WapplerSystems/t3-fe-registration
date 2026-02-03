@@ -7,7 +7,6 @@ imports:
   - { resource: "./Finishers/Overrides/EmailToSender.yaml" }
   - { resource: "./Finishers/Overrides/EmailToReceiver.yaml" }
   - { resource: "./FormElements/EmailConfirmation.yaml" }
-  - { resource: "./FormElements/Overrides/Email.yaml" }
   - { resource: "./FormElements/Overrides/Form.yaml" }
   - { resource: "./FormElements/Overrides/Text.yaml" }
   - { resource: "./Validators/ConfirmationRequest.yaml" }

@@ -37,7 +37,7 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
      *
      * @throws FinisherException
      */
-    protected function executeInternal()
+    protected function executeInternal(): void
     {
         $this->process(0);
     }
@@ -47,7 +47,7 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
      *
      * @param int $iterationCount
      */
-    protected function process(int $iterationCount)
+    protected function process(int $iterationCount): void
     {
         $this->throwExceptionOnInconsistentConfiguration();
 
@@ -125,7 +125,7 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
      * @param array $databaseData
      * @return mixed
      */
-    protected function prepareData(array $elementsConfiguration, array $databaseData)
+    protected function prepareData(array $elementsConfiguration, array $databaseData): array
     {
         foreach ($this->getFormValues() as $elementIdentifier => $elementValue) {
             if (
@@ -187,7 +187,7 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
      *
      * @throws FinisherException
      */
-    protected function throwExceptionOnInconsistentConfiguration()
+    protected function throwExceptionOnInconsistentConfiguration(): void
     {
         parent::throwExceptionOnInconsistentConfiguration();
 

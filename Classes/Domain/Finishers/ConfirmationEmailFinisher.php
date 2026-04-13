@@ -7,7 +7,7 @@ use TYPO3\CMS\Form\Domain\Finishers\EmailFinisher;
 class ConfirmationEmailFinisher extends EmailFinisher
 {
 
-    protected function executeInternal()
+    protected function executeInternal(): void
     {
 
         if (is_array($this->options['variables'] ?? null)) {

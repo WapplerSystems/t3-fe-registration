@@ -1,9 +1,6 @@
 <?php
 
-use TYPO3\CMS\Core\Imaging\IconProvider\SvgIconProvider;
-use TYPO3\CMS\Core\Imaging\IconRegistry;
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use WapplerSystems\FeRegistration\Controller\RegistrationController;
 
@@ -30,15 +27,6 @@ ExtensionUtility::configurePlugin(
         RegistrationController::class => 'resendConfirmationEmail'
     ],
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
-);
-
-$iconRegistry = GeneralUtility::makeInstance(
-    IconRegistry::class
-);
-$iconRegistry->registerIcon(
-    'plugin-feregistration',
-    SvgIconProvider::class,
-    ['source' => 'EXT:fe_registration/Resources/Public/Icons/PluginDoubleOptIn.svg']
 );
 
 

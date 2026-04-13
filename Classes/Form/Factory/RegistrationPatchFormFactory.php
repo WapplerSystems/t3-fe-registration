@@ -20,19 +20,19 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
 
     protected array $preDefinedValues;
 
-    public function __construct(?array $settings = null, ?UriBuilder $uriBuilder = null, ?array $preDefinedValues = null)
+    public function setSettings(array $settings): void
     {
-        if ($settings !== null) {
-            $this->settings = $settings;
-        }
-        if ($uriBuilder !== null) {
-            $this->uriBuilder = $uriBuilder;
-        }
-        if ($preDefinedValues !== null) {
-            $this->preDefinedValues = $preDefinedValues;
-        } else {
-            $this->preDefinedValues = [];
-        }
+        $this->settings = $settings;
+    }
+
+    public function setUriBuilder(UriBuilder $uriBuilder): void
+    {
+        $this->uriBuilder = $uriBuilder;
+    }
+
+    public function setPreDefinedValues(array $preDefinedValues): void
+    {
+        $this->preDefinedValues = $preDefinedValues;
     }
 
     public function build(

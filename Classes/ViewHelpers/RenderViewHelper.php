@@ -42,6 +42,10 @@ final class RenderViewHelper extends AbstractViewHelper
      */
     protected $escapeOutput = false;
 
+    public function __construct(
+        private readonly FormPersistenceManagerInterface $formPersistenceManager,
+    ) {}
+
     public function initializeArguments(): void
     {
         $this->registerArgument('persistenceIdentifier', 'string', 'The persistence identifier for the form.');
@@ -69,11 +73,7 @@ final class RenderViewHelper extends AbstractViewHelper
             $extbaseConfigurationManager = GeneralUtility::makeInstance(ExtbaseConfigurationManagerInterface::class);
             $extbaseConfigurationManager->setRequest($request);
             $typoScriptSettings = $extbaseConfigurationManager->getConfiguration(ExtbaseConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, 'form');
-            $extFormConfigurationManager = GeneralUtility::makeInstance(ExtFormConfigurationManagerInterface::class);
-            $formSettings = $extFormConfigurationManager->getYamlConfiguration($typoScriptSettings, true);
-            // @todo: Make this VH non-static, get FormPersistenceManagerInterface injected, removed 'public: true' in its AsAlias
-            $formPersistenceManager = GeneralUtility::makeInstance(FormPersistenceManagerInterface::class);
-            $formConfiguration = $formPersistenceManager->load($persistenceIdentifier, $formSettings, $typoScriptSettings);
+            $formConfiguration = $this->formPersistenceManager->load($persistenceIdentifier, $typoScriptSettings, $request);
             ArrayUtility::mergeRecursiveWithOverrule($formConfiguration, $overrideConfiguration);
             $overrideConfiguration = $formConfiguration;
             $overrideConfiguration['persistenceIdentifier'] = $persistenceIdentifier;

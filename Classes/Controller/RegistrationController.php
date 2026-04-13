@@ -125,7 +125,10 @@ class RegistrationController extends ActionController
             ]
         ];
 
-        $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder);
+        $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class);
+        $factory->setSettings($this->settings);
+        $factory->setUriBuilder($this->uriBuilder);
+        $factory->setPreDefinedValues([]);
 
         $this->view->assignMultiple([
             'settings' => $this->settings,
@@ -255,7 +258,10 @@ class RegistrationController extends ActionController
                     ]
                 ];
 
-                $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder, $confirmationRequest->getDecodedValues());
+                $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class);
+                $factory->setSettings($this->settings);
+                $factory->setUriBuilder($this->uriBuilder);
+                $factory->setPreDefinedValues($confirmationRequest->getDecodedValues());
 
                 $this->view->assignMultiple([
                     'settings' => $this->settings,

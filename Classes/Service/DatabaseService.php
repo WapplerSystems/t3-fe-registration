@@ -98,7 +98,7 @@ class DatabaseService
             ->executeQuery()->fetchAssociative();
     }
 
-    public function updateFeUserPassword(mixed $feUserUid, string $password): void
+    public function updateFeUserPassword(int $feUserUid, string $password): void
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
@@ -116,7 +116,7 @@ class DatabaseService
     }
 
 
-    public function updateFeUser(mixed $feUserUid, array $values)
+    public function updateFeUser(int $feUserUid, array $values): void
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
             'fe_users'
@@ -198,7 +198,7 @@ class DatabaseService
         $queryBuilder
             ->update('fe_users');
         foreach ($dbValues as $key => $value) {
-            $queryBuilder->set($key, $value);
+            $queryBuilder->set($key, $queryBuilder->createNamedParameter($value));
         }
         $queryBuilder
             ->where(

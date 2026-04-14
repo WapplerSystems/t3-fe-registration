@@ -2,6 +2,7 @@
 
 namespace WapplerSystems\FeRegistration\Domain\Repository;
 
+use TYPO3\CMS\Extbase\Persistence\QueryResultInterface;
 use TYPO3\CMS\Extbase\Persistence\Repository;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 
@@ -25,11 +26,11 @@ class ConfirmationRequestRepository extends Repository
     public function createQuery()
     {
         $query = parent::createQuery();
-        $query->getQuerySettings()->setRespectStoragePage(FALSE);
+        $query->getQuerySettings()->setRespectStoragePage(false);
         return $query;
     }
 
-    public function findUnconfirmedByEmail(mixed $email)
+    public function findUnconfirmedByEmail(string $email): QueryResultInterface
     {
         $query = $this->createQuery();
         $constraints = [

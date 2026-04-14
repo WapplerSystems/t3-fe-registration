@@ -13,7 +13,7 @@ class EmailAddressRepository extends Repository
     public function createQuery()
     {
         $query = parent::createQuery();
-        $query->getQuerySettings()->setRespectStoragePage(FALSE);
+        $query->getQuerySettings()->setRespectStoragePage(false);
         return $query;
     }
 

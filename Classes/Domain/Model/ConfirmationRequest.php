@@ -28,23 +28,12 @@ class ConfirmationRequest extends AbstractEntity
         $this->confirmationHash = Uuid::generate();
     }
 
-    /**
-     * Returns the email
-     *
-     * @return string $email
-     */
-    public function getEmail()
+    public function getEmail(): string
     {
         return $this->email;
     }
 
-    /**
-     * Sets the email
-     *
-     * @param string $email
-     * @return void
-     */
-    public function setEmail($email)
+    public function setEmail(string $email): void
     {
         $this->email = $email;
     }
@@ -110,7 +99,7 @@ class ConfirmationRequest extends AbstractEntity
      */
     public function getDecodedValues(): array
     {
-        return json_decode($this->getEncodedValues(), true);
+        return json_decode($this->getEncodedValues(), true, 512, JSON_THROW_ON_ERROR);
     }
 
     public function setDecodedValues(array $values): void

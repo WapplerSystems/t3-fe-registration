@@ -125,7 +125,10 @@ class RegistrationController extends ActionController
             ]
         ];
 
-        $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder);
+        $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class);
+        $factory->setSettings($this->settings);
+        $factory->setUriBuilder($this->uriBuilder);
+        $factory->setPreDefinedValues([]);
 
         $this->view->assignMultiple([
             'settings' => $this->settings,
@@ -245,17 +248,20 @@ class RegistrationController extends ActionController
                 $finishers['RedirectToUri'] = $redirectFinisher;
 
                 $overrideConfiguration = [
-                    //'finishers' => $finishers,
+                    'finishers' => $finishers,
                     'renderingOptions' => [
                         'fe-registration' => true,
                         'controllerAction' => 'confirm',
                         'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
                         'submitButtonLabel' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:btn.completeRegistration'),
-                        'confirmationRequest' => $confirmationRequest,
                     ]
                 ];
 
-                $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class, $this->settings, $this->uriBuilder, $confirmationRequest->getDecodedValues());
+                $factory = GeneralUtility::makeInstance(RegistrationPatchFormFactory::class);
+                $factory->setSettings($this->settings);
+                $factory->setUriBuilder($this->uriBuilder);
+                $factory->setPreDefinedValues($confirmationRequest->getDecodedValues());
+                $factory->setConfirmationRequest($confirmationRequest);
 
                 $this->view->assignMultiple([
                     'settings' => $this->settings,

@@ -19,6 +19,7 @@ use TYPO3\CMS\Form\Mvc\Configuration\ConfigurationManagerInterface as ExtFormCon
 use TYPO3\CMS\Form\Mvc\Persistence\FormPersistenceManagerInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
 
 /**
  * Main Entry Point to render a Form into a Fluid Template
@@ -41,6 +42,10 @@ final class RenderViewHelper extends AbstractViewHelper
      * @var bool
      */
     protected $escapeOutput = false;
+
+    public function __construct(
+        private readonly FormPersistenceManagerInterface $formPersistenceManager,
+    ) {}
 
     public function initializeArguments(): void
     {
@@ -69,11 +74,7 @@ final class RenderViewHelper extends AbstractViewHelper
             $extbaseConfigurationManager = GeneralUtility::makeInstance(ExtbaseConfigurationManagerInterface::class);
             $extbaseConfigurationManager->setRequest($request);
             $typoScriptSettings = $extbaseConfigurationManager->getConfiguration(ExtbaseConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, 'form');
-            $extFormConfigurationManager = GeneralUtility::makeInstance(ExtFormConfigurationManagerInterface::class);
-            $formSettings = $extFormConfigurationManager->getYamlConfiguration($typoScriptSettings, true);
-            // @todo: Make this VH non-static, get FormPersistenceManagerInterface injected, removed 'public: true' in its AsAlias
-            $formPersistenceManager = GeneralUtility::makeInstance(FormPersistenceManagerInterface::class);
-            $formConfiguration = $formPersistenceManager->load($persistenceIdentifier, $formSettings, $typoScriptSettings);
+            $formConfiguration = $this->formPersistenceManager->load($persistenceIdentifier, $typoScriptSettings, $request);
             ArrayUtility::mergeRecursiveWithOverrule($formConfiguration, $overrideConfiguration);
             $overrideConfiguration = $formConfiguration;
             $overrideConfiguration['persistenceIdentifier'] = $persistenceIdentifier;
@@ -92,13 +93,16 @@ final class RenderViewHelper extends AbstractViewHelper
 
         $form = $formDefinition->bind($request);
         if ($formDefinition->getRenderingOptions()['afterConfirmation'] ?? false) {
-            /** @var ConfirmationRequest $confirmationRequest */
             $confirmationRequest = $formDefinition->getRenderingOptions()['confirmationRequest'] ?? null;
-            if ($confirmationRequest) {
+            if ($confirmationRequest instanceof ConfirmationRequest) {
                 $values = $confirmationRequest->getDecodedValues();
-                foreach ($values as $fieldIdentifier => $value) {
-                    $form->getFormState()->setFormValue($fieldIdentifier, $value);
-                }
+            } elseif ($factory instanceof RegistrationPatchFormFactory) {
+                $values = $factory->getPreDefinedValues();
+            } else {
+                $values = [];
+            }
+            foreach ($values as $fieldIdentifier => $value) {
+                $form->getFormState()->setFormValue($fieldIdentifier, $value);
             }
         }
 

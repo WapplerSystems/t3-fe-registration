@@ -40,9 +40,10 @@ class CompleteRegistrationFinisher extends AbstractFinisher
     protected function executeInternal()
     {
         /** @var ConfirmationRequest $confirmationRequest */
-        $confirmationRequest = $this->finisherContext->getFormRuntime()->getFormDefinition()->getRenderingOptions()['confirmationRequest'];
-
-        $user = $this->finisherContext->getFormRuntime()->getFormDefinition()->getRenderingOptions()['confirmationRequest'] ?? null;
+        $confirmationRequest = $this->finisherContext->getFormRuntime()->getFormDefinition()->getRenderingOptions()['confirmationRequest'] ?? null;
+        if (!$confirmationRequest instanceof ConfirmationRequest) {
+            $confirmationRequest = $this->options['confirmationRequest'] ?? null;
+        }
 
 
         /*

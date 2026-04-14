@@ -19,6 +19,7 @@ use TYPO3\CMS\Form\Mvc\Configuration\ConfigurationManagerInterface as ExtFormCon
 use TYPO3\CMS\Form\Mvc\Persistence\FormPersistenceManagerInterface;
 use TYPO3Fluid\Fluid\Core\ViewHelper\AbstractViewHelper;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
+use WapplerSystems\FeRegistration\Form\Factory\RegistrationPatchFormFactory;
 
 /**
  * Main Entry Point to render a Form into a Fluid Template
@@ -92,13 +93,16 @@ final class RenderViewHelper extends AbstractViewHelper
 
         $form = $formDefinition->bind($request);
         if ($formDefinition->getRenderingOptions()['afterConfirmation'] ?? false) {
-            /** @var ConfirmationRequest $confirmationRequest */
             $confirmationRequest = $formDefinition->getRenderingOptions()['confirmationRequest'] ?? null;
-            if ($confirmationRequest) {
+            if ($confirmationRequest instanceof ConfirmationRequest) {
                 $values = $confirmationRequest->getDecodedValues();
-                foreach ($values as $fieldIdentifier => $value) {
-                    $form->getFormState()->setFormValue($fieldIdentifier, $value);
-                }
+            } elseif ($factory instanceof RegistrationPatchFormFactory) {
+                $values = $factory->getPreDefinedValues();
+            } else {
+                $values = [];
+            }
+            foreach ($values as $fieldIdentifier => $value) {
+                $form->getFormState()->setFormValue($fieldIdentifier, $value);
             }
         }
 

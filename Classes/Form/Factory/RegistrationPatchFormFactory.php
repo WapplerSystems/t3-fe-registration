@@ -9,6 +9,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autoconfigure;
 use TYPO3\CMS\Extbase\Mvc\Web\Routing\UriBuilder;
 use TYPO3\CMS\Form\Domain\Factory\ArrayFormFactory;
 use TYPO3\CMS\Form\Domain\Model\FormDefinition;
+use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 
 #[Autoconfigure(public: true, shared: false)]
 class RegistrationPatchFormFactory extends ArrayFormFactory
@@ -19,6 +20,8 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
     protected UriBuilder $uriBuilder;
 
     protected array $preDefinedValues;
+
+    protected ?ConfirmationRequest $confirmationRequest = null;
 
     public function setSettings(array $settings): void
     {
@@ -33,6 +36,21 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
     public function setPreDefinedValues(array $preDefinedValues): void
     {
         $this->preDefinedValues = $preDefinedValues;
+    }
+
+    public function getPreDefinedValues(): array
+    {
+        return $this->preDefinedValues;
+    }
+
+    public function setConfirmationRequest(?ConfirmationRequest $confirmationRequest): void
+    {
+        $this->confirmationRequest = $confirmationRequest;
+    }
+
+    public function getConfirmationRequest(): ?ConfirmationRequest
+    {
+        return $this->confirmationRequest;
     }
 
     public function build(
@@ -134,7 +152,11 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             $newConfiguration['renderingOptions']['afterConfirmation'] = true;
         }
 
-        return parent::build($newConfiguration, $prototypeName, $request);
+        $formDefinition = parent::build($newConfiguration, $prototypeName, $request);
+        if ($this->confirmationRequest !== null) {
+            $formDefinition->setRenderingOption('confirmationRequest', $this->confirmationRequest);
+        }
+        return $formDefinition;
     }
 
 

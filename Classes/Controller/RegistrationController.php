@@ -2,13 +2,12 @@
 
 namespace WapplerSystems\FeRegistration\Controller;
 
-use Doctrine\DBAL\ParameterType;
 use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
-use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Service\FlexFormService;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
@@ -41,7 +40,8 @@ class RegistrationController extends ActionController
                                 readonly PersistenceManager     $persistenceManager,
                                 readonly FrontendUserRepository $frontendUserRepository,
                                 readonly MailingService         $mailingService,
-                                readonly ContentElementService  $contentElementService
+                                readonly ContentElementService  $contentElementService,
+                                readonly LoggerInterface        $logger,
     )
     {
     }
@@ -191,6 +191,12 @@ class RegistrationController extends ActionController
                     );
                 }
 
+                if ($confirmationRequest->isExpired()) {
+                    return $this->renderNotification(
+                        type: 'Expired',
+                    );
+                }
+
                 $this->confirmationService->setRequestConfirmed($confirmationRequest);
 
 
@@ -237,10 +243,6 @@ class RegistrationController extends ActionController
                 ];
 
                 $finishers = [];
-                /*
-                if ((int)($this->settings['createFeUser'] ?? 0) === 1) {
-                    $finishers['FeUser'] = $feUserFinisher;
-                }*/
                 if (count($notificationEmailRecipients) > 0) {
                     $finishers['NotificationEmail'] = $notificationEmailFinisher;
                 }
@@ -312,9 +314,7 @@ class RegistrationController extends ActionController
 
         $pluginContentRecord = $this->contentElementService->findFeRegistrationPlugin($currentPageId, $currentLanguageUid);
         if ($pluginContentRecord) {
-            // FlexForm-Daten parsen
-            $flexFormService = GeneralUtility::makeInstance(FlexFormService::class);
-            $flexFormSettings = $flexFormService->convertFlexFormContentToArray($pluginContentRecord['pi_flexform']);
+            $flexFormSettings = GeneralUtility::makeInstance(FlexFormService::class)->convertFlexFormContentToArray($pluginContentRecord['pi_flexform']);
 
             // FlexForm-Werte nutzen
             $settings = array_merge($settings, $flexFormSettings['settings'] ?? []);
@@ -332,9 +332,7 @@ class RegistrationController extends ActionController
                     return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequest->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock']]);
                 }
 
-                /** @var MailingService $mailer */
-                $mailer = GeneralUtility::makeInstance(MailingService::class);
-                $mailer->sendConfirmationMail($confirmationRequest, $this->request, $settings, $currentPageId);
+                $this->mailingService->sendConfirmationMail($confirmationRequest, $this->request, $settings, $currentPageId);
 
                 return new JsonResponse(['success' => true]);
             }

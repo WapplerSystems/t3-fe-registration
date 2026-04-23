@@ -6,8 +6,10 @@ CREATE TABLE tx_feregistration_domain_model_confirmationrequest
 
 	encoded_values text,
 	last_sent      int(10) unsigned DEFAULT '0' NOT NULL,
+	expires_at     int(10) unsigned DEFAULT '0' NOT NULL,
 
-	KEY            hash (confirmation_hash)
+	KEY            hash (confirmation_hash),
+	KEY            email (email)
 );
 
 CREATE TABLE fe_users

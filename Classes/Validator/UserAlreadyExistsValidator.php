@@ -33,11 +33,11 @@ class UserAlreadyExistsValidator extends AbstractValidator
     {
 
         /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_validationrequest');
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
         $queryBuilder->getRestrictions()->removeAll();
         $count = $queryBuilder
             ->select('uid')
-            ->from('tx_feregistration_domain_model_validationrequest')
+            ->from('tx_feregistration_domain_model_confirmationrequest')
             ->where($queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['confirmationRequestPid'])),

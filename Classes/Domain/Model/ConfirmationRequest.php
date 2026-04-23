@@ -22,6 +22,8 @@ class ConfirmationRequest extends AbstractEntity
 
     protected ?\DateTime $completionDate = null;
 
+    protected ?\DateTime $expiresAt = null;
+
 
     public function __construct()
     {
@@ -137,5 +139,19 @@ class ConfirmationRequest extends AbstractEntity
         $this->completionDate = $completionDate;
     }
 
+    public function getExpiresAt(): ?\DateTime
+    {
+        return $this->expiresAt;
+    }
+
+    public function setExpiresAt(?\DateTime $expiresAt): void
+    {
+        $this->expiresAt = $expiresAt;
+    }
+
+    public function isExpired(): bool
+    {
+        return $this->expiresAt !== null && $this->expiresAt < new \DateTime();
+    }
 
 }

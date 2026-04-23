@@ -193,40 +193,6 @@ readonly class DataStructureIdentifierListener
                     'value' => $identifier['ext-feregistration-persistenceIdentifier'],
                 ];
             }
-            /*
-            // If a specific form is selected and if finisher override is active, add finisher sheets
-            if (!empty($identifier['ext-feregistration-persistenceIdentifier']) && $formIsAccessible) {
-                $persistenceIdentifier = $identifier['ext-feregistration-persistenceIdentifier'];
-                $formDefinition = $this->formPersistenceManager->load($persistenceIdentifier, $formSettings, []);
-                $translationFile = 'LLL:EXT:form/Resources/Private/Language/Database.xlf';
-                $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.overrideFinishers'] = [
-                    'label' => $translationFile . ':tt_content.pi_flexform.formframework.overrideFinishers',
-                    'onChange' => 'reload',
-                    'config' => [
-                        'type' => 'check',
-                    ],
-                ];
-                $newSheets = [];
-                if (!empty($formDefinition['finishers'])) {
-                    $prototypeName = $formDefinition['prototypeName'] ?? 'standard';
-                    $prototypeConfiguration = $this->configurationService->getPrototypeConfiguration($prototypeName);
-                    $newSheets = $this->getAdditionalFinisherSheets($persistenceIdentifier, $formDefinition, $prototypeName, $prototypeConfiguration);
-                }
-                if (empty($newSheets)) {
-                    ArrayUtility::mergeRecursiveWithOverrule(
-                        $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.overrideFinishers'],
-                        [
-                            'description' => $translationFile . ':tt_content.pi_flexform.formframework.overrideFinishers.empty',
-                            'config' => [
-                                'readOnly' => true,
-                            ],
-                        ]
-                    );
-                }
-                if ($identifier['ext-feregistration-overrideFinishers'] === 'enabled') {
-                    ArrayUtility::mergeRecursiveWithOverrule($dataStructure, $newSheets);
-                }
-            }*/
         } catch (NoSuchFileException|ParseErrorException $e) {
             $dataStructure = $this->addSelectedPersistenceIdentifier($identifier['ext-feregistration-persistenceIdentifier'], $dataStructure);
             $this->addInvalidFrameworkConfigurationFlashMessage($e, $identifier['ext-feregistration-persistenceIdentifier']);

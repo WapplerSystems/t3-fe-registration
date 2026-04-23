@@ -3,8 +3,8 @@
 namespace WapplerSystems\FeRegistration\Service;
 
 use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerInterface;
 use TYPO3\CMS\Core\Context\Context;
-use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Persistence\Generic\PersistenceManager;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
@@ -16,7 +16,9 @@ class ConfirmationService
     public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
                                 readonly EventDispatcherInterface      $eventDispatcher,
                                 readonly DatabaseService               $databaseService,
-                                readonly PersistenceManager            $persistenceManager)
+                                readonly PersistenceManager            $persistenceManager,
+                                readonly LoggerInterface               $logger,
+                                readonly Context                       $context)
     {
     }
 
@@ -57,21 +59,20 @@ class ConfirmationService
         $confirmationRequest->setCompletionDate(new \DateTime());
         $this->confirmationRequestRepository->update($confirmationRequest);
         $this->persistenceManager->persistAll();
+        $this->logger->info('Registration completed', ['email' => $confirmationRequest->getEmail(), 'uid' => $confirmationRequest->getUid()]);
     }
 
     public function setRequestConfirmed(ConfirmationRequest $confirmationRequest): void
     {
-        $context = GeneralUtility::makeInstance(Context::class);
-
         /** @var \DateTimeImmutable $currentDateTime */
-        $currentDateTime = $context->getPropertyFromAspect('date', 'full');
+        $currentDateTime = $this->context->getPropertyFromAspect('date', 'full');
         $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
         $this->confirmationRequestRepository->update($confirmationRequest);
         $this->persistenceManager->persistAll();
-
+        $this->logger->info('Email confirmed', ['email' => $confirmationRequest->getEmail(), 'uid' => $confirmationRequest->getUid()]);
     }
 
-    public function findUnconfirmedByEmail(mixed $email): ?ConfirmationRequest
+    public function findUnconfirmedByEmail(string $email): ?ConfirmationRequest
     {
         return $this->confirmationRequestRepository->findUnconfirmedByEmail($email);
 

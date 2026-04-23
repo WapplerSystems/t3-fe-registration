@@ -1,41 +1,100 @@
 # TYPO3 Frontend Registration Extension (fe_registration)
 
-Diese Extension bietet eine flexible und erweiterbare Lösung für die Benutzerregistrierung im Frontend von TYPO3, basierend auf dem TYPO3 Form Framework.
+Flexible und erweiterbare Lösung für die Frontend-Benutzerregistrierung in TYPO3 14, basierend auf dem TYPO3 Form Framework mit DSGVO-konformem Double-Opt-In-Verfahren.
 
-## Vorteile und Merkmale
+## Features
 
-### 1. Integration in das TYPO3 Form Framework
-* **Flexibilität:** Nutzen Sie alle Vorteile des TYPO3 Form Frameworks, um Registrierungsformulare visuell im Form Editor zu erstellen.
-* **Bekannte Bedienung:** Administratoren und Redakteure können Formulare wie gewohnt verwalten, ohne neue Tools erlernen zu müssen.
-* **Validierung:** Nutzen Sie integrierte Validatoren oder die spezialisierten Validatoren dieser Extension (z.B. `UserAlreadyExistsValidator`), um Datenqualität sicherzustellen.
+### Form Framework Integration
+- Registrierungsformulare visuell im Form Editor erstellen und verwalten
+- Integrierte und spezialisierte Validatoren (Duplikatprüfung E-Mail/Benutzername)
+- Formular-Splitting: Felder vor und nach der E-Mail-Bestätigung getrennt konfigurierbar
+- Vorausfüllung von Formularfeldern über URL-Parameter
 
-### 2. Double Opt-In (DOI) Prozess
-* **Rechtssicherheit:** Ein vollständiger Double Opt-In Prozess ist integriert, um DSGVO-Anforderungen zu erfüllen.
-* **Sichere Bestätigung:** Erzeugt eindeutige Bestätigungs-Hashes und speichert diese sicher in der Datenbank.
-* **Anpassbare E-Mails:** Bestätigungs-E-Mails können über Fluid-Templates vollständig individualisiert werden.
+### Double Opt-In (DOI)
+- DSGVO-konformer Bestätigungsprozess mit UUID-basierten Hashes
+- Konfigurierbare Ablaufzeit für Bestätigungslinks (Standard: 7 Tage)
+- Resend-Endpoint mit Time-Lock gegen Missbrauch
+- Automatische Bereinigung abgelaufener Requests via Scheduler-Command
 
-### 3. Erweiterbarkeit durch PSR-14 Events
-Die Extension ist nach modernen Standards entwickelt und bietet zahlreiche Events, um den Registrierungsprozess an eigene Bedürfnisse anzupassen:
-* `AfterConfirmationRequestCreationEvent`: Nach der Erstellung einer Bestätigungsanfrage.
-* `AfterConfirmationEvent`: Nach erfolgreicher Bestätigung durch den Benutzer.
-* `AfterRegistrationCompletionEvent`: Nach Abschluss des gesamten Registrierungsprozesses (z.B. für die Synchronisation mit Drittsystemen).
-* `SetPredefinedRegistrationFormValuesEvent`: Zum Vorbelegen von Formularwerten.
+### E-Mail-System
+- Bestätigungsmail mit individuell anpassbarem Fluid-Template
+- Optionale Willkommensmail nach erfolgreicher Registrierung
+- Admin-Benachrichtigungen bei abgeschlossenen Registrierungen
+- Konfigurierbare Absender, Betreff und HTML/Plain-Text-Format
 
-### 4. Nahtlose Frontend-Integration
-* **Controller-gesteuerter Workflow:** Ein spezialisierter `RegistrationController` verwaltet den Ablauf von der Anmeldung bis zur erfolgreichen Bestätigung.
-* **Passwort-Management:** Unterstützung für Passwort-Felder inklusive automatischer Generierung, falls kein Passwort-Feld im Formular vorhanden ist.
-* **Benutzergruppen-Zuordnung:** Automatische Zuweisung von FE-Benutzern zu vordefinierten Benutzergruppen nach erfolgreicher Registrierung.
+### Benutzerverwaltung
+- Automatische Erstellung von `fe_users`-Einträgen
+- Zuweisung zu konfigurierbaren Benutzergruppen
+- Passwort-Management mit automatischem Hashing
+- Optionale Deaktivierung bis Admin-Freigabe (`feUserMustConfirmed`)
 
-### 5. Entwicklerfreundlich
-* **Moderne Architektur:** Nutzt Dependency Injection und ist für TYPO3 v13 optimiert.
-* **Einfache Konfiguration:** Die Konfiguration erfolgt bequem über YAML (Form Framework) und TypoScript/FlexForms.
-* **Spezialisierte Finisher:** Enthält maßgeschneiderte Finisher wie `ConfirmationRequestFinisher` und `CompleteRegistrationFinisher`.
+### Erweiterbarkeit (PSR-14 Events)
+- `AfterConfirmationRequestCreationEvent` -- nach Erstellung einer Bestätigungsanfrage
+- `BeforeConfirmationEvent` / `AfterConfirmationEvent` -- vor/nach E-Mail-Bestätigung
+- `AfterRegistrationCompletionEvent` -- nach Abschluss der Registrierung (z.B. Sync mit Drittsystemen)
+- `FeUserDatabaseDataEvent` -- vor dem Speichern der Benutzerdaten (Daten modifizieren)
+- `SetPredefinedRegistrationFormValuesEvent` -- Formularwerte vorbelegen
+
+## Registrierungsablauf
+
+```
+1. Benutzer füllt Registrierungsformular aus
+2. ConfirmationRequest wird gespeichert, Bestätigungsmail versendet
+3. Benutzer klickt Bestätigungslink in E-Mail
+4. Optionales Vervollständigungsformular (Adresse, etc.)
+5. fe_users-Eintrag wird erstellt, Admin wird benachrichtigt
+6. Erfolgsseite
+```
 
 ## Installation
 
-1. Installation via Composer:
-   ```bash
-   composer require wapplersystems/fe-registration
-   ```
-2. Includieren Sie das TypoScript der Extension in Ihr Template.
-3. Konfigurieren Sie das Registrierungsformular im TYPO3-Backend.
+```bash
+composer require wapplersystems/fe-registration
+```
+
+## Konfiguration
+
+1. TypoScript der Extension in das Template einbinden
+2. Inhaltselement "Frontend User Registration" auf einer Seite platzieren
+3. Im FlexForm konfigurieren:
+   - **Formular** auswählen (Form Framework Persistenz-Identifier)
+   - **Identifier-Feld** festlegen (z.B. `email`)
+   - **E-Mail-Feld** festlegen
+   - **Storage-PIDs** für Bestätigungsanfragen und fe_users setzen
+   - **Benutzergruppen** zuweisen
+   - **Absender** für E-Mails konfigurieren
+
+### Registrierungsformular erstellen
+
+Das Formular wird im TYPO3 Form Editor erstellt. Es muss ein `EmailConfirmation`-Element enthalten, das den Formular-Split definiert:
+
+- Felder **vor** dem `EmailConfirmation`-Element werden im ersten Schritt abgefragt
+- Felder **danach** erscheinen erst nach der E-Mail-Bestätigung
+
+Formularfelder werden automatisch auf gleichnamige `fe_users`-Spalten gemappt (camelCase wird in snake_case konvertiert).
+
+### Cleanup abgelaufener Requests
+
+Abgelaufene Bestätigungsanfragen können per Scheduler-Command bereinigt werden:
+
+```bash
+# Entfernt abgelaufene und unbestätigte Requests (Fallback: älter als 30 Tage)
+vendor/bin/typo3 feregistration:cleanup
+
+# Mit benutzerdefiniertem Fallback-Zeitraum
+vendor/bin/typo3 feregistration:cleanup --days=14
+```
+
+## Anforderungen
+
+- TYPO3 14.0+
+- TYPO3 Form Framework (`typo3/cms-form`)
+- Extension `wapplersystems/form_extended`
+
+## Lizenz
+
+GPL-2.0+
+
+## Autor
+
+Sven Wappler -- [WapplerSystems](https://wappler.systems)

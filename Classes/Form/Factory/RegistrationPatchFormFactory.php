@@ -123,12 +123,6 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
 
         $this->patchFieldConfigurations($newConfiguration, $request);
 
-        /*
-        $newConfiguration['renderables'][0]['renderables'][] = [
-            'type' => 'Hidden',
-            'identifier' => 'preDefinedValues',
-        ];*/
-
         if ($preConfirmation) {
             $allowedParameterizedFields = explode(',',$this->settings['allowedParameterizedFields'] ?? '');
 

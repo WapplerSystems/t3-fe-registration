@@ -3,6 +3,7 @@
 namespace WapplerSystems\FeRegistration\Service;
 
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
 use Symfony\Component\Mime\Address;
 use TYPO3\CMS\Core\Mail\FluidEmail;
@@ -18,6 +19,14 @@ use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepositor
 
 class MailingService
 {
+
+    public function __construct(
+        private readonly LoggerInterface $logger,
+        private readonly ConfirmationRequestRepository $confirmationRequestRepository,
+        private readonly PersistenceManager $persistenceManager,
+        private readonly MailerInterface $mailer,
+    ) {
+    }
 
 
     /**
@@ -58,22 +67,18 @@ class MailingService
             ->assign('confirmationHash', $confirmationRequest->getConfirmationHash())
             ->assign('pageId', $pageId);
 
-        /*
-        if (!empty($languageBackup)) {
-            $translationService->setLanguage($languageBackup);
-        }*/
-
-
-        GeneralUtility::makeInstance(MailerInterface::class)->send($mail);
+        try {
+            $this->mailer->send($mail);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Failed to send confirmation email', ['email' => $receiverAddress, 'exception' => $e->getMessage()]);
+            throw $e;
+        }
 
         $confirmationRequest->setLastSent(new \DateTime());
+        $this->confirmationRequestRepository->update($confirmationRequest);
+        $this->persistenceManager->persistAll();
 
-        $confirmationRequestRepository = GeneralUtility::makeInstance(ConfirmationRequestRepository::class);
-        $confirmationRequestRepository->update($confirmationRequest);
-
-        $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-        $persistenceManager->persistAll();
-
+        $this->logger->info('Confirmation email sent', ['email' => $receiverAddress]);
     }
 
 
@@ -113,13 +118,14 @@ class MailingService
             ->assign('user', $feUser)
             ->assign('mustBeConfirmed', $settings['feUserMustConfirmed'] ?? false);
 
-        /*
-        if (!empty($languageBackup)) {
-            $translationService->setLanguage($languageBackup);
-        }*/
+        try {
+            $this->mailer->send($mail);
+        } catch (TransportExceptionInterface $e) {
+            $this->logger->error('Failed to send welcome email', ['email' => $receiverAddress, 'exception' => $e->getMessage()]);
+            throw $e;
+        }
 
-        GeneralUtility::makeInstance(MailerInterface::class)->send($mail);
-
+        $this->logger->info('Welcome email sent', ['email' => $receiverAddress]);
     }
 
 

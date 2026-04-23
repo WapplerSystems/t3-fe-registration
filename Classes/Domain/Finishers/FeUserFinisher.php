@@ -2,6 +2,8 @@
 namespace WapplerSystems\FeRegistration\Domain\Finishers;
 
 
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\EventDispatcher\EventDispatcher;
@@ -12,13 +14,10 @@ use WapplerSystems\FeRegistration\Event\FeUserDatabaseDataEvent;
 
 /**
  * Finisher to save form values to fe_users table
- *
- *
- *
- *
  */
-class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFinisher
+class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFinisher implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
 
     /**
      * @var array
@@ -109,7 +108,11 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
                 $this->databaseConnection->insert($table, $databaseData);
                 $databaseData['uid'] = (int)$this->databaseConnection->lastInsertId($table);
             } catch (\Exception $e) {
-                // logging
+                $this->logger?->error('Failed to create fe_user', [
+                    'username' => $databaseData['username'] ?? '',
+                    'exception' => $e->getMessage(),
+                ]);
+                throw $e;
             }
 
         }

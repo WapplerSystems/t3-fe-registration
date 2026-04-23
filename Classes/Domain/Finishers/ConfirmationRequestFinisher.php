@@ -26,11 +26,13 @@ class ConfirmationRequestFinisher extends AbstractFinisher
      */
     protected $defaultOptions = [
         'confirmationRequestPid' => null,
+        'expirationDays' => 7,
     ];
 
 
     public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
-                                readonly EventDispatcherInterface      $eventDispatcher)
+                                readonly EventDispatcherInterface      $eventDispatcher,
+                                readonly PersistenceManager            $persistenceManager)
     {
     }
 
@@ -66,14 +68,20 @@ class ConfirmationRequestFinisher extends AbstractFinisher
         $confirmationRequest->setPid($this->options['confirmationRequestPid']);
         $confirmationRequest->setLastSent(new \DateTime());
 
+        $expirationDays = (int)($this->options['expirationDays'] ?? 7);
+        if ($expirationDays > 0) {
+            $expiresAt = new \DateTime();
+            $expiresAt->modify('+' . $expirationDays . ' days');
+            $confirmationRequest->setExpiresAt($expiresAt);
+        }
+
         $this->confirmationRequestRepository->add($confirmationRequest);
 
         $this->eventDispatcher->dispatch(
             new AfterConfirmationRequestCreationEvent($confirmationRequest)
         );
 
-        $persistenceManager = GeneralUtility::makeInstance(PersistenceManager::class);
-        $persistenceManager->persistAll();
+        $this->persistenceManager->persistAll();
 
         $this->finisherContext->getFormRuntime()->getFormState()->setFormValue('confirmationHash', $confirmationRequest->getConfirmationHash());
     }

@@ -23,6 +23,7 @@ use Symfony\Component\DependencyInjection\Attribute\Autowire;
 use TYPO3\CMS\Core\Attribute\AsEventListener;
 use TYPO3\CMS\Core\Configuration\Event\AfterFlexFormDataStructureIdentifierInitializedEvent;
 use TYPO3\CMS\Core\Configuration\Event\AfterFlexFormDataStructureParsedEvent;
+use TYPO3\CMS\Form\Domain\DTO\SearchCriteria;
 use TYPO3\CMS\Core\Core\SystemEnvironmentBuilder;
 use TYPO3\CMS\Core\Http\ApplicationType;
 use TYPO3\CMS\Core\Http\ServerRequest;
@@ -164,21 +165,21 @@ readonly class DataStructureIdentifierListener
         try {
             // Add list of existing forms to drop down if we find our key in the identifier
             $formIsAccessible = false;
-            foreach ($this->formPersistenceManager->listForms($formSettings) as $form) {
-                $invalidFormDefinition = $form['invalid'] ?? false;
-                if ($form['persistenceIdentifier'] === $identifier['ext-feregistration-persistenceIdentifier']) {
+            foreach ($this->formPersistenceManager->listForms($formSettings, new SearchCriteria()) as $form) {
+                $invalidFormDefinition = $form->invalid;
+                if ($form->persistenceIdentifier === $identifier['ext-feregistration-persistenceIdentifier']) {
                     $formIsAccessible = true;
                 }
                 if ($invalidFormDefinition) {
                     $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.form']['config']['items'][] = [
-                        'label' => $form['name'] . ' (' . $form['persistenceIdentifier'] . ')',
-                        'value' => $form['persistenceIdentifier'],
+                        'label' => $form->name . ' (' . $form->persistenceIdentifier . ')',
+                        'value' => $form->persistenceIdentifier,
                         'icon' => 'overlay-missing',
                     ];
                 } else {
                     $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.form']['config']['items'][] = [
-                        'label' => $form['name'] . ' (' . $form['persistenceIdentifier'] . ')',
-                        'value' => $form['persistenceIdentifier'],
+                        'label' => $form->name . ' (' . $form->persistenceIdentifier . ')',
+                        'value' => $form->persistenceIdentifier,
                         'icon' => 'content-form',
                     ];
                 }

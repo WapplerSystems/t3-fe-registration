@@ -1,0 +1,7 @@
+"tx_feregistration_domain_model_confirmationrequest"
+,"uid","pid","email","confirmation_hash","encoded_values","confirmation_date","completion_date","last_sent","expires_at","crdate","tstamp"
+,1,10,"unconfirmed@example.com","hash-unconfirmed-1111","{}",0,0,1700000000,1900000000,1700000000,1700000000
+,2,10,"confirmed@example.com","hash-confirmed-2222","{}",1700100000,0,1700000000,1900000000,1700000000,1700000000
+,3,10,"completed@example.com","hash-completed-3333","{""firstName"":""John""}",1700100000,1700200000,1700000000,1900000000,1700000000,1700000000
+,4,10,"expired@example.com","hash-expired-4444","{}",0,0,1700000000,1000000000,1700000000,1700000000
+,5,10,"no-expiry@example.com","hash-no-expiry-5555","{}",0,0,1700000000,0,1600000000,1600000000

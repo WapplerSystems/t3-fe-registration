@@ -3,6 +3,9 @@
 use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use WapplerSystems\FeRegistration\Controller\RegistrationController;
+use WapplerSystems\FeRegistration\Routing\Aspect\PersistedFieldValueMapper;
+
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects']['PersistedFieldValueMapper'] = PersistedFieldValueMapper::class;
 
 
 ExtensionUtility::configurePlugin(

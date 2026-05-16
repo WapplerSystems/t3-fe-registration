@@ -1,0 +1,40 @@
+name: wapplersystems/fe-registration
+label: 'Frontend Registration'
+priority: 341
+
+imports:
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/ConfirmationRequest.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/ConfirmationEmail.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/CompleteRegistration.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/FeUser.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/Overrides/Confirmation.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/Overrides/EmailToSender.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/Overrides/EmailToReceiver.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/FormElements/EmailConfirmation.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/FormElements/Overrides/Form.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/FormElements/Overrides/Text.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Validators/ConfirmationRequest.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Validators/FeUser.yaml" }
+
+
+formManager:
+  translationFiles:
+    73666: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
+
+prototypes:
+  standard:
+    formEditor:
+      translationFiles:
+        73666: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
+
+      dynamicJavaScriptModules:
+        additionalViewModelModules:
+          73666: '@wapplersystems/fe_registration/backend/form-editor/view-model.js'
+    formEngine:
+      translationFiles:
+        73666: 'EXT:fe_registration/Resources/Private/Language/form.xlf'
+
+persistenceManager:
+  allowedExtensionPaths:
+    2788: EXT:fe_registration/Configuration/Yaml/Forms/
+  allowSaveToExtensionPaths: true

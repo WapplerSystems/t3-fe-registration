@@ -1,6 +1,5 @@
 <?php
 
-use TYPO3\CMS\Core\Utility\ExtensionManagementUtility;
 use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 use WapplerSystems\FeRegistration\Controller\RegistrationController;
 use WapplerSystems\FeRegistration\Routing\Aspect\PersistedFieldValueMapper;
@@ -32,16 +31,6 @@ ExtensionUtility::configurePlugin(
     ExtensionUtility::PLUGIN_TYPE_CONTENT_ELEMENT
 );
 
-
-ExtensionManagementUtility::addTypoScriptSetup(
-    'module.tx_form {
-    settings {
-        yamlConfigurations {
-            341 = EXT:fe_registration/Configuration/Yaml/FormSetup.yaml
-        }
-    }
-}'
-);
 
 $GLOBALS['TYPO3_CONF_VARS']['SC_OPTIONS']['ext/form']['afterInitializeCurrentPage'][1739725421] = \WapplerSystems\FeRegistration\Hooks\FormInitializationHook::class;
 

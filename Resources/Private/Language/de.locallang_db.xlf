@@ -7,6 +7,14 @@
                 <source>Frontend User Registration</source>
                 <target state="final">Frontend-Benutzerregistrierung</target>
             </trans-unit>
+            <trans-unit id="plugin.registration.title" approved="yes">
+                <source>Frontend User Registration</source>
+                <target state="final">Frontend-Benutzerregistrierung</target>
+            </trans-unit>
+            <trans-unit id="plugin.registration.description" approved="yes">
+                <source>Adds a frontend user registration form to the page.</source>
+                <target state="final">Fügt ein Frontend-Registrierungsformular zur Seite hinzu.</target>
+            </trans-unit>
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest" approved="yes">
                 <source>Email confirmation requests</source>
                 <target state="final">E-Mail-Bestätigungsanfragen</target>

@@ -11,7 +11,8 @@ use TYPO3\CMS\Extbase\Utility\ExtensionUtility;
 $contentTypeName = ExtensionUtility::registerPlugin(
     'fe_registration',
     'Registration',
-    'Frontend User Registration'
+    'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:plugin.registration.title',
+    'plugin-feregistration'
 );
 
 ExtensionManagementUtility::addToAllTCAtypes(

@@ -4,6 +4,9 @@
           product-name="form_extended">
         <header/>
         <body>
+            <trans-unit id="extension.title">
+                <source>Frontend User Registration</source>
+            </trans-unit>
             <trans-unit id="flexform.main">
                 <source>Main settings</source>
             </trans-unit>

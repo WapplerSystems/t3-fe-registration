@@ -3,8 +3,8 @@ mod.wizards.newContentElement.wizardItems.plugins {
     elements {
       feregistration {
             iconIdentifier = plugin-feregistration
-            title = Frontend User Registration
-            description = Adds a frontend user registration form to the page.
+            title = LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:plugin.registration.title
+            description = LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:plugin.registration.description
             tt_content_defValues {
                 CType = feregistration_registration
             }

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<xliff version="1.0">
+    <file source-language="en" target-language="de" datatype="plaintext" original="messages" date="2026-05-29T00:00:00Z" product-name="fe_registration">
+        <header/>
+        <body>
+            <trans-unit id="extension.title" approved="yes">
+                <source>Frontend User Registration</source>
+                <target state="final">Frontend-Benutzerregistrierung</target>
+            </trans-unit>
+            <trans-unit id="plugin.registration.title" approved="yes">
+                <source>Frontend User Registration</source>
+                <target state="final">Frontend-Benutzerregistrierung</target>
+            </trans-unit>
+            <trans-unit id="plugin.registration.description" approved="yes">
+                <source>Adds a frontend user registration form to the page.</source>
+                <target state="final">Fügt ein Frontend-Registrierungsformular zur Seite hinzu.</target>
+            </trans-unit>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest" approved="yes">
+                <source>Email confirmation requests</source>
+                <target state="final">E-Mail-Bestätigungsanfragen</target>
+            </trans-unit>
+        </body>
+    </file>
+</xliff>

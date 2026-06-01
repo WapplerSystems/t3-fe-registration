@@ -4,6 +4,15 @@
           product-name="form_extended">
         <header/>
         <body>
+            <trans-unit id="extension.title">
+                <source>Frontend User Registration</source>
+            </trans-unit>
+            <trans-unit id="plugin.registration.title">
+                <source>Frontend User Registration</source>
+            </trans-unit>
+            <trans-unit id="plugin.registration.description">
+                <source>Adds a frontend user registration form to the page.</source>
+            </trans-unit>
             <trans-unit id="flexform.main">
                 <source>Main settings</source>
             </trans-unit>

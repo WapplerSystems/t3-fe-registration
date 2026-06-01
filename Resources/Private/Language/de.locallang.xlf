@@ -84,6 +84,28 @@
                 <target>Willkommen</target>
             </trans-unit>
 
+            <trans-unit id="validator.currentPassword.wrong">
+                <source>The current password is incorrect.</source>
+                <target>Das aktuelle Passwort ist nicht korrekt.</target>
+            </trans-unit>
+            <trans-unit id="validator.currentPassword.notLoggedIn">
+                <source>You must be logged in to change your password.</source>
+                <target>Sie müssen angemeldet sein, um Ihr Passwort zu ändern.</target>
+            </trans-unit>
+            <trans-unit id="finisher.changePassword.currentPasswordWrong">
+                <source>The current password is incorrect.</source>
+                <target>Das aktuelle Passwort ist nicht korrekt.</target>
+            </trans-unit>
+
+            <trans-unit id="validator.currentUserEmail.mismatch">
+                <source>The email address does not match your account.</source>
+                <target>Die E-Mail-Adresse stimmt nicht mit Ihrem Account überein.</target>
+            </trans-unit>
+            <trans-unit id="validator.currentUserEmail.notLoggedIn">
+                <source>You must be logged in.</source>
+                <target>Sie müssen angemeldet sein.</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

@@ -7,6 +7,9 @@ imports:
   - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/ConfirmationEmail.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/CompleteRegistration.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/FeUser.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/ChangePassword.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/DeleteAccount.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/UpdateProfile.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/Overrides/Confirmation.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/Overrides/EmailToSender.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Finishers/Overrides/EmailToReceiver.yaml" }
@@ -15,6 +18,8 @@ imports:
   - { resource: "EXT:fe_registration/Configuration/Yaml/FormElements/Overrides/Text.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Validators/ConfirmationRequest.yaml" }
   - { resource: "EXT:fe_registration/Configuration/Yaml/Validators/FeUser.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Validators/CurrentPassword.yaml" }
+  - { resource: "EXT:fe_registration/Configuration/Yaml/Validators/CurrentUserEmail.yaml" }
 
 
 formManager:

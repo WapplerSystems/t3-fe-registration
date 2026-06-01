@@ -1,0 +1,8 @@
+prototypes:
+  standard:
+    validatorsDefinition:
+      CurrentUserEmail:
+        implementationClassName: WapplerSystems\FeRegistration\Validator\CurrentUserEmailValidator
+        formEditor:
+          iconIdentifier: form-validator
+          label: 'Email matches logged-in user'

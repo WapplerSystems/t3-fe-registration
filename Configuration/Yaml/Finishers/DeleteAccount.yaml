@@ -1,0 +1,16 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      DeleteAccount:
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\DeleteAccountFinisher
+        formEditor:
+          iconIdentifier: form-finisher
+          label: 'Delete FE-User account (soft-delete + anonymize)'
+          predefinedDefaults:
+            options:
+              pageUid: 0
+              emailField: email
+              additionalParameters: ''
+              statusCode: 303
+              fragment: ''
+              siteSettingKey: feRegistration.deleteRedirectPageId

@@ -1,0 +1,7 @@
+settings:
+  feRegistration.deleteRedirectPageId:
+    label: 'Redirect page after frontend user account deletion'
+    description: 'Page UID the user is redirected to after the DeleteAccountFinisher has removed their account. 0 disables the redirect (current page is shown).'
+    type: int
+    default: 0
+    category: 'fe_registration'

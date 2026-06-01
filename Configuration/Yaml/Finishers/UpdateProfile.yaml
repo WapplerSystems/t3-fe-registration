@@ -1,0 +1,10 @@
+prototypes:
+  standard:
+    finishersDefinition:
+      UpdateProfile:
+        implementationClassName: WapplerSystems\FeRegistration\Domain\Finishers\UpdateProfileFinisher
+        formEditor:
+          iconIdentifier: form-finisher
+          label: 'Update logged-in frontend user profile'
+        FormEngine:
+          label: 'Update Profile finisher'

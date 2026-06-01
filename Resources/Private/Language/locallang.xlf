@@ -71,6 +71,23 @@
                 <source>A new user has successfully registered</source>
             </trans-unit>
 
+            <trans-unit id="validator.currentPassword.wrong">
+                <source>The current password is incorrect.</source>
+            </trans-unit>
+            <trans-unit id="validator.currentPassword.notLoggedIn">
+                <source>You must be logged in to change your password.</source>
+            </trans-unit>
+            <trans-unit id="finisher.changePassword.currentPasswordWrong">
+                <source>The current password is incorrect.</source>
+            </trans-unit>
+
+            <trans-unit id="validator.currentUserEmail.mismatch">
+                <source>The email address does not match your account.</source>
+            </trans-unit>
+            <trans-unit id="validator.currentUserEmail.notLoggedIn">
+                <source>You must be logged in.</source>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

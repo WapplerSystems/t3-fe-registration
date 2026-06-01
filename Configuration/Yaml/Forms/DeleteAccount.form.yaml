@@ -1,0 +1,54 @@
+renderingOptions:
+  submitButtonLabel: 'Account endgültig löschen'
+identifier: DeleteAccount
+label: 'Account löschen'
+type: Form
+prototypeName: standard
+renderables:
+  -
+    identifier: page-1
+    label: ''
+    type: Page
+    renderingOptions:
+      previousButtonLabel: ''
+      nextButtonLabel: ''
+    renderables:
+      -
+        type: StaticText
+        identifier: warning
+        properties:
+          text: 'Das Löschen Ihres Accounts ist endgültig. Zur Bestätigung geben Sie bitte Ihre E-Mail-Adresse ein und aktivieren Sie die Sicherheitsabfrage.'
+      -
+        type: Email
+        identifier: email
+        label: 'Ihre E-Mail-Adresse zur Bestätigung'
+        defaultValue: ''
+        properties:
+          fluidAdditionalAttributes:
+            required: required
+            autocomplete: email
+            autocapitalize: 'off'
+            spellcheck: 'false'
+        validators:
+          -
+            identifier: NotEmpty
+          -
+            identifier: EmailAddress
+          -
+            identifier: CurrentUserEmail
+      -
+        type: Checkbox
+        identifier: confirm
+        label: 'Ich möchte meinen Account und meine personenbezogenen Daten endgültig löschen lassen.'
+        properties:
+          fluidAdditionalAttributes:
+            required: required
+        validators:
+          -
+            identifier: NotEmpty
+finishers:
+  -
+    identifier: DeleteAccount
+    options:
+      emailField: email
+      siteSettingKey: feRegistration.deleteRedirectPageId

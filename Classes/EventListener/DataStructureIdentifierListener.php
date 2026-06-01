@@ -101,10 +101,13 @@ readonly class DataStructureIdentifierListener
         if (!empty($row['pi_flexform']) && !\is_array($row['pi_flexform'])) {
             $currentFlexData = GeneralUtility::xml2array($row['pi_flexform']);
         }
-        // Add selected form value
+        // Add selected form value — FlexForm XML uses <settings.form>, NOT
+        // <settings.persistenceIdentifier>. Without this the items list rendered
+        // by modifyDataStructure() never contains the currently selected form,
+        // so DataHandler drops the value on every save ("form disappears").
         $identifier['ext-feregistration-persistenceIdentifier'] = '';
-        if (!empty($currentFlexData['data']['sDEF']['lDEF']['settings.persistenceIdentifier']['vDEF'])) {
-            $identifier['ext-feregistration-persistenceIdentifier'] = $currentFlexData['data']['sDEF']['lDEF']['settings.persistenceIdentifier']['vDEF'];
+        if (!empty($currentFlexData['data']['sDEF']['lDEF']['settings.form']['vDEF'])) {
+            $identifier['ext-feregistration-persistenceIdentifier'] = $currentFlexData['data']['sDEF']['lDEF']['settings.form']['vDEF'];
         }
         // Add bool - finisher override active or not
         $identifier['ext-feregistration-overrideFinishers'] = '';

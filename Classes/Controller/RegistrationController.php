@@ -325,7 +325,9 @@ class RegistrationController extends ActionController
         $settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
 
         $pluginContentRecord = $this->contentElementService->findFeRegistrationPlugin($currentPageId, $currentLanguageUid);
-        if ($pluginContentRecord === null) {
+        // findFeRegistrationPlugin() is typed `?array` but DBAL fetchAssociative
+        // can return false on miss — accept both falsy shapes here.
+        if (!$pluginContentRecord) {
             return $uniformResponse;
         }
 

@@ -37,6 +37,7 @@ class ConfirmationRequestValidator extends AbstractValidator
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
         $queryBuilder->getRestrictions()->removeAll();
+        $now = time();
         $row = $queryBuilder
             ->select('uid', 'confirmation_date', 'confirmation_hash')
             ->from('tx_feregistration_domain_model_confirmationrequest')
@@ -44,6 +45,14 @@ class ConfirmationRequestValidator extends AbstractValidator
             ->where($queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['pid'])),
+                // Skip expired, abandoned DOI rows — those should not block a
+                // fresh registration attempt nor produce a "resend?" link that
+                // would point at an expired hash anyway.
+                $queryBuilder->expr()->or(
+                    $queryBuilder->expr()->gt('confirmation_date', 0),
+                    $queryBuilder->expr()->eq('expires_at', 0),
+                    $queryBuilder->expr()->gt('expires_at', $queryBuilder->createNamedParameter($now)),
+                ),
             )
             )->executeQuery()->fetchAssociative();
 

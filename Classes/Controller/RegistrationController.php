@@ -6,6 +6,7 @@ use Psr\EventDispatcher\EventDispatcherInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\Mailer\Exception\TransportExceptionInterface;
+use TYPO3\CMS\Core\Cache\CacheManager;
 use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Http\JsonResponse;
@@ -298,14 +299,25 @@ class RegistrationController extends ActionController
 
 
     /**
-     * @throws Exception
-     * @throws TransportExceptionInterface
-     * @throws FinisherException
-     * @throws \Doctrine\DBAL\Exception
+     * Re-sends the double-opt-in mail for a still-unconfirmed registration.
+     *
+     * Hardened against email-enumeration and SMTP-spam abuse:
+     *  - POST only — GET requests can't be triggered cross-origin via a
+     *    `<img>` / link prefetch, and POST forces the caller to be a real
+     *    XHR/fetch from the same origin.
+     *  - Uniform response shape and content; never reveal whether the email
+     *    exists, was already confirmed, or is throttled.
+     *  - Per-IP throttle bound to the configured `timeLock`. Cuts off bulk
+     *    probing even for non-existent emails (the per-email gate already
+     *    protects legitimate inboxes).
      */
     public function resendConfirmationEmailAction(): ResponseInterface
     {
+        $uniformResponse = new JsonResponse(['success' => true]);
 
+        if (strtoupper($this->request->getMethod()) !== 'POST') {
+            return $uniformResponse;
+        }
 
         $currentPageId = (int)($this->request->getAttribute('routing')->getPageId() ?? 0);
         $currentLanguageUid = (int)($this->request->getAttribute('language')->getLanguageId() ?? 0);
@@ -313,31 +325,51 @@ class RegistrationController extends ActionController
         $settings = $this->configurationManager->getConfiguration(ConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS);
 
         $pluginContentRecord = $this->contentElementService->findFeRegistrationPlugin($currentPageId, $currentLanguageUid);
-        if ($pluginContentRecord) {
-            $flexFormSettings = GeneralUtility::makeInstance(FlexFormService::class)->convertFlexFormContentToArray($pluginContentRecord['pi_flexform']);
-
-            // FlexForm-Werte nutzen
-            $settings = array_merge($settings, $flexFormSettings['settings'] ?? []);
-
-            $email = $this->request->getQueryParams()['email'] ?? '';
-
-            $confirmationRequest = $this->confirmationService->findUnconfirmedByEmail($email);
-
-            if ($confirmationRequest) {
-
-                if ($confirmationRequest->isConfirmed()) {
-                    return new JsonResponse(['success' => false, 'alreadyConfirmed' => true]);
-                }
-                if ($confirmationRequest->getLastSent() && $confirmationRequest->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock'] > time()) {
-                    return new JsonResponse(['success' => false, 'wait' => true, 'nextSend' => $confirmationRequest->getLastSent()->getTimestamp() + (int)$settings['confirmationEmail']['timeLock']]);
-                }
-
-                $this->mailingService->sendConfirmationMail($confirmationRequest, $this->request, $settings, $currentPageId);
-
-                return new JsonResponse(['success' => true]);
-            }
+        if ($pluginContentRecord === null) {
+            return $uniformResponse;
         }
-        return new JsonResponse(['success' => false]);
+
+        $flexFormSettings = GeneralUtility::makeInstance(FlexFormService::class)
+            ->convertFlexFormContentToArray($pluginContentRecord['pi_flexform']);
+        $settings = array_merge($settings, $flexFormSettings['settings'] ?? []);
+
+        $timeLock = (int)($settings['confirmationEmail']['timeLock'] ?? 300);
+
+        $remoteAddress = (string)($this->request->getAttribute('normalizedParams')?->getRemoteAddress() ?? '');
+        $ipKey = 'resend-' . sha1($remoteAddress);
+        $cache = GeneralUtility::makeInstance(CacheManager::class)->getCache('fe_registration');
+        if ($cache->has($ipKey)) {
+            return $uniformResponse;
+        }
+        // Burn the per-IP slot up front so a slow downstream send can't be
+        // replayed mid-flight.
+        $cache->set($ipKey, time(), [], max(60, $timeLock));
+
+        $parsedBody = $this->request->getParsedBody();
+        $email = is_array($parsedBody) ? trim((string)($parsedBody['email'] ?? '')) : '';
+        if ($email === '') {
+            return $uniformResponse;
+        }
+
+        $confirmationRequest = $this->confirmationService->findUnconfirmedByEmail($email);
+        if ($confirmationRequest === null || $confirmationRequest->isConfirmed()) {
+            return $uniformResponse;
+        }
+
+        $lastSentTs = $confirmationRequest->getLastSent()?->getTimestamp() ?? 0;
+        if (($lastSentTs + $timeLock) > time()) {
+            return $uniformResponse;
+        }
+
+        try {
+            $this->mailingService->sendConfirmationMail($confirmationRequest, $this->request, $settings, $currentPageId);
+        } catch (\Throwable $e) {
+            $this->logger->error('resendConfirmationEmail: send failed', [
+                'exception' => $e->getMessage(),
+            ]);
+        }
+
+        return $uniformResponse;
     }
 
 

@@ -35,12 +35,23 @@ class UserAlreadyExistsValidator extends AbstractValidator
         /** @var QueryBuilder $queryBuilder */
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
         $queryBuilder->getRestrictions()->removeAll();
+        $now = time();
         $count = $queryBuilder
             ->select('uid')
             ->from('tx_feregistration_domain_model_confirmationrequest')
             ->where($queryBuilder->expr()->and(
                 $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
                 $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['confirmationRequestPid'])),
+                // Only consider rows that are actually blocking: either already
+                // confirmed (user is mid-registration or done) or still inside
+                // the open DOI window. Expired, abandoned, unconfirmed rows are
+                // ignored so a user who walked away can register again without
+                // waiting for the cleanup command to sweep the table.
+                $queryBuilder->expr()->or(
+                    $queryBuilder->expr()->gt('confirmation_date', 0),
+                    $queryBuilder->expr()->eq('expires_at', 0),
+                    $queryBuilder->expr()->gt('expires_at', $queryBuilder->createNamedParameter($now)),
+                ),
             )
             )->executeQuery()->fetchOne();
 

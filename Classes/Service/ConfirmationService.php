@@ -57,6 +57,10 @@ class ConfirmationService
     public function setRegistrationCompleted(ConfirmationRequest $confirmationRequest): void
     {
         $confirmationRequest->setCompletionDate(new \DateTime());
+        // The JSON-encoded original form payload (address, phone, hashed
+        // password, …) is no longer needed once the user has been materialized
+        // in fe_users. Drop it now to minimize data retention.
+        $confirmationRequest->setDecodedValues([]);
         $this->confirmationRequestRepository->update($confirmationRequest);
         $this->persistenceManager->persistAll();
         $this->logger->info('Registration completed', ['email' => $confirmationRequest->getEmail(), 'uid' => $confirmationRequest->getUid()]);

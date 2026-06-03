@@ -43,7 +43,6 @@ class CleanupExpiredConfirmationRequestsCommand extends Command
         $now = time();
         $cutoff = $now - ($days * 86400);
 
-        $connection = $this->connectionPool->getConnectionForTable($table);
         $queryBuilder = $this->connectionPool->getQueryBuilderForTable($table);
         $queryBuilder->getRestrictions()->removeAll();
 
@@ -69,6 +68,29 @@ class CleanupExpiredConfirmationRequestsCommand extends Command
             ->executeStatement();
 
         $io->success(sprintf('Removed %d expired/stale confirmation requests.', $count));
+
+        // Backfill: scrub encoded_values from completed rows that still carry
+        // the original form payload — covers historic data created before
+        // ConfirmationService cleared encoded_values on completion. Keeps the
+        // row itself so fe_users.registration_request stays a valid pointer
+        // for the BE inline view.
+        $scrubber = $this->connectionPool->getQueryBuilderForTable($table);
+        $scrubber->getRestrictions()->removeAll();
+        $scrubbed = $scrubber
+            ->update($table)
+            ->set('encoded_values', '[]')
+            ->where(
+                $scrubber->expr()->and(
+                    $scrubber->expr()->gt('completion_date', 0),
+                    $scrubber->expr()->neq('encoded_values', $scrubber->createNamedParameter('')),
+                    $scrubber->expr()->neq('encoded_values', $scrubber->createNamedParameter('[]')),
+                )
+            )
+            ->executeStatement();
+
+        if ($scrubbed > 0) {
+            $io->success(sprintf('Scrubbed encoded_values from %d completed requests.', $scrubbed));
+        }
 
         return Command::SUCCESS;
     }

@@ -6,6 +6,14 @@ use WapplerSystems\FeRegistration\Routing\Aspect\PersistedFieldValueMapper;
 
 $GLOBALS['TYPO3_CONF_VARS']['SYS']['routing']['aspects']['PersistedFieldValueMapper'] = PersistedFieldValueMapper::class;
 
+// Per-IP throttle store for the resendConfirmationEmail endpoint. Short-lived
+// entries (~timeLock seconds) keep the cache tiny.
+$GLOBALS['TYPO3_CONF_VARS']['SYS']['caching']['cacheConfigurations']['fe_registration'] ??= [
+    'frontend' => \TYPO3\CMS\Core\Cache\Frontend\VariableFrontend::class,
+    'backend' => \TYPO3\CMS\Core\Cache\Backend\SimpleFileBackend::class,
+    'options' => ['defaultLifetime' => 600],
+];
+
 
 ExtensionUtility::configurePlugin(
     'fe_registration',

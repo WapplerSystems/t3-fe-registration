@@ -66,7 +66,7 @@ class DeleteAccountFinisher extends RedirectFinisher implements LoggerAwareInter
 
         $connection = $this->connectionPool->getConnectionForTable('fe_users');
         $userRow = $connection->select(
-            ['uid', 'username', 'email', 'first_name', 'last_name'],
+            ['uid', 'username', 'email', 'first_name', 'last_name', 'registration_request'],
             'fe_users',
             ['uid' => $userId]
         )->fetchAssociative();
@@ -134,6 +134,10 @@ class DeleteAccountFinisher extends RedirectFinisher implements LoggerAwareInter
             'image' => 0,
             // wipe the password hash so the (soft-deleted) row can never authenticate
             'password' => '',
+            // cut the link to the confirmation request — the row itself is
+            // purged by PurgeConfirmationRequestOnUserDeletion so the FK would
+            // otherwise dangle in the BE inline view.
+            'registration_request' => 0,
         ];
     }
 

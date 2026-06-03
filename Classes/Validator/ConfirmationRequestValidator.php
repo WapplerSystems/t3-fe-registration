@@ -61,7 +61,6 @@ class ConfirmationRequestValidator extends AbstractValidator
                     ->reset()
                     ->setCreateAbsoluteUri(true)
                     ->setTargetPageUid($currentPageId)
-                    ->setArguments(['email' => $value])
                     ->setTargetPageType(1735853778)
                     ->buildFrontendUri();
 

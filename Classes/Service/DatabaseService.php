@@ -18,6 +18,24 @@ class DatabaseService
     }
 
 
+    /**
+     * Columns that must never be populated from user-submitted form values, so a
+     * crafted form field whose identifier collides with a fe_users column can't
+     * escalate privileges (e.g. by smuggling `usergroup`, `pid`, or `disable`).
+     * The trusted defaults further down win regardless because they are written
+     * after the user-controlled mapping.
+     */
+    private const PROTECTED_FE_USER_COLUMNS = [
+        'uid', 'pid', 'tstamp', 'crdate',
+        'deleted', 'disable', 'hidden',
+        'starttime', 'endtime',
+        'usergroup',
+        'lockToDomain', 'lockToIP',
+        'TSconfig',
+        'is_online', 'lastlogin', 'last_login', 'failure',
+        'felogin_forgotHash',
+    ];
+
     public function createFeUser(array $values, array $settings): array
     {
 
@@ -29,24 +47,33 @@ class DatabaseService
         $schemaManager = $connection->createSchemaManager();
         $columns = array_keys($schemaManager->listTableColumns('fe_users'));
 
-        $dbValues = [
-            'pid' => (int)$settings['feUserStoragePid'],
-            'usergroup' => $settings['usergroups'] ?? '',
-            'username' => $values[$settings['identifierFieldName']],
-            'crdate' => time(),
-            'tstamp' => time(),
-            'deleted' => 0,
-            'disable' => 0,
-        ];
-
+        $dbValues = [];
         foreach ($values as $key => $value) {
             if (in_array($key, $columns, true)) {
-                $dbValues[$key] = $value;
+                $column = $key;
+            } elseif (in_array(GeneralUtility::camelCaseToLowerCaseUnderscored($key), $columns, true)) {
+                $column = GeneralUtility::camelCaseToLowerCaseUnderscored($key);
+            } else {
+                continue;
             }
-            if (in_array(GeneralUtility::camelCaseToLowerCaseUnderscored($key), $columns, true)) {
-                $dbValues[GeneralUtility::camelCaseToLowerCaseUnderscored($key)] = $value;
+            if (in_array($column, self::PROTECTED_FE_USER_COLUMNS, true)) {
+                continue;
             }
+            $dbValues[$column] = $value;
         }
+
+        // Trusted, system-controlled values — applied last so nothing in $values
+        // can override them, even by colliding with a fe_users column name.
+        $dbValues['pid'] = (int)$settings['feUserStoragePid'];
+        $dbValues['usergroup'] = $settings['usergroups'] ?? '';
+        $dbValues['username'] = $values[$settings['identifierFieldName']];
+        $dbValues['crdate'] = time();
+        $dbValues['tstamp'] = time();
+        $dbValues['deleted'] = 0;
+        // `disable` is set by ConfirmationService::requestToFeUser from the
+        // `feUserMustConfirmed` site setting and is always overwritten before
+        // it reaches this method, so reading it back here is trustworthy.
+        $dbValues['disable'] = isset($values['disable']) && (int)$values['disable'] !== 0 ? 1 : 0;
 
         $queryBuilder
             ->insert('fe_users')

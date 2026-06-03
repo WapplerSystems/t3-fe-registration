@@ -157,9 +157,11 @@ class DatabaseService
         $columns = array_keys($schemaManager->listTableColumns('fe_users'));
 
         $feUser = $this->getFeUser($feUserUid);
+        if ($feUser === false) {
+            return;
+        }
 
-        $dbValues = [
-        ];
+        $dbValues = [];
 
         foreach ($values as $formFieldKey => $value) {
             $formFieldKey = str_replace('-', '_', $formFieldKey);
@@ -171,6 +173,20 @@ class DatabaseService
                 $convertedFormFieldKey = GeneralUtility::camelCaseToLowerCaseUnderscored($formFieldKey);
             }
 
+            if ($convertedFormFieldKey === null) {
+                continue;
+            }
+            // Block privilege escalation via system-controlled columns and refuse
+            // `password` outright: unlike createFeUser() — where the upstream
+            // finisher hashes the password before persisting — this entrypoint
+            // gives no such guarantee, and writing the raw form value would land
+            // a plain-text password in fe_users. Callers that need to change a
+            // password must go through updateFeUserPassword().
+            if (in_array($convertedFormFieldKey, self::PROTECTED_FE_USER_COLUMNS, true)
+                || $convertedFormFieldKey === 'password'
+            ) {
+                continue;
+            }
 
             if (isset($GLOBALS['TCA']['fe_users']['columns'][$convertedFormFieldKey])) {
 
@@ -221,6 +237,14 @@ class DatabaseService
             }
 
         }
+
+        if ($dbValues === []) {
+            return;
+        }
+
+        // Trusted timestamp — applied after the loop so nothing in $values can
+        // clobber it.
+        $dbValues['tstamp'] = time();
 
         $queryBuilder
             ->update('fe_users');

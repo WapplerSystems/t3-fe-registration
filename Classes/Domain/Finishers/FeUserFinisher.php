@@ -91,12 +91,12 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
                 ]
             )->fetchAssociative();
             if ($existingUser) {
-                // user already exists, do not insert
-                $whereClause = ['uid' => (int)$databaseData['uid']];
+                // user already exists → update by the existing uid instead of inserting
+                $databaseData['uid'] = (int)$existingUser['uid'];
                 $this->databaseConnection->update(
                     $table,
                     $databaseData,
-                    $whereClause
+                    ['uid' => $databaseData['uid']]
                 );
 
                 $this->finisherContext->getFormRuntime()->getFormDefinition()->setRenderingOption('user', $databaseData);

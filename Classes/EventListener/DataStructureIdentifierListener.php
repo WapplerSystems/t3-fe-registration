@@ -197,11 +197,87 @@ readonly class DataStructureIdentifierListener
                     'value' => $identifier['ext-feregistration-persistenceIdentifier'],
                 ];
             }
+
+            if ($formIsAccessible) {
+                $dataStructure = $this->populateFormFieldDropdowns(
+                    $dataStructure,
+                    $identifier['ext-feregistration-persistenceIdentifier'],
+                    $formSettings,
+                    $request
+                );
+            }
         } catch (NoSuchFileException|ParseErrorException $e) {
             $dataStructure = $this->addSelectedPersistenceIdentifier($identifier['ext-feregistration-persistenceIdentifier'], $dataStructure);
             $this->addInvalidFrameworkConfigurationFlashMessage($e, $identifier['ext-feregistration-persistenceIdentifier']);
         }
         $event->setDataStructure($dataStructure);
+    }
+
+    /**
+     * Populate the items list of settings.identifierFieldName and settings.emailFieldName
+     * with the identifiers of all input form elements of the selected form.
+     */
+    protected function populateFormFieldDropdowns(
+        array $dataStructure,
+        string $persistenceIdentifier,
+        array $formSettings,
+        ServerRequestInterface $request,
+    ): array {
+        try {
+            $formDefinition = $this->formPersistenceManager->load($persistenceIdentifier, $formSettings, $request);
+        } catch (\Throwable) {
+            return $dataStructure;
+        }
+
+        $fields = [];
+        $this->collectFormElementIdentifiers($formDefinition['renderables'] ?? [], $fields);
+
+        $fieldItems = [['label' => '', 'value' => '']];
+        $emailItems = [['label' => '', 'value' => '']];
+        foreach ($fields as $field) {
+            $label = ($field['label'] !== '' ? $field['label'] . ' ' : '')
+                . '[' . $field['identifier'] . ', ' . $field['type'] . ']';
+            $item = ['label' => $label, 'value' => $field['identifier']];
+            $fieldItems[] = $item;
+            if (in_array($field['type'], ['Email', 'Text'], true)) {
+                $emailItems[] = $item;
+            }
+        }
+        if (count($emailItems) === 1) {
+            $emailItems = $fieldItems;
+        }
+
+        if (isset($dataStructure['sheets']['sDEF']['ROOT']['el']['settings.identifierFieldName'])) {
+            $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.identifierFieldName']['config']['items'] = $fieldItems;
+        }
+        if (isset($dataStructure['sheets']['sDEF']['ROOT']['el']['settings.emailFieldName'])) {
+            $dataStructure['sheets']['sDEF']['ROOT']['el']['settings.emailFieldName']['config']['items'] = $emailItems;
+        }
+        return $dataStructure;
+    }
+
+    /**
+     * Recursively walk the renderables tree and collect every non-container
+     * leaf element (skipping Form, Page, GridRow, Fieldset, Section, SummaryPage).
+     */
+    protected function collectFormElementIdentifiers(array $renderables, array &$out): void
+    {
+        $containerTypes = ['Form', 'Page', 'GridRow', 'Fieldset', 'Section', 'SummaryPage'];
+        foreach ($renderables as $renderable) {
+            $type = (string)($renderable['type'] ?? '');
+            $identifier = (string)($renderable['identifier'] ?? '');
+            $hasChildren = !empty($renderable['renderables']) && is_array($renderable['renderables']);
+            if ($identifier !== '' && !in_array($type, $containerTypes, true)) {
+                $out[] = [
+                    'identifier' => $identifier,
+                    'label' => (string)($renderable['label'] ?? ''),
+                    'type' => $type,
+                ];
+            }
+            if ($hasChildren) {
+                $this->collectFormElementIdentifiers($renderable['renderables'], $out);
+            }
+        }
     }
 
     /**

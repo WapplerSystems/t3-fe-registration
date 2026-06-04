@@ -19,6 +19,22 @@
                 <source>Email confirmation requests</source>
                 <target state="final">E-Mail-Bestätigungsanfragen</target>
             </trans-unit>
+            <trans-unit id="flexform.identifierFieldName" approved="yes">
+                <source>Form field used as username</source>
+                <target state="final">Formularfeld für den Benutzernamen</target>
+            </trans-unit>
+            <trans-unit id="flexform.identifierFieldName.description" approved="yes">
+                <source>Pick the form field whose value should become fe_users.username. Options are populated from the selected form.</source>
+                <target state="final">Wähle das Formularfeld, dessen Wert als fe_users.username gespeichert wird. Die Auswahl wird aus der oben gewählten Form befüllt.</target>
+            </trans-unit>
+            <trans-unit id="flexform.emailFieldName" approved="yes">
+                <source>Form field used as email address</source>
+                <target state="final">Formularfeld für die E-Mail-Adresse</target>
+            </trans-unit>
+            <trans-unit id="flexform.emailFieldName.description" approved="yes">
+                <source>Pick the form field that provides the email address (used as the DOI recipient). Options are populated from the selected form.</source>
+                <target state="final">Wähle das Formularfeld, das die E-Mail-Adresse liefert (Empfänger für die Double-Opt-In-Mail). Die Auswahl wird aus der gewählten Form befüllt.</target>
+            </trans-unit>
         </body>
     </file>
 </xliff>

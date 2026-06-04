@@ -48,10 +48,21 @@
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.identifierFieldName
                         </label>
+                        <description>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.identifierFieldName.description
+                        </description>
                         <config>
-                            <type>input</type>
-                            <size>30</size>
-                            <eval>trim</eval>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                            <size>1</size>
+                            <items>
+                                <numIndex index="0" type="array">
+                                    <label></label>
+                                    <value></value>
+                                </numIndex>
+                            </items>
                         </config>
                     </settings.identifierFieldName>
 
@@ -59,10 +70,21 @@
                         <label>
                             LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.emailFieldName
                         </label>
+                        <description>
+                            LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:flexform.emailFieldName.description
+                        </description>
                         <config>
-                            <type>input</type>
-                            <size>30</size>
-                            <eval>trim</eval>
+                            <type>select</type>
+                            <renderType>selectSingle</renderType>
+                            <minitems>0</minitems>
+                            <maxitems>1</maxitems>
+                            <size>1</size>
+                            <items>
+                                <numIndex index="0" type="array">
+                                    <label></label>
+                                    <value></value>
+                                </numIndex>
+                            </items>
                         </config>
                     </settings.emailFieldName>
 

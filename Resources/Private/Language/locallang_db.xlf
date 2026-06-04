@@ -35,10 +35,16 @@
                 <source>Storage for confirmation requests</source>
             </trans-unit>
             <trans-unit id="flexform.identifierFieldName">
-                <source>Name of the username field</source>
+                <source>Form field used as username</source>
+            </trans-unit>
+            <trans-unit id="flexform.identifierFieldName.description">
+                <source>Pick the form field whose value should become fe_users.username. Options are populated from the selected form.</source>
             </trans-unit>
             <trans-unit id="flexform.emailFieldName">
-                <source>Name of the email field</source>
+                <source>Form field used as email address</source>
+            </trans-unit>
+            <trans-unit id="flexform.emailFieldName.description">
+                <source>Pick the form field that provides the email address (used as the DOI recipient). Options are populated from the selected form.</source>
             </trans-unit>
             <trans-unit id="flexform.timeLock">
                 <source>Time block for resending</source>

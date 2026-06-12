@@ -75,7 +75,35 @@ final class RenderViewHelper extends AbstractViewHelper
             $extbaseConfigurationManager->setRequest($request);
             $typoScriptSettings = $extbaseConfigurationManager->getConfiguration(ExtbaseConfigurationManagerInterface::CONFIGURATION_TYPE_SETTINGS, 'form');
             $formConfiguration = $this->formPersistenceManager->load($persistenceIdentifier, $typoScriptSettings, $request);
+
+            // YAML stores `finishers` as a numerically-keyed sequence; the
+            // RegistrationController's $overrideConfiguration uses identifier
+            // strings as keys (e.g. 'ConfirmationRequest'). A naive
+            // mergeRecursiveWithOverrule() leaves both representations side by
+            // side, so every finisher that exists in both ends up registered
+            // twice — the symptom: duplicate ConfirmationRequest DB rows and
+            // two confirmation emails per submit.
+            //
+            // Merge finishers separately, identifier-by-identifier: for any
+            // identifier that exists in BOTH lists, the override entry fully
+            // replaces the YAML entry (mixing options would produce hybrid
+            // configs like templateName from override + templateRootPaths
+            // from YAML resolving to a non-existent template path).
+            // Identifiers exclusive to one side are preserved as-is.
+            $yamlFinishers = isset($formConfiguration['finishers']) && is_array($formConfiguration['finishers'])
+                ? self::keyFinishersByIdentifier($formConfiguration['finishers']) : [];
+            $overrideFinishers = isset($overrideConfiguration['finishers']) && is_array($overrideConfiguration['finishers'])
+                ? self::keyFinishersByIdentifier($overrideConfiguration['finishers']) : [];
+            $mergedFinishers = array_replace($yamlFinishers, $overrideFinishers);
+            unset($formConfiguration['finishers'], $overrideConfiguration['finishers']);
+
             ArrayUtility::mergeRecursiveWithOverrule($formConfiguration, $overrideConfiguration);
+            // Keep identifier-string keys: RegistrationPatchFormFactory
+            // detects pre-confirmation mode by checking
+            // `$finisherName === 'ConfirmationRequest'` on the array keys.
+            // Re-indexing to numeric here would silently flip that detection
+            // to false and slice the email-bearing page out of the form.
+            $formConfiguration['finishers'] = $mergedFinishers;
             $overrideConfiguration = $formConfiguration;
             $overrideConfiguration['persistenceIdentifier'] = $persistenceIdentifier;
         }
@@ -107,5 +135,27 @@ final class RenderViewHelper extends AbstractViewHelper
         }
 
         return $form->render();
+    }
+
+    /**
+     * Re-key a list of finisher configurations by their `identifier`.
+     *
+     * Form-framework YAML stores finishers as a numerically indexed list of
+     * `{identifier, options}` entries; mergeRecursiveWithOverrule() with a
+     * map keyed by identifier would otherwise produce a duplicated stack.
+     * Falls back to the original key when an entry has no identifier (which
+     * would be a malformed config anyway).
+     *
+     * @param array<int|string, mixed> $finishers
+     * @return array<int|string, mixed>
+     */
+    private static function keyFinishersByIdentifier(array $finishers): array
+    {
+        $keyed = [];
+        foreach ($finishers as $key => $finisher) {
+            $identifier = is_array($finisher) ? ($finisher['identifier'] ?? null) : null;
+            $keyed[is_string($identifier) && $identifier !== '' ? $identifier : $key] = $finisher;
+        }
+        return $keyed;
     }
 }

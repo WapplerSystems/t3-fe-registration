@@ -64,10 +64,26 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         $newConfiguration = $configuration;
         $newConfiguration['renderingOptions']['hasPasswordField'] = $this->hasPasswordField($allRenderables);
 
-        $preConfirmation = false;
-        foreach ($configuration['finishers'] ?? [] as $finisherName => $page) {
-            if ($finisherName === 'ConfirmationRequest') {
-                $preConfirmation = true;
+        // The RegistrationController sets renderingOptions.controllerAction
+        // to either 'new' (initial submit → send the double-opt-in mail) or
+        // 'confirm' (user clicked the DOI link → finalize the registration).
+        // We used to detect this implicitly by looking for a string-keyed
+        // 'ConfirmationRequest' finisher in the merged config, which broke
+        // once the merge in RenderViewHelper started deduplicating by
+        // identifier and produced string keys in BOTH passes. Read the
+        // explicit signal instead. Fall back to the legacy lookup for any
+        // callers that build configurations without setting controllerAction.
+        $controllerAction = $configuration['renderingOptions']['controllerAction'] ?? null;
+        if ($controllerAction === 'new') {
+            $preConfirmation = true;
+        } elseif ($controllerAction === 'confirm') {
+            $preConfirmation = false;
+        } else {
+            $preConfirmation = false;
+            foreach ($configuration['finishers'] ?? [] as $finisherName => $page) {
+                if ($finisherName === 'ConfirmationRequest') {
+                    $preConfirmation = true;
+                }
             }
         }
 

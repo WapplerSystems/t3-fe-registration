@@ -10,7 +10,7 @@
             </trans-unit>
             <trans-unit id="confirmationEmail.subject">
                 <source>Please confirm your email address</source>
-                <target>Bitte bestätigen Sie Ihre Email-Adresse</target>
+                <target>Bitte bestätigen Sie Ihre E-Mail-Adresse</target>
             </trans-unit>
             <trans-unit id="text.success">
                 <source>Thank you, your validation was successful. You can now login.</source>
@@ -30,7 +30,7 @@
             </trans-unit>
             <trans-unit id="text.confirmationMailSent">
                 <source>Thank you very much. Please confirm the email that has just been sent to you.</source>
-                <target>Vielen Dank. Bitte bestätigen Sie die Email, die soeben an Sie gesendet wurde.</target>
+                <target>Vielen Dank! Wir haben Ihnen soeben eine E-Mail zur Bestätigung Ihrer Adresse geschickt. Bitte klicken Sie auf den Link in der E-Mail, um die Registrierung abzuschließen.</target>
             </trans-unit>
             <trans-unit id="text.alreadyCompleted">
                 <source>The registration has already been completed.</source>

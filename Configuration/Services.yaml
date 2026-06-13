@@ -11,4 +11,40 @@ services:
   WapplerSystems\FeRegistration\Service\Mailer:
     public: true
 
+  # ─── Dashboard widgets: latest / pending FE registrations ──────────
+  # One generic FeRegistrationListWidget class is reused for both —
+  # the only difference is which DataProvider implementation is wired
+  # in. Each entry needs its own dashboard.widget tag so the dashboard
+  # module shows two separate items in the "Add widget" panel.
+
+  WapplerSystems\FeRegistration\Widgets\FeRegistrationListWidget:
+    abstract: true
+
+  dashboard.widget.feRegistration.latest:
+    parent: 'WapplerSystems\FeRegistration\Widgets\FeRegistrationListWidget'
+    arguments:
+      $dataProvider: '@WapplerSystems\FeRegistration\Widgets\Provider\LatestRegistrationsDataProvider'
+    tags:
+      - name: dashboard.widget
+        identifier: 'feRegistrationLatest'
+        groupNames: 'general'
+        title: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.latest.title'
+        description: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.latest.description'
+        iconIdentifier: 'content-widget-list'
+        height: 'medium'
+        width: 'medium'
+
+  dashboard.widget.feRegistration.pending:
+    parent: 'WapplerSystems\FeRegistration\Widgets\FeRegistrationListWidget'
+    arguments:
+      $dataProvider: '@WapplerSystems\FeRegistration\Widgets\Provider\PendingRegistrationsDataProvider'
+    tags:
+      - name: dashboard.widget
+        identifier: 'feRegistrationPending'
+        groupNames: 'general'
+        title: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.pending.title'
+        description: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.pending.description'
+        iconIdentifier: 'content-widget-list'
+        height: 'medium'
+        width: 'medium'
 

@@ -1,0 +1,68 @@
+<html xmlns:f="http://typo3.org/ns/TYPO3/CMS/Fluid/ViewHelpers"
+      xmlns:be="http://typo3.org/ns/TYPO3/CMS/Backend/ViewHelpers"
+      xmlns:core="http://typo3.org/ns/TYPO3/CMS/Core/ViewHelpers"
+      data-namespace-typo3-fluid="true">
+<f:layout name="Widget/Widget"/>
+<f:section name="main">
+
+    <f:if condition="{items}">
+        <f:then>
+            <div class="widget-table-wrapper">
+                <table class="widget-table table table-striped table-hover">
+                    <thead>
+                        <tr>
+                            <th>{f:translate(key: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.column.name')}</th>
+                            <th>{f:translate(key: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.column.email')}</th>
+                            <th>{f:translate(key: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.column.company')}</th>
+                            <th class="col-time">{f:translate(key: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.column.time')}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <f:for each="{items}" as="item">
+                            <tr>
+                                <td>
+                                    <f:if condition="{item.name}">
+                                        <f:then>
+                                            <be:link.editRecord table="{item.editTable}" uid="{item.uid}" returnUrl="{f:be.uri(route: 'dashboard')}">{item.name}</be:link.editRecord>
+                                        </f:then>
+                                        <f:else>
+                                            <span class="text-muted">{f:translate(key: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.noName')}</span>
+                                        </f:else>
+                                    </f:if>
+                                </td>
+                                <td>
+                                    <be:link.editRecord table="{item.editTable}" uid="{item.uid}" returnUrl="{f:be.uri(route: 'dashboard')}">{item.email}</be:link.editRecord>
+                                </td>
+                                <td>{item.company}</td>
+                                <td class="col-datetime">
+                                    {item.timestamp -> f:format.date(format: dateFormat)}
+                                </td>
+                            </tr>
+                        </f:for>
+                    </tbody>
+                </table>
+            </div>
+        </f:then>
+        <f:else>
+            <div class="callout callout-info">
+                <div class="callout-icon">
+                    <span class="icon-emphasized">
+                        <core:icon identifier="content-widget-list" />
+                    </span>
+                </div>
+                <div class="callout-content">
+                    <div class="callout-title">
+                        {f:translate(key: 'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:widgets.registrations.empty')}
+                    </div>
+                </div>
+            </div>
+        </f:else>
+    </f:if>
+
+</f:section>
+<f:section name="footer">
+    <f:if condition="{button}">
+        <f:render partial="Widget/Button" arguments="{button: button}"/>
+    </f:if>
+</f:section>
+</html>

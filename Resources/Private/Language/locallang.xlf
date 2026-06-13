@@ -88,6 +88,44 @@
                 <source>You must be logged in.</source>
             </trans-unit>
 
+            <!-- Dashboard widgets -->
+            <trans-unit id="widgets.registrations.latest.title">
+                <source>Latest registrations</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.latest.description">
+                <source>Most recent frontend users who completed the double-opt-in flow.</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.pending.title">
+                <source>Pending registrations</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.pending.description">
+                <source>Submitted registrations that are still waiting for the user's email confirmation click.</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.name">
+                <source>Name</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.email">
+                <source>E-mail</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.company">
+                <source>Company</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.time">
+                <source>Registered</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.noName">
+                <source>(no name)</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.empty">
+                <source>No matching registrations.</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.settings.limit">
+                <source>Number of rows to display</source>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.settings.limit.description">
+                <source>How many of the most recent registrations the widget should list.</source>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

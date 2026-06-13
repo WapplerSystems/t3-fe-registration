@@ -106,6 +106,56 @@
                 <target>Sie müssen angemeldet sein.</target>
             </trans-unit>
 
+            <!-- Dashboard widgets -->
+            <trans-unit id="widgets.registrations.latest.title">
+                <source>Latest registrations</source>
+                <target>Neueste Registrierungen</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.latest.description">
+                <source>Most recent frontend users who completed the double-opt-in flow.</source>
+                <target>Die zuletzt vollständig registrierten Frontend-Benutzer (Double-Opt-in abgeschlossen).</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.pending.title">
+                <source>Pending registrations</source>
+                <target>Offene Registrierungen</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.pending.description">
+                <source>Submitted registrations that are still waiting for the user's email confirmation click.</source>
+                <target>Eingereichte Registrierungen, die noch auf die E-Mail-Bestätigung des Nutzers warten.</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.name">
+                <source>Name</source>
+                <target>Name</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.email">
+                <source>E-mail</source>
+                <target>E-Mail</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.company">
+                <source>Company</source>
+                <target>Firma</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.column.time">
+                <source>Registered</source>
+                <target>Registriert</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.noName">
+                <source>(no name)</source>
+                <target>(kein Name)</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.empty">
+                <source>No matching registrations.</source>
+                <target>Keine passenden Registrierungen.</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.settings.limit">
+                <source>Number of rows to display</source>
+                <target>Anzahl der angezeigten Zeilen</target>
+            </trans-unit>
+            <trans-unit id="widgets.registrations.settings.limit.description">
+                <source>How many of the most recent registrations the widget should list.</source>
+                <target>Wie viele der neuesten Registrierungen das Widget anzeigt.</target>
+            </trans-unit>
+
         </body>
     </file>
 </xliff>

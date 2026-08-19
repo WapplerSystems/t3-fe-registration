@@ -64,6 +64,20 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
 
         $databaseData = array_merge($databaseData, $mappingValues);
 
+        // Map every form element that carries a `mapOnDatabaseColumn` property.
+        // prepareData() existed but was never called, so $databaseData only ever
+        // held what the finisher's own `mapping` option provided — and forms that
+        // rely on mapOnDatabaseColumn (like Registration) left `username` unset,
+        // which made the duplicate check below emit an "Undefined array key"
+        // warning that TYPO3's error handler escalates into a 500.
+        //
+        // In this extension mapOnDatabaseColumn is authored as an element
+        // *property* (see UpdateProfileFinisher and AfterFormStateInitializedHook),
+        // not under the finisher's `elements` option, so the per-element config is
+        // collected from the renderables. An explicit `elements.<identifier>`
+        // finisher option still wins, which keeps the upstream syntax working.
+        $databaseData = $this->prepareData($this->collectElementsConfiguration(), $databaseData);
+
         $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
         $event = new FeUserDatabaseDataEvent($databaseData);
         $event = $eventDispatcher->dispatch($event);
@@ -81,6 +95,23 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
 
         } else {
             // Insert new record
+
+            // Without a username there is nothing usable to insert: the row could
+            // never serve as a login, and the duplicate check below would be
+            // meaningless. This is the normal situation in a double-opt-in flow —
+            // after confirmation the form only carries a pseudo placeholder field,
+            // so the registration payload lives on the ConfirmationRequest and is
+            // written by CompleteRegistrationFinisher instead. Bail out quietly
+            // rather than inserting an empty fe_users row (which is what this
+            // finisher used to do on every registration) or throwing, which would
+            // surface as a 500 at the very end of an otherwise successful signup.
+            if (($databaseData['username'] ?? '') === '') {
+                $this->logger?->info(
+                    'FeUser finisher skipped: no username could be mapped from the submitted form values.',
+                    ['form' => $this->finisherContext->getFormRuntime()->getFormDefinition()->getIdentifier()]
+                );
+                return;
+            }
 
             // check if user with same username or email already exists
             $existingUser = $this->databaseConnection->select(
@@ -120,6 +151,41 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
         $this->finisherContext->getFormRuntime()->getFormDefinition()->setRenderingOption('user', $databaseData);
     }
 
+
+    /**
+     * Build the per-element configuration prepareData() consumes.
+     *
+     * Element properties (mapOnDatabaseColumn, hashPassword, dateFormat,
+     * skipIfValueIsEmpty, …) form the base; anything set explicitly under the
+     * finisher's `elements` option overrides it.
+     *
+     * @return array<string, array<string, mixed>>
+     */
+    protected function collectElementsConfiguration(): array
+    {
+        $fromOption = (array)$this->parseOption('elements');
+        $configuration = [];
+
+        foreach ($this->finisherContext->getFormRuntime()->getFormDefinition()->getRenderablesRecursively() as $element) {
+            if (!method_exists($element, 'getProperties')) {
+                continue;
+            }
+            $properties = $element->getProperties();
+            if (!isset($properties['mapOnDatabaseColumn'])) {
+                continue;
+            }
+            $configuration[$element->getIdentifier()] = $properties;
+        }
+
+        foreach ($fromOption as $identifier => $elementConfiguration) {
+            if (!is_array($elementConfiguration)) {
+                continue;
+            }
+            $configuration[$identifier] = array_merge($configuration[$identifier] ?? [], $elementConfiguration);
+        }
+
+        return $configuration;
+    }
 
     /**
      * Prepare data for saving to database

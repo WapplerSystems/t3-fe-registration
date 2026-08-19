@@ -1,4 +1,6 @@
 name: wapplersystems/fe-registration
 label: Frontend Registration
 dependencies:
-  - wapplersystems/form-extended
+  # wapplersystems/form (the EXT:form fork) provides this set; it replaces both
+  # typo3/cms-form and the retired wapplersystems/form-extended.
+  - typo3/form

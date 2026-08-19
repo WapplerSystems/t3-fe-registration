@@ -61,6 +61,10 @@ renderables:
       -
         properties:
           confirmationLabel: Bestätigung
+          passwordPolicyHeading: 'Das Passwort muss folgendes erfüllen:'
+          passwordToggleShowLabel: 'Anzeigen'
+          passwordToggleHideLabel: 'Verbergen'
+          passwordGeneratorLabel: 'Passwort generieren'
           fluidAdditionalAttributes:
             required: required
             autocomplete: new-password

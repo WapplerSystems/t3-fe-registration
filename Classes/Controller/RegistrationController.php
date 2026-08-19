@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Context\Context;
 use TYPO3\CMS\Core\Context\Exception\AspectNotFoundException;
 use TYPO3\CMS\Core\Http\JsonResponse;
 use TYPO3\CMS\Core\Service\FlexFormService;
+use TYPO3\CMS\Core\Site\Entity\SiteLanguage;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Exception;
@@ -250,13 +251,36 @@ class RegistrationController extends ActionController
                 $finishers['CompleteRegistration'] = $completeRegistrationFinisher;
                 $finishers['RedirectToUri'] = $redirectFinisher;
 
+                // On the confirmation step the button completes an already
+                // confirmed registration, so it must not read "Register" like the
+                // initial submit does.
+                $completeRegistrationLabel = (string)LocalizationUtility::translate(
+                    'LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:btn.completeRegistration'
+                );
+
                 $overrideConfiguration = [
                     'finishers' => $finishers,
                     'renderingOptions' => [
                         'fe-registration' => true,
                         'controllerAction' => 'confirm',
                         'additionalParams' => ['tx_feregistration_registration' => ['hash' => $hash]],
-                        'submitButtonLabel' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:btn.completeRegistration'),
+                        'submitButtonLabel' => $completeRegistrationLabel,
+                        // submitButtonLabel alone is not enough: TranslationService
+                        // resolves it through the XLF chain first, so a site package
+                        // that translates <formIdentifier>.element.<formIdentifier>
+                        // .renderingOptions.submitButtonLabel (as this project does)
+                        // would win and both steps would show its label. The form
+                        // identifier is the same on both steps, so the site package
+                        // has no way to distinguish them. The in-definition
+                        // translation overlay is checked before the XLF chain, so it
+                        // is the only place a per-step label can be pinned.
+                        'translation' => [
+                            'overrides' => [
+                                $this->currentLanguageCode() => [
+                                    'submitButtonLabel' => $completeRegistrationLabel,
+                                ],
+                            ],
+                        ],
                     ]
                 ];
 
@@ -374,5 +398,17 @@ class RegistrationController extends ActionController
         return $uniformResponse;
     }
 
+    /**
+     * Language code of the active site language, as used to key the
+     * translation overlay in renderingOptions.translation.overrides.
+     */
+    private function currentLanguageCode(): string
+    {
+        $language = $this->request->getAttribute('language');
+        if ($language instanceof SiteLanguage) {
+            return $language->getLocale()->getLanguageCode();
+        }
+        return '';
+    }
 
 }

@@ -17,8 +17,7 @@
     "GPL-2.0+"
   ],
   "require": {
-    "typo3/cms-form": "^14.0",
-    "wapplersystems/form_extended": "^14.0"
+    "wapplersystems/form": "^14.3"
   },
   "require-dev": {
     "typo3/testing-framework": "^9.0",

@@ -12,7 +12,6 @@ use WapplerSystems\FeRegistration\Service\ConfirmationService;
 class ConfirmationServiceTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [
-        'wapplersystems/form_extended',
         'wapplersystems/fe-registration',
     ];
 

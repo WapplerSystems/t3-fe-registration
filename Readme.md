@@ -88,8 +88,10 @@ vendor/bin/typo3 feregistration:cleanup --days=14
 ## Anforderungen
 
 - TYPO3 14.0+
-- TYPO3 Form Framework (`typo3/cms-form`)
-- Extension `wapplersystems/form_extended`
+- `wapplersystems/form` -- der WapplerSystems-Fork des Form Frameworks. Er
+  ersetzt `typo3/cms-form` per Composer-`replace` (Extension-Key bleibt `form`)
+  und loest zugleich `wapplersystems/form_extended` ab. Benoetigt wird daraus
+  u. a. das PSR-14-Event `TYPO3\CMS\Form\Event\MailBeforeSendingEvent`.
 
 ## Lizenz
 

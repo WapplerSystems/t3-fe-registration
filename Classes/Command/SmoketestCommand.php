@@ -17,7 +17,7 @@ use WapplerSystems\FeRegistration\Event\BeforeFrontendUserDeletedEvent;
 use WapplerSystems\FeRegistration\Service\ConfirmationService;
 use WapplerSystems\FeRegistration\Service\DatabaseService;
 use WapplerSystems\FeRegistration\Validator\UserAlreadyExistsValidator;
-use WapplerSystems\FormExtended\Utility\Uuid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  * End-to-end smoketest for the DOI registration flow.
@@ -146,7 +146,7 @@ class SmoketestCommand extends Command
 
         $connection = $this->connectionPool->getConnectionForTable(self::REQUEST_TABLE);
         $now = time();
-        $hash = Uuid::generate();
+        $hash = Uuid::v4()->toRfc4122();
         $connection->insert(self::REQUEST_TABLE, [
             'pid' => $pid,
             'tstamp' => $now,

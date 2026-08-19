@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <xliff version="1.0">
     <file source-language="en" datatype="plaintext" original="messages" date="2016-08-21T20:15:32Z"
-          product-name="form_extended">
+          product-name="fe_registration">
         <header/>
         <body>
             <trans-unit id="extension.title">

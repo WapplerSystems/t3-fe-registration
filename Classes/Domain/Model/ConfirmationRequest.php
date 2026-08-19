@@ -3,7 +3,7 @@
 namespace WapplerSystems\FeRegistration\Domain\Model;
 
 use TYPO3\CMS\Extbase\DomainObject\AbstractEntity;
-use WapplerSystems\FormExtended\Utility\Uuid;
+use Symfony\Component\Uid\Uuid;
 
 /**
  */
@@ -27,7 +27,7 @@ class ConfirmationRequest extends AbstractEntity
 
     public function __construct()
     {
-        $this->confirmationHash = Uuid::generate();
+        $this->confirmationHash = Uuid::v4()->toRfc4122();
     }
 
     public function getEmail(): string

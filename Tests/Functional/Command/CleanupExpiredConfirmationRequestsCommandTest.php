@@ -16,7 +16,6 @@ class CleanupExpiredConfirmationRequestsCommandTest extends FunctionalTestCase
     private const TABLE = 'tx_feregistration_domain_model_confirmationrequest';
 
     protected array $testExtensionsToLoad = [
-        'wapplersystems/form_extended',
         'wapplersystems/fe-registration',
     ];
 

@@ -12,7 +12,6 @@ use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepositor
 class ConfirmationRequestRepositoryTest extends FunctionalTestCase
 {
     protected array $testExtensionsToLoad = [
-        'wapplersystems/form_extended',
         'wapplersystems/fe-registration',
     ];
 

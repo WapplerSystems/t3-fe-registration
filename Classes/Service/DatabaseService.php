@@ -25,7 +25,7 @@ class DatabaseService
      * The trusted defaults further down win regardless because they are written
      * after the user-controlled mapping.
      */
-    private const PROTECTED_FE_USER_COLUMNS = [
+    public const PROTECTED_FE_USER_COLUMNS = [
         'uid', 'pid', 'tstamp', 'crdate',
         'deleted', 'disable', 'hidden',
         'starttime', 'endtime',

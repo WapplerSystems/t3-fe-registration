@@ -11,6 +11,7 @@ use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Domain\Model\FileReference;
 use TYPO3\CMS\Form\Domain\Finishers\Exception\FinisherException;
 use WapplerSystems\FeRegistration\Event\FeUserDatabaseDataEvent;
+use WapplerSystems\FeRegistration\Service\DatabaseService;
 
 /**
  * Finisher to save form values to fe_users table
@@ -77,6 +78,24 @@ class FeUserFinisher extends \TYPO3\CMS\Form\Domain\Finishers\SaveToDatabaseFini
         // collected from the renderables. An explicit `elements.<identifier>`
         // finisher option still wins, which keeps the upstream syntax working.
         $databaseData = $this->prepareData($this->collectElementsConfiguration(), $databaseData);
+
+        // This finisher writes to fe_users directly instead of going through
+        // DatabaseService, so it has to apply the same protection: drop every
+        // system-controlled column. Both sources feeding $databaseData are
+        // backend-configurable — the finisher's `mapping` option and the
+        // elements' mapOnDatabaseColumn properties — and FeUsersDatabaseField
+        // only checks that a mapping target is a real fe_users column, not that
+        // it is safe. Without this filter an editor with form permissions could
+        // map a field onto `usergroup`, `disable` or `pid` and grant frontend
+        // privileges from a public form.
+        foreach (DatabaseService::PROTECTED_FE_USER_COLUMNS as $protectedColumn) {
+            unset($databaseData[$protectedColumn]);
+        }
+
+        // pid is system-controlled but legitimately needed here, so restore the
+        // trusted value from the finisher option after the filter.
+        $databaseData['pid'] = $this->parseOption('pid');
+        $databaseData['tstamp'] = time();
 
         $eventDispatcher = GeneralUtility::makeInstance(EventDispatcher::class);
         $event = new FeUserDatabaseDataEvent($databaseData);

@@ -195,7 +195,23 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
                 ];
             }
 
-            if (array_key_exists($renderable['identifier'], $this->preDefinedValues)) {
+            // Never seed a password field from the stored payload. The value kept
+            // on the ConfirmationRequest is the *hash* produced by
+            // ConfirmationRequestFinisher, and assigning it as a defaultValue puts
+            // it into the form state, which is serialized into a hidden field and
+            // handed to the browser. The state is HMAC-signed but not encrypted, so
+            // anyone holding the confirmation link (it travels by email, lands in
+            // browser history, proxy logs, …) could read the password hash straight
+            // out of the page and attack it offline.
+            //
+            // Nothing needs it there: CompleteRegistrationFinisher builds the
+            // fe_users row from $confirmationRequest->getDecodedValues(), never
+            // from the submitted form values, and after confirmation the password
+            // field is not even rendered — the factory replaces the page with a
+            // pseudo page.
+            if (array_key_exists($renderable['identifier'], $this->preDefinedValues)
+                && !in_array($renderable['type'] ?? '', ['Password', 'AdvancedPassword'], true)
+            ) {
                 $renderable['defaultValue'] = $this->preDefinedValues[$renderable['identifier']];
             }
 

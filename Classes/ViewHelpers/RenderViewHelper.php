@@ -10,6 +10,7 @@ namespace WapplerSystems\FeRegistration\ViewHelpers;
 
 use Psr\Http\Message\ServerRequestInterface;
 use TYPO3\CMS\Core\Utility\ArrayUtility;
+use TYPO3\CMS\Core\Crypto\PasswordHashing\PasswordHashFactory;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Configuration\ConfigurationManagerInterface as ExtbaseConfigurationManagerInterface;
 use TYPO3\CMS\Extbase\Mvc\RequestInterface;
@@ -129,7 +130,36 @@ final class RenderViewHelper extends AbstractViewHelper
             } else {
                 $values = [];
             }
+            // The stored payload contains the password *hash* that
+            // ConfirmationRequestFinisher produced. The form state is serialized
+            // into a hidden field and handed to the browser — HMAC-signed, but not
+            // encrypted — so seeding it here would publish the hash to anyone
+            // holding the confirmation link (which travels by email and lands in
+            // browser history and proxy logs) for offline attack.
+            //
+            // Nothing downstream needs it: CompleteRegistrationFinisher builds the
+            // fe_users row from $confirmationRequest->getDecodedValues() directly.
+            $hashFactory = GeneralUtility::makeInstance(PasswordHashFactory::class);
             foreach ($values as $fieldIdentifier => $value) {
+                $element = $formDefinition->getElementByIdentifier((string)$fieldIdentifier);
+                if ($element !== null
+                    && in_array($element->getType(), ['Password', 'AdvancedPassword'], true)
+                ) {
+                    continue;
+                }
+                // After confirmation the original page is replaced by a pseudo
+                // page, so the password element is usually gone from the
+                // definition and the type check above cannot see it. Fall back to
+                // recognising the value itself: anything the FE password-hash
+                // factory accepts is credential material and must not be exposed.
+                if (is_string($value) && $value !== '') {
+                    try {
+                        $hashFactory->get($value, 'FE');
+                        continue;
+                    } catch (\Throwable) {
+                        // Not a password hash — fall through and seed it.
+                    }
+                }
                 $form->getFormState()->setFormValue($fieldIdentifier, $value);
             }
         }

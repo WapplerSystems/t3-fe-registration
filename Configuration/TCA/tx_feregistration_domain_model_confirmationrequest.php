@@ -67,6 +67,21 @@ return [
                 'readOnly' => 1
             ]
         ],
+        // The column existed in ext_tables.sql and the model had the property, but it was
+        // missing here — and Extbase only persists what TCA describes. So every request
+        // ever written kept expires_at = 0: the expiry that ConfirmationRequestFinisher
+        // computed was silently dropped, links never expired, and the cleanup command
+        // could only reach such rows through its --days fallback.
+        'expires_at' => [
+            'exclude' => 1,
+            'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.expires_at',
+            'config' => [
+                'type' => 'datetime',
+                'size' => 20,
+                'checkbox' => 0,
+                'readOnly' => 1
+            ]
+        ],
         'completion_date' => [
             'exclude' => 1,
             'label' => 'LLL:EXT:fe_registration/Resources/Private/Language/locallang_db.xlf:tx_feregistration_domain_model_confirmationrequest.completion_date',

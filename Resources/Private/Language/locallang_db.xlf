@@ -91,6 +91,9 @@
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest.confirmation_date">
                 <source>Confirmation date</source>
             </trans-unit>
+            <trans-unit id="tx_feregistration_domain_model_confirmationrequest.expires_at">
+                <source>Confirmation link expires</source>
+            </trans-unit>
             <trans-unit id="tx_feregistration_domain_model_confirmationrequest.last_sent">
                 <source>Last confirmation mail sent</source>
             </trans-unit>

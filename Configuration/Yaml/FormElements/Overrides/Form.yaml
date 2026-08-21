@@ -15,20 +15,28 @@ prototypes:
                   label: 'Complete registration'
           propertyCollections:
             finishers:
+              # The e-mail templates this extension ships, added to the template
+              # chooser of the e-mail content modal (Inspector-EmailContentEditor,
+              # editor index 250, "availableTemplates" = templateName => label).
+              #
+              # Previously these were injected as selectOptions of editor index
+              # 1800 - the standalone "Template" dropdown that wapplersystems/form_extended
+              # added to both e-mail finishers. The wapplersystems/form fork replaced
+              # that dropdown with the chooser inside the content modal, so 1800 no
+              # longer exists: the override created an editor node carrying only
+              # selectOptions and no propertyPath, on which SelectOptionsExtractor
+              # throws (#1329289436) - breaking *every* save in the form editor,
+              # not just for forms using this extension.
               10:
                 editors:
-                  1800:
-                    selectOptions:
-                      336558:
-                        value: 'Email/Welcome'
-                        label: 'Welcome Email'
+                  250:
+                    availableTemplates:
+                      'Email/Welcome': 'Welcome Email'
               20:
                 editors:
-                  1800:
-                    selectOptions:
-                      336557:
-                        value: 'Email/Notification/RegistrationCompleted'
-                        label: 'Registration Completed Notification to Admin'
+                  250:
+                    availableTemplates:
+                      'Email/Notification/RegistrationCompleted': 'Registration Completed Notification to Admin'
               351:
                 identifier: 'FeUser'
                 editors:

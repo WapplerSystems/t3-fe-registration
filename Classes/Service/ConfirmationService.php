@@ -63,7 +63,8 @@ class ConfirmationService
         $confirmationRequest->setDecodedValues([]);
         $this->confirmationRequestRepository->update($confirmationRequest);
         $this->persistenceManager->persistAll();
-        $this->logger->info('Registration completed', ['email' => $confirmationRequest->getEmail(), 'uid' => $confirmationRequest->getUid()]);
+        // uid only — the address is personal data and adds nothing for tracing.
+        $this->logger->info('Registration completed', ['uid' => $confirmationRequest->getUid()]);
     }
 
     public function setRequestConfirmed(ConfirmationRequest $confirmationRequest): void
@@ -73,7 +74,7 @@ class ConfirmationService
         $confirmationRequest->setConfirmationDate(\DateTime::createFromImmutable($currentDateTime));
         $this->confirmationRequestRepository->update($confirmationRequest);
         $this->persistenceManager->persistAll();
-        $this->logger->info('Email confirmed', ['email' => $confirmationRequest->getEmail(), 'uid' => $confirmationRequest->getUid()]);
+        $this->logger->info('Email confirmed', ['uid' => $confirmationRequest->getUid()]);
     }
 
     public function findUnconfirmedByEmail(string $email): ?ConfirmationRequest

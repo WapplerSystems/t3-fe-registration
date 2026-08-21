@@ -70,7 +70,10 @@ class MailingService
         try {
             $this->mailer->send($mail);
         } catch (TransportExceptionInterface $e) {
-            $this->logger->error('Failed to send confirmation email', ['email' => $receiverAddress, 'exception' => $e->getMessage()]);
+            // No email address in the log context: it is personal data, the log file
+            // has no retention of its own, and the confirmation request uid below is
+            // enough to trace the case while it exists.
+            $this->logger->error('Failed to send confirmation email', ['confirmationRequest' => $confirmationRequest->getUid(), 'exception' => $e->getMessage()]);
             throw $e;
         }
 
@@ -78,7 +81,7 @@ class MailingService
         $this->confirmationRequestRepository->update($confirmationRequest);
         $this->persistenceManager->persistAll();
 
-        $this->logger->info('Confirmation email sent', ['email' => $receiverAddress]);
+        $this->logger->info('Confirmation email sent', ['confirmationRequest' => $confirmationRequest->getUid()]);
     }
 
 
@@ -121,11 +124,11 @@ class MailingService
         try {
             $this->mailer->send($mail);
         } catch (TransportExceptionInterface $e) {
-            $this->logger->error('Failed to send welcome email', ['email' => $receiverAddress, 'exception' => $e->getMessage()]);
+            $this->logger->error('Failed to send welcome email', ['exception' => $e->getMessage()]);
             throw $e;
         }
 
-        $this->logger->info('Welcome email sent', ['email' => $receiverAddress]);
+        $this->logger->info('Welcome email sent', []);
     }
 
 

@@ -177,8 +177,20 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         }
         foreach ($fieldConfig['renderables'] as &$renderable) {
 
-            if ($renderable['identifier'] === $this->settings['identifierFieldName']) {
-
+            // Account-enumeration protection.
+            //
+            // These two validators answer "this address is already registered" straight
+            // back into the form, which lets anyone probe who has an account — and they
+            // are injected here, so removing them from the form YAML has no effect.
+            //
+            // ConfirmationRequestFinisher performs the same check silently and also
+            // carries the duplicate protection these validators used to provide, so they
+            // are off by default: a known address now gets the same confirmation view and
+            // an "you already have an account" mail. Projects that prefer the immediate
+            // on-screen feedback can opt back in with settings.revealExistingAccounts = 1.
+            if ($renderable['identifier'] === $this->settings['identifierFieldName']
+                && (int)($this->settings['revealExistingAccounts'] ?? 0) === 1
+            ) {
                 $renderable['validators'][] = [
                     'identifier' => 'ConfirmationRequest',
                     'options' => [

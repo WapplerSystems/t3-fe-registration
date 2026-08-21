@@ -4,10 +4,9 @@ namespace WapplerSystems\FeRegistration\Validator;
 
 
 use Doctrine\DBAL\Exception;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
+use WapplerSystems\FeRegistration\Service\AddressLookupService;
 
 /**
  * Validator for not empty values.
@@ -29,18 +28,12 @@ class FeUserValidator extends AbstractValidator
      */
     public function isValid($value): void
     {
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('fe_users');
-        $queryBuilder->getRestrictions()->removeAll();
-        $count = $queryBuilder->count('uid')
-            ->from('fe_users')
-            ->where($queryBuilder->expr()->and(
-                $queryBuilder->expr()->eq('username', $queryBuilder->createNamedParameter($value)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['pid'])),
-            )
-        )->executeQuery()->fetchOne();
+        // The query lives in AddressLookupService so this validator and the finisher-side
+        // guard in ConfirmationRequestFinisher cannot drift apart.
+        $exists = GeneralUtility::makeInstance(AddressLookupService::class)
+            ->hasFeUserWithUsername((string)$value, (int)$this->options['pid']);
 
-        if ($count > 0) {
+        if ($exists) {
             $this->addError(
                 $this->translateErrorMessage(
                     'validator.feUsernameAlreadyExists.true',

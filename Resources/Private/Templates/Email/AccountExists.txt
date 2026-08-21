@@ -1,0 +1,15 @@
+<f:layout name="SystemEmail" />
+<f:section name="Title">{title}</f:section>
+<f:section name="Main">
+
+<f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.text" />
+<f:if condition="{loginPageUid}">
+
+{f:uri.page(pageUid: loginPageUid, absolute: 1) -> f:format.raw()}
+
+<f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.passwordHint" />
+</f:if>
+
+<f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.ignoreHint" />
+
+</f:section>

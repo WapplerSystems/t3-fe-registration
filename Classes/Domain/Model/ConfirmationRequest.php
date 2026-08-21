@@ -149,9 +149,24 @@ class ConfirmationRequest extends AbstractEntity
         $this->expiresAt = $expiresAt;
     }
 
+    /**
+     * Treats a missing expiry date as expired.
+     *
+     * Fail-closed on purpose: the previous `$expiresAt !== null && …` returned false for
+     * a row without a date, so such a double-opt-in link stayed valid forever and the
+     * cleanup command could only ever catch it through its `--days` fallback. Rows land
+     * in that state whenever ConfirmationRequestFinisher runs with `expirationDays: 0`.
+     *
+     * A confirmation link is short-lived by nature; if we cannot tell how long it should
+     * live, the safe answer is "no longer".
+     */
     public function isExpired(): bool
     {
-        return $this->expiresAt !== null && $this->expiresAt < new \DateTime();
+        if ($this->expiresAt === null) {
+            return true;
+        }
+
+        return $this->expiresAt < new \DateTime();
     }
 
 }

@@ -4,6 +4,22 @@
           product-name="fe_registration">
         <header/>
         <body>
+            <trans-unit id="accountExistsEmail.subject">
+                <source><![CDATA[About your registration]]></source>
+                <target><![CDATA[Zu Ihrer Registrierung]]></target>
+            </trans-unit>
+            <trans-unit id="accountExistsEmail.text">
+                <source><![CDATA[You recently tried to register with this email address. An account already exists for it, so we did not create a second one. You can sign in directly:]]></source>
+                <target><![CDATA[Sie haben versucht, sich mit dieser E-Mail-Adresse zu registrieren. Für diese Adresse besteht bereits ein Konto, daher haben wir kein zweites angelegt. Sie können sich direkt anmelden:]]></target>
+            </trans-unit>
+            <trans-unit id="accountExistsEmail.passwordHint">
+                <source><![CDATA[If you do not remember your password, you can request a new one on that page.]]></source>
+                <target><![CDATA[Falls Sie Ihr Passwort nicht mehr wissen, können Sie dort ein neues anfordern.]]></target>
+            </trans-unit>
+            <trans-unit id="accountExistsEmail.ignoreHint">
+                <source><![CDATA[If it was not you who tried to register, you can simply ignore this email. Nothing has changed and no new account was created.]]></source>
+                <target><![CDATA[Falls nicht Sie es waren, können Sie diese E-Mail einfach ignorieren. Es hat sich nichts geändert und es wurde kein neues Konto angelegt.]]></target>
+            </trans-unit>
             <trans-unit id="confirmationEmail.text">
                 <source><![CDATA[Thank you for signing up. To verify your email address, please click the following link or copy it into your browser's address bar:]]></source>
                 <target><![CDATA[Danke, dass Sie sich angemeldet haben. Um Ihre E-Mail-Adresse zu verifizieren, klicken Sie bitte auf den folgenden Link oder kopieren Sie ihn in die Adressleiste Ihres Browsers:]]></target>

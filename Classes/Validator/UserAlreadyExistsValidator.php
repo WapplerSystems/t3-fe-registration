@@ -4,10 +4,9 @@ namespace WapplerSystems\FeRegistration\Validator;
 
 
 use Doctrine\DBAL\Exception;
-use TYPO3\CMS\Core\Database\ConnectionPool;
-use TYPO3\CMS\Core\Database\Query\QueryBuilder;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Extbase\Validation\Validator\AbstractValidator;
+use WapplerSystems\FeRegistration\Service\AddressLookupService;
 
 /**
  * Checks confirmationRequest records and fe_users for existing or completed records
@@ -32,30 +31,13 @@ class UserAlreadyExistsValidator extends AbstractValidator
     public function isValid($value): void
     {
 
-        /** @var QueryBuilder $queryBuilder */
-        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable('tx_feregistration_domain_model_confirmationrequest');
-        $queryBuilder->getRestrictions()->removeAll();
-        $now = time();
-        $count = $queryBuilder
-            ->select('uid')
-            ->from('tx_feregistration_domain_model_confirmationrequest')
-            ->where($queryBuilder->expr()->and(
-                $queryBuilder->expr()->eq('email', $queryBuilder->createNamedParameter($value)),
-                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter((int)$this->options['confirmationRequestPid'])),
-                // Only consider rows that are actually blocking: either already
-                // confirmed (user is mid-registration or done) or still inside
-                // the open DOI window. Expired, abandoned, unconfirmed rows are
-                // ignored so a user who walked away can register again without
-                // waiting for the cleanup command to sweep the table.
-                $queryBuilder->expr()->or(
-                    $queryBuilder->expr()->gt('confirmation_date', 0),
-                    $queryBuilder->expr()->eq('expires_at', 0),
-                    $queryBuilder->expr()->gt('expires_at', $queryBuilder->createNamedParameter($now)),
-                ),
-            )
-            )->executeQuery()->fetchOne();
+        // The query lives in AddressLookupService so this validator and the finisher-side
+        // guard in ConfirmationRequestFinisher cannot drift apart. It only counts rows
+        // that actually block: already confirmed, or still inside the open DOI window.
+        $exists = GeneralUtility::makeInstance(AddressLookupService::class)
+            ->hasBlockingConfirmationRequest((string)$value, (int)$this->options['confirmationRequestPid']);
 
-        if ($count > 0) {
+        if ($exists) {
             $this->addError(
                 $this->translateErrorMessage(
                     'validator.confirmationRequest.true',

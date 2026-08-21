@@ -4,6 +4,18 @@
           product-name="fe_registration">
         <header/>
         <body>
+            <trans-unit id="accountExistsEmail.subject">
+                <source><![CDATA[About your registration]]></source>
+            </trans-unit>
+            <trans-unit id="accountExistsEmail.text">
+                <source><![CDATA[You recently tried to register with this email address. An account already exists for it, so we did not create a second one. You can sign in directly:]]></source>
+            </trans-unit>
+            <trans-unit id="accountExistsEmail.passwordHint">
+                <source><![CDATA[If you do not remember your password, you can request a new one on that page.]]></source>
+            </trans-unit>
+            <trans-unit id="accountExistsEmail.ignoreHint">
+                <source><![CDATA[If it was not you who tried to register, you can simply ignore this email. Nothing has changed and no new account was created.]]></source>
+            </trans-unit>
             <trans-unit id="confirmationEmail.text">
                 <source><![CDATA[Thank you for signing up. To verify your email address, please click the following link or copy it into your browser's address bar:]]></source>
             </trans-unit>

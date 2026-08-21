@@ -96,6 +96,10 @@ class RegistrationController extends ActionController
             'identifier' => 'ConfirmationRequest',
             'options' => [
                 'confirmationRequestPid' => $this->settings['confirmationRequestPid'] ?? '',
+                // Lets the enumeration guard recognise an address that already has an
+                // account, not just a pending request. Must be passed here: this override
+                // entry fully replaces the form YAML's, so a YAML-side value never arrives.
+                'feUserStoragePid' => $this->settings['feUserStoragePid'] ?? '',
             ]
         ];
         $emailFinisher = [
@@ -105,6 +109,11 @@ class RegistrationController extends ActionController
                 'senderName' => $this->settings['confirmationEmail']['senderName'] ?? '',
                 'useFluidEmail' => $this->settings['confirmationEmail']['useFluidEmail'] ?? 0,
                 'subject' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:confirmationEmail.subject'),
+                // Used instead when ConfirmationRequestFinisher recognised the address
+                // and created nothing. Set here rather than in the form YAML: for an
+                // identifier present in both, RenderViewHelper lets this override entry
+                // fully replace the YAML one, so YAML-side options would never arrive.
+                'subject_accountExists' => LocalizationUtility::translate('LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.subject'),
                 'recipients' => ['{' . $this->settings['emailFieldName'] . '}'],
                 'templateName' => 'Email/Confirmation',
             ]

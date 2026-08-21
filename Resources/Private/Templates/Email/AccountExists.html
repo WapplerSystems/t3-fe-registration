@@ -1,0 +1,37 @@
+<f:layout name="SystemEmail" />
+<f:section name="Title">{title}</f:section>
+<f:section name="Main">
+
+    <f:comment>
+        Sent instead of the double-opt-in mail when the submitted address already has an
+        account or a pending request. The signup form deliberately gives no on-screen hint
+        in that case, so this mail is the only place the fact surfaces — and it goes to the
+        address itself, which is the one recipient entitled to know.
+
+        Deliberately vague: no creation date, no stored data, no user name. Someone who
+        typed the address by mistake learns nothing about its owner.
+
+        `loginPageUid` comes from the finisher's `variables` option. Without it the mail
+        still makes sense, just without a link.
+    </f:comment>
+
+    <p>
+        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.text" />
+    </p>
+
+    <f:if condition="{loginPageUid}">
+        <p>
+            <f:link.page pageUid="{loginPageUid}" absolute="1">
+                {f:uri.page(pageUid: loginPageUid, absolute: 1)}
+            </f:link.page>
+        </p>
+        <p>
+            <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.passwordHint" />
+        </p>
+    </f:if>
+
+    <p>
+        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:accountExistsEmail.ignoreHint" />
+    </p>
+
+</f:section>

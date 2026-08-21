@@ -5,3 +5,9 @@ settings:
     type: int
     default: 0
     category: 'fe_registration'
+  feRegistration.loginPageId:
+    label: 'Login page'
+    description: 'Page UID linked from the "you already have an account" mail, which replaces the opt-in mail when someone signs up with an address that is already registered. 0 omits the link.'
+    type: int
+    default: 0
+    category: 'fe_registration'

@@ -16,6 +16,7 @@ use TYPO3\CMS\Form\Domain\Runtime\FormRuntime;
 use TYPO3\CMS\Form\ViewHelpers\RenderRenderableViewHelper;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Service\AddressLookupService;
 use WapplerSystems\FeRegistration\Event\AfterConfirmationRequestCreationEvent;
 
 class ConfirmationRequestFinisher extends AbstractFinisher
@@ -27,7 +28,24 @@ class ConfirmationRequestFinisher extends AbstractFinisher
     protected $defaultOptions = [
         'confirmationRequestPid' => null,
         'expirationDays' => 7,
+        // Storage page of the fe_users records. Needed so the guard below can also
+        // recognise an address that already has an account, not just a pending
+        // request. 0 skips that half of the check.
+        'feUserStoragePid' => 0,
     ];
+
+    /**
+     * Rendering option set when the submitted address already has an account or a
+     * pending request. ConfirmationEmailFinisher reads it and sends the
+     * "you already have an account" mail instead of the double-opt-in mail.
+     */
+    public const RENDERING_OPTION_ACCOUNT_EXISTS = 'accountExists';
+
+    /**
+     * Fallback lifetime of a double-opt-in link, also used when `expirationDays` is
+     * configured as 0 or negative.
+     */
+    private const DEFAULT_EXPIRATION_DAYS = 7;
 
 
     public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository,
@@ -58,6 +76,32 @@ class ConfirmationRequestFinisher extends AbstractFinisher
             throw new FinisherException('No receiver email address found in form data.', 1599834020);
         }
 
+        // Account-enumeration guard. The email field used to carry the
+        // ConfirmationRequest and FeUser validators, which answered "this address is
+        // already registered" straight back into the form — anyone could probe who has
+        // an account. Those validators are gone from the form; the check happens here
+        // instead, silently.
+        //
+        // This also carries the duplicate-protection the ConfirmationRequest validator
+        // used to provide: without it a second submission would insert another row for
+        // the same address.
+        //
+        // Nothing is persisted and no confirmationHash is written. The rest of the
+        // finisher chain still runs, so the visitor sees exactly the same view as after
+        // a genuine signup; ConfirmationEmailFinisher swaps the mail template.
+        $confirmationRequestPid = (int)$this->options['confirmationRequestPid'];
+        $addressBlocked = GeneralUtility::makeInstance(AddressLookupService::class)->isAddressBlocked(
+            $email,
+            $confirmationRequestPid,
+            (int)($this->options['feUserStoragePid'] ?? 0)
+        );
+
+        if ($addressBlocked) {
+            $this->finisherContext->getFormRuntime()->getFormDefinition()
+                ->setRenderingOption(self::RENDERING_OPTION_ACCOUNT_EXISTS, true);
+            return;
+        }
+
         /* Opt in data set  */
         $confirmationRequest = new ConfirmationRequest();
         $confirmationRequest->setEmail($email);
@@ -68,12 +112,19 @@ class ConfirmationRequestFinisher extends AbstractFinisher
         $confirmationRequest->setPid($this->options['confirmationRequestPid']);
         $confirmationRequest->setLastSent(new \DateTime());
 
-        $expirationDays = (int)($this->options['expirationDays'] ?? 7);
-        if ($expirationDays > 0) {
-            $expiresAt = new \DateTime();
-            $expiresAt->modify('+' . $expirationDays . ' days');
-            $confirmationRequest->setExpiresAt($expiresAt);
+        // Always set an expiry. `expirationDays: 0` used to mean "never expires", which
+        // left rows that no cleanup run could reach except through its --days fallback,
+        // and links that stayed valid indefinitely. Since ConfirmationRequest::isExpired()
+        // is now fail-closed, a row without a date would also count as instantly expired
+        // and its link would never work — so 0 falls back to the default instead of
+        // producing either surprise.
+        $expirationDays = (int)($this->options['expirationDays'] ?? self::DEFAULT_EXPIRATION_DAYS);
+        if ($expirationDays <= 0) {
+            $expirationDays = self::DEFAULT_EXPIRATION_DAYS;
         }
+        $expiresAt = new \DateTime();
+        $expiresAt->modify('+' . $expirationDays . ' days');
+        $confirmationRequest->setExpiresAt($expiresAt);
 
         $this->confirmationRequestRepository->add($confirmationRequest);
 

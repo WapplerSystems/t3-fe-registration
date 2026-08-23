@@ -14,6 +14,24 @@
         argumentsToBeExcludedFromQueryString="{form.renderingOptions.argumentsToBeExcludedFromQueryString}"
         additionalParams="{form.renderingOptions.additionalParams}"
         additionalAttributes="{formvh:translateElementProperty(element: form, property: 'fluidAdditionalAttributes')}">
+        <f:comment>
+            Form-level (cross-field) validator errors — Challenge, MinimumFillTime,
+            EntropySpam — are attached to the form-root property path and render
+            nowhere unless a summary block asks for them. This template sits at
+            templateRootPaths.890 and therefore wins over the fork's own
+            Form.fluid.html (10), so the block has to be repeated here; without it
+            a rejected submission looks to the visitor like a form that silently
+            refuses to submit.
+        </f:comment>
+        <f:form.validationResults for="{form.identifier}">
+            <f:if condition="{validationResults.errors}">
+                <div class="form-error-summary alert alert-danger" role="alert">
+                    <f:for each="{validationResults.errors}" as="error">
+                        <p class="form-error-summary-item">{error -> f:format.htmlspecialchars()}</p>
+                    </f:for>
+                </div>
+            </f:if>
+        </f:form.validationResults>
         <f:render partial="{form.currentPage.templateName}" arguments="{page: form.currentPage}"/>
         <div class="actions">
             <f:render partial="Form/Navigation" arguments="{form: form}"/>

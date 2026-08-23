@@ -87,6 +87,22 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
             }
         }
 
+        // Form-level bot protection (Challenge / MinimumFillTime) belongs on the
+        // public step only. The confirmation step is reached exclusively through
+        // the unguessable hash from the double-opt-in mail, so it needs no spam
+        // shield — and it must not carry one: it renders a single button, which a
+        // visitor clicks well inside the MinimumFillTime floor and possibly before
+        // the challenge delay has elapsed. Leaving the validators in place would
+        // reject legitimate confirmations. Both spellings the fork accepts are
+        // cleared here — the conventional `validators:` list on the form root and
+        // the older renderingOptions one — so a definition using either is safe.
+        if (!$preConfirmation) {
+            unset(
+                $newConfiguration['validators'],
+                $newConfiguration['renderingOptions']['formLevelValidators']
+            );
+        }
+
         if ($preConfirmation) {
             // remove in pre confirmation-steps all finishers except ConfirmationRequest, ConfirmationEmail, RedirectToUri and special preConfirmation finishers
             foreach ($configuration['finishers'] ?? [] as $finisherName => $finisherConfig) {

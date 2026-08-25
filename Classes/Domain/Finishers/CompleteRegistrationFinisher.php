@@ -79,6 +79,16 @@ class CompleteRegistrationFinisher extends AbstractFinisher implements LoggerAwa
             $values = $confirmationRequest->getDecodedValues();
             if (!empty($values)) {
                 $values['registration_request'] = $confirmationRequest->getUid();
+                // createFeUser() only accepts keys that match a fe_users column or
+                // its snake_case form. The form element is called `emailAddress`,
+                // which maps to `email_address` — not a column — so the address was
+                // dropped and every account created here ended up with an empty
+                // email field. The confirmed address on the request is the
+                // authoritative one anyway: it is the address the double opt-in was
+                // answered from.
+                if (($values['email'] ?? '') === '') {
+                    $values['email'] = $confirmationRequest->getEmail();
+                }
                 $values['disable'] = ((int)($settings['feUserMustConfirmed'] ?? 0)) === 1 ? 1 : 0;
 
                 $row = $this->databaseService->createFeUser($values, $settings);

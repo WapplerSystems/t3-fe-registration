@@ -3,18 +3,25 @@
 namespace WapplerSystems\FeRegistration\Service;
 
 use Doctrine\DBAL\ParameterType;
+use Psr\EventDispatcher\EventDispatcherInterface;
+use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerAwareTrait;
 use TYPO3\CMS\Core\Database\ConnectionPool;
 use TYPO3\CMS\Core\Database\Query\Restriction\HiddenRestriction;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Form\Mvc\Property\TypeConverter\PseudoFileReference;
 use WapplerSystems\FeRegistration\Domain\Model\ConfirmationRequest;
 use WapplerSystems\FeRegistration\Domain\Repository\ConfirmationRequestRepository;
+use WapplerSystems\FeRegistration\Event\FeUserDatabaseDataEvent;
 
-class DatabaseService
+class DatabaseService implements LoggerAwareInterface
 {
+    use LoggerAwareTrait;
 
-    public function __construct(readonly ConfirmationRequestRepository $confirmationRequestRepository)
-    {
+    public function __construct(
+        readonly ConfirmationRequestRepository $confirmationRequestRepository,
+        readonly EventDispatcherInterface $eventDispatcher,
+    ) {
     }
 
 
@@ -47,6 +54,17 @@ class DatabaseService
         $schemaManager = $connection->createSchemaManager();
         $columns = array_keys($schemaManager->listTableColumns('fe_users'));
 
+        // Last chance for listeners to adjust the payload before it is reduced to
+        // fe_users columns. Dispatched on the raw values — still keyed by form
+        // element identifier — so a listener can derive a column from a field that
+        // has no column of its own; LINEAR maps its `salutation` radio onto
+        // fe_users.gender this way. Everything a listener adds still has to pass
+        // the column filter and the PROTECTED_FE_USER_COLUMNS check below, and the
+        // trusted values are written afterwards, so nothing here can reach a
+        // system-controlled column.
+        $event = $this->eventDispatcher->dispatch(new FeUserDatabaseDataEvent($values));
+        $values = $event->getDatabaseData();
+
         $dbValues = [];
         foreach ($values as $key => $value) {
             if (in_array($key, $columns, true)) {
@@ -75,6 +93,25 @@ class DatabaseService
         // it reaches this method, so reading it back here is trustworthy.
         $dbValues['disable'] = isset($values['disable']) && (int)$values['disable'] !== 0 ? 1 : 0;
 
+        // fe_users.username has to stay unique: it is the login identifier, and
+        // TCA declares it `uniqueInPid` — but that is only enforced by the
+        // DataHandler, not by this direct INSERT and not by the schema. A
+        // duplicate therefore lands silently and only surfaces later, when an
+        // editor opens one of the two rows in the backend and the DataHandler
+        // renames it by appending a digit. The registration form already rejects
+        // known accounts up front, so reaching this point means something else
+        // went wrong; log it loudly and leave the existing account untouched
+        // rather than creating a second one.
+        $existing = $this->findFeUserByUsername((string)$dbValues['username'], (int)$dbValues['pid']);
+        if ($existing !== false) {
+            $this->logger?->error('Refused to create a duplicate fe_user; an account with this username already exists.', [
+                'username' => $dbValues['username'],
+                'pid' => $dbValues['pid'],
+                'existingUid' => $existing['uid'],
+            ]);
+            return $existing;
+        }
+
         $queryBuilder
             ->insert('fe_users')
             ->values($dbValues)
@@ -88,6 +125,34 @@ class DatabaseService
     /**
      * @throws \Doctrine\DBAL\Exception
      */
+    /**
+     * Look up a frontend user by login name within one storage folder.
+     *
+     * Disabled and hidden accounts count as taken — they still occupy the
+     * username — while soft-deleted ones do not, which is what the default
+     * DeletedRestriction gives us.
+     */
+    public function findFeUserByUsername(string $username, int $pid): array|false
+    {
+        if ($username === '') {
+            return false;
+        }
+        $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(
+            'fe_users'
+        );
+        $restrictions = $queryBuilder->getRestrictions();
+        $restrictions->removeByType(HiddenRestriction::class);
+        $queryBuilder->setRestrictions($restrictions);
+        return $queryBuilder
+            ->select('*')
+            ->from('fe_users')
+            ->where(
+                $queryBuilder->expr()->eq('username', $queryBuilder->createNamedParameter($username)),
+                $queryBuilder->expr()->eq('pid', $queryBuilder->createNamedParameter($pid, ParameterType::INTEGER))
+            )
+            ->executeQuery()->fetchAssociative();
+    }
+
     public function findFeUserByConfirmationRequest(ConfirmationRequest $confirmationRequest): array|false
     {
         $queryBuilder = GeneralUtility::makeInstance(ConnectionPool::class)->getQueryBuilderForTable(

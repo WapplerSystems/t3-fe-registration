@@ -2,7 +2,7 @@
 $EM_CONF['fe_registration'] = [
     'title' => 'Frontend User Registration',
     'description' => 'Frontend User Registration based on form with double opt in',
-    'category' => 'frontend',
+    'category' => 'fe',
     'state' => 'stable',
     'clearCacheOnLoad' => 1,
     'author' => 'Sven Wappler',

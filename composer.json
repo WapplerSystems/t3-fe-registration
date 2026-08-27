@@ -1,11 +1,20 @@
 {
   "name": "wapplersystems/fe-registration",
   "type": "typo3-cms-extension",
-  "description": "",
+  "description": "Frontend user registration for TYPO3 based on EXT:form with double opt-in confirmation.",
   "keywords": [
-    "TYPO3"
+    "TYPO3",
+    "TYPO3 CMS",
+    "extension",
+    "registration",
+    "frontend-user",
+    "fe_users",
+    "double-opt-in",
+    "form"
   ],
-  "homepage": "https://wappler.systems",
+  "homepage": "https://github.com/WapplerSystems/t3-fe-registration",
+  "readme": "README.md",
+  "license": "GPL-2.0-or-later",
   "authors": [
     {
       "name": "Sven Wappler",
@@ -13,10 +22,14 @@
       "homepage": "https://wappler.systems"
     }
   ],
-  "license": [
-    "GPL-2.0+"
-  ],
+  "support": {
+    "issues": "https://github.com/WapplerSystems/t3-fe-registration/issues",
+    "source": "https://github.com/WapplerSystems/t3-fe-registration",
+    "docs": "https://github.com/WapplerSystems/t3-fe-registration/blob/release/v14/README.md"
+  },
   "require": {
+    "php": "^8.2",
+    "typo3/cms-core": "^14.0",
     "wapplersystems/form": "^14.3"
   },
   "require-dev": {
@@ -30,9 +43,8 @@
   },
   "autoload-dev": {
     "psr-4": {
+      "WapplerSystems\\FeRegistration\\Tests\\": "Tests"
     }
-  },
-  "scripts": {
   },
   "extra": {
     "typo3/cms": {

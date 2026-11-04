@@ -89,6 +89,12 @@ class CompleteRegistrationFinisher extends AbstractFinisher implements LoggerAwa
                 if (($values['email'] ?? '') === '') {
                     $values['email'] = $confirmationRequest->getEmail();
                 }
+                // Fields shown on the confirmation step (the form page that follows
+                // the double opt-in, e.g. company and address) only exist in this
+                // submission, not on the request — without this merge they were
+                // silently dropped. The stored values win, so this step can't
+                // overwrite the confirmed identifier, email or password.
+                $values += $this->finisherContext->getFormValues();
                 $values['disable'] = ((int)($settings['feUserMustConfirmed'] ?? 0)) === 1 ? 1 : 0;
 
                 $row = $this->databaseService->createFeUser($values, $settings);

@@ -49,10 +49,19 @@ class DatabaseService
 
         $dbValues = [];
         foreach ($values as $key => $value) {
+            // Multi-value fields and uploads (arrays, file references) have no
+            // generic column representation; empty fields (null) are left to the
+            // column default — an empty upload would otherwise hit a NOT NULL column.
+            if (!is_scalar($value)) {
+                continue;
+            }
             if (in_array($key, $columns, true)) {
                 $column = $key;
             } elseif (in_array(GeneralUtility::camelCaseToLowerCaseUnderscored($key), $columns, true)) {
                 $column = GeneralUtility::camelCaseToLowerCaseUnderscored($key);
+            } elseif (in_array(str_replace('-', '_', $key), $columns, true)) {
+                // form element identifiers like `office-hours`
+                $column = str_replace('-', '_', $key);
             } else {
                 continue;
             }

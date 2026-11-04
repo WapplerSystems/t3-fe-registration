@@ -50,9 +50,10 @@ class DatabaseService
         $dbValues = [];
         foreach ($values as $key => $value) {
             // Multi-value fields and uploads (arrays, file references) have no
-            // generic column representation; empty fields (null) are left to the
-            // column default — an empty upload would otherwise hit a NOT NULL column.
-            if (!is_scalar($value)) {
+            // generic column representation; empty fields (null, '') are left to the
+            // column default — an empty upload or an empty multi-checkbox would
+            // otherwise hit a NOT NULL or integer column.
+            if (!is_scalar($value) || $value === '') {
                 continue;
             }
             if (in_array($key, $columns, true)) {

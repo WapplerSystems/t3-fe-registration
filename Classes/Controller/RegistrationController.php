@@ -253,11 +253,13 @@ class RegistrationController extends ActionController
                     ]
                 ];
 
+                // Create the account first: the notification must not go out when
+                // creating it fails.
                 $finishers = [];
+                $finishers['CompleteRegistration'] = $completeRegistrationFinisher;
                 if (count($notificationEmailRecipients) > 0) {
                     $finishers['NotificationEmail'] = $notificationEmailFinisher;
                 }
-                $finishers['CompleteRegistration'] = $completeRegistrationFinisher;
                 $finishers['RedirectToUri'] = $redirectFinisher;
 
                 // On the confirmation step the button completes an already

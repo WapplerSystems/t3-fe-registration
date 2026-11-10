@@ -181,6 +181,17 @@ class RegistrationPatchFormFactory extends ArrayFormFactory
         $formDefinition = parent::build($newConfiguration, $prototypeName, $request);
         if ($this->confirmationRequest !== null) {
             $formDefinition->setRenderingOption('confirmationRequest', $this->confirmationRequest);
+
+            // The welcome mail prints {user.username}. Only the FeUser finisher
+            // used to set `user`; on the double opt-in path the account is created
+            // by CompleteRegistration, which runs after the mail finishers, so the
+            // mail said "Your user name is:" followed by nothing. Derive the name
+            // the same way DatabaseService::createFeUser() will.
+            $identifierFieldName = (string)($this->settings['identifierFieldName'] ?? '');
+            $username = (string)($this->confirmationRequest->getDecodedValues()[$identifierFieldName] ?? '');
+            if ($identifierFieldName !== '' && $username !== '') {
+                $formDefinition->setRenderingOption('user', ['username' => $username]);
+            }
         }
         return $formDefinition;
     }

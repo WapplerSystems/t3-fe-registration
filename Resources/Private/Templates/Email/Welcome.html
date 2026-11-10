@@ -5,9 +5,11 @@
     <p>
         <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.text" />
     </p>
-    <p>
-        <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.username" /> {user.username}
-    </p>
+    <f:if condition="{user.username}">
+        <p>
+            <f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.username" /> {user.username}
+        </p>
+    </f:if>
 
     <f:if condition="{password}">
         <p><f:translate key="LLL:EXT:fe_registration/Resources/Private/Language/locallang.xlf:welcomeEmail.password" /> {password}</p>
